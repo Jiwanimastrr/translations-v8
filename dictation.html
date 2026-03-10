@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>주니어통번역사 - 받아쓰기 숙제</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- JS Data 불러오기 -->
+    <script src="data.js"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .app-header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .speed-btn {
+            transition: all 0.2s;
+        }
+
+        .speed-btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+
+<body class="text-gray-800 pb-20">
+
+    <!-- Header & Navigation -->
+    <header class="app-header px-4 py-3">
+        <div class="flex items-center justify-center mb-4 mt-2">
+            <h1 class="text-xl font-black text-blue-700 tracking-tight"><i class="fas fa-headphones-alt mr-2"></i>AI
+                받아쓰기 숙제</h1>
+        </div>
+
+        <div class="flex flex-col gap-3">
+            <!-- Chapter Select -->
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-gray-600 w-12">Chapter</span>
+                <select id="chapter-select"
+                    class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 shadow-sm font-semibold">
+                    <!-- Options populated by JS -->
+                </select>
+            </div>
+
+            <!-- Session Select -->
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-sm text-gray-600 w-12">Session</span>
+                <div class="grid grid-cols-3 gap-2 flex-1" id="session-tabs">
+                    <button class="session-btn bg-blue-600 text-white font-bold py-2 rounded-lg shadow-sm"
+                        data-session="1">1차시</button>
+                    <button
+                        class="session-btn bg-white text-gray-600 border border-gray-300 font-bold py-2 rounded-lg shadow-sm"
+                        data-session="2">2차시</button>
+                    <button
+                        class="session-btn bg-white text-gray-600 border border-gray-300 font-bold py-2 rounded-lg shadow-sm"
+                        data-session="3">3차시</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="p-4 max-w-2xl mx-auto" id="dictation-container">
+        <!-- Dictation cards populated by JS -->
+    </main>
+
+    <script>
+        // State variables
+        let currentChapterId = db[0] ? db[0].id : 1;
+        let currentSession = 1;
+
+        // TTS Setup
+        let synth = window.speechSynthesis;
+        let voices = [];
+
+        function populateVoices() {
+            voices = synth.getVoices().filter(v => v.lang.includes('en'));
+        }
+        populateVoices();
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = populateVoices;
+        }
+
+        function playAudio(text, rate) {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            let utterance = new SpeechSynthesisUtterance(text);
+            if (voices.length > 0) {
+                // Try to find a natural sounding US/UK female/male voice
+                let preferred = voices.find(v => v.name.includes('Google') || v.name.includes('Samantha') || v.lang === 'en-US');
+                if (preferred) utterance.voice = preferred;
+            }
+            utterance.lang = 'en-US';
+            utterance.rate = rate;
+            utterance.pitch = 1.0;
+            synth.speak(utterance);
+        }
+
+        // DOM Elements
+        const chapterSelect = document.getElementById('chapter-select');
+        const sessionBtns = document.querySelectorAll('.session-btn');
+        const container = document.getElementById('dictation-container');
+
+        // Initialization
+        function init() {
+            // Populate Chapter Dropdown
+            db.forEach(ch => {
+                const opt = document.createElement('option');
+                opt.value = ch.id;
+                opt.textContent = `Chapter 0${ch.id}. ${ch.title}`;
+                chapterSelect.appendChild(opt);
+            });
+
+            // Event Listeners
+            chapterSelect.addEventListener('change', (e) => {
+                currentChapterId = parseInt(e.target.value);
+                renderDictation();
+            });
+
+            sessionBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    sessionBtns.forEach(b => {
+                        b.classList.remove('bg-blue-600', 'text-white');
+                        b.classList.add('bg-white', 'text-gray-600');
+                    });
+                    const target = e.target;
+                    target.classList.remove('bg-white', 'text-gray-600');
+                    target.classList.add('bg-blue-600', 'text-white');
+                    currentSession = parseInt(target.dataset.session);
+                    renderDictation();
+                });
+            });
+
+            renderDictation();
+        }
+
+        function renderDictation() {
+            container.innerHTML = '';
+
+            const chapterData = db.find(ch => ch.id === currentChapterId);
+            if (!chapterData) return;
+
+            // session slice logic (14 sentences per session)
+            const sStart = (currentSession - 1) * 14;
+            const sEnd = sStart + 14;
+            const sessionWords = chapterData.words.slice(sStart, sEnd);
+
+            // Create Help Card
+            const helpCard = document.createElement('div');
+            helpCard.className = 'bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-sm text-blue-800 shadow-sm leading-relaxed';
+            helpCard.innerHTML = `<i class="fas fa-info-circle mr-1"></i> 아이콘을 눌러 원어민 음성을 듣고 문장을 받아 적어보세요. <br> 🐇 <b>빠르게</b> (1.2x) | ▶️ <b>보통</b> (1.0x) | 🐢 <b>느리게</b> (0.7x)`;
+            container.appendChild(helpCard);
+
+            sessionWords.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-2xl shadow-md p-5 mb-5 border border-gray-100 relative overflow-hidden';
+
+                // Audio safely escaped
+                const safeEn = item.senEn.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-4">
+                        <div class="font-black text-blue-600 text-lg">Q${String(index + 1).padStart(2, '0')}</div>
+                    </div>
+                    
+                    <div class="flex justify-between gap-2 mb-5">
+                        <button onclick="playAudio('${safeEn}', 1.2)" class="speed-btn flex-1 bg-red-50 text-red-600 border border-red-200 rounded-xl py-3 font-bold text-sm shadow-sm flex flex-col items-center gap-1">
+                            <span class="text-xl">🐇</span> 빠르게
+                        </button>
+                        <button onclick="playAudio('${safeEn}', 1.0)" class="speed-btn flex-1 bg-blue-50 text-blue-600 border border-blue-200 rounded-xl py-3 font-bold text-sm shadow-sm flex flex-col items-center gap-1">
+                            <span class="text-xl">▶️</span> 보통
+                        </button>
+                        <button onclick="playAudio('${safeEn}', 0.7)" class="speed-btn flex-1 bg-green-50 text-green-600 border border-green-200 rounded-xl py-3 font-bold text-sm shadow-sm flex flex-col items-center gap-1">
+                            <span class="text-xl">🐢</span> 느리게
+                        </button>
+                    </div>
+
+                    <div class="mb-4">
+                        <textarea class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none font-medium text-lg placeholder-gray-400 shadow-inner" rows="2" placeholder="이곳에 영어 문장을 받아 적으세요..."></textarea>
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <button onclick="toggleAnswer('ans-${index}')" class="text-sm font-bold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg hover:bg-gray-200 active:bg-gray-300 transition-colors">
+                                <i class="fas fa-eye mr-1"></i> 정답 및 해석 보기
+                            </button>
+                        </div>
+                        <div id="ans-${index}" class="hidden mt-3 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+                            <p class="font-bold text-lg text-blue-800 mb-1 leading-tight">${item.senEn}</p>
+                            <p class="text-sm text-gray-600 font-medium">${item.senKo}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Global function for toggle
+        window.toggleAnswer = function (id) {
+            const el = document.getElementById(id);
+            if (el.classList.contains('hidden')) {
+                el.classList.remove('hidden');
+                el.classList.add('block', 'animate-pulse');
+                setTimeout(() => el.classList.remove('animate-pulse'), 500);
+            } else {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            }
+        };
+
+        // Run
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>
