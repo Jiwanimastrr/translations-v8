@@ -1647,13 +1647,15 @@
 
                 let transHtml = '';
                 sessionWords.forEach((word, index) => {
-                    transHtml += `<div class="avoid-break print-item mt-6 mb-8"><p class="font-bold text-[14pt] mb-3"><span class="text-purple-600 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senEn}</p><div class="writing-line mt-4"></div></div>`;
+                    const ansText = answerMode ? `<div class="text-red-500 font-bold text-[13pt] mt-1 ml-8 animate-fadeIn">${word.senKo}</div>` : `<div class="text-gray-400 font-medium text-[11pt] italic mt-1 ml-8">(${word.senKo})</div>`;
+                    transHtml += `<div class="avoid-break print-item mt-6 mb-8"><p class="font-bold text-[14pt] mb-1"><span class="text-purple-600 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senEn}</p>${ansText}<div class="writing-line mt-4"></div></div>`;
                 });
                 pageHtml += `<div class="print-page-break">${headerHtml}<section class="relative z-10"><h2 class="section-title text-gray-800"><i class="fas fa-language text-purple-500 mr-2"></i>Step 2. 직독직해 (Eng to Kor)</h2><div class="grid grid-cols-1">${transHtml}</div></section></div>`;
 
                 let writeHtml = '';
                 sessionWords.forEach((word, index) => {
-                    writeHtml += `<div class="avoid-break print-item mt-6 mb-8"><p class="font-bold text-[14pt] text-gray-800 mb-3"><span class="text-red-600 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senKo} <br><span class="text-[12pt] text-gray-400 font-normal ml-8 mt-2 inline-block">(${word.en})</span></p><div class="writing-line mt-4"></div></div>`;
+                    const ansText = answerMode ? `<div class="text-red-500 font-bold text-[13pt] mt-1 ml-8 animate-fadeIn">${word.senEn}</div>` : `<div class="text-gray-400 font-medium text-[11pt] italic mt-1 ml-8">(${word.senEn})</div>`;
+                    writeHtml += `<div class="avoid-break print-item mt-6 mb-8"><p class="font-bold text-[14pt] text-gray-800 mb-1"><span class="text-red-600 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senKo} <span class="text-[12pt] text-gray-400 font-normal ml-2">(${word.en})</span></p>${ansText}<div class="writing-line mt-4"></div></div>`;
                 });
                 pageHtml += `<div class="print-page-break">${headerHtml}<section class="relative z-10"><h2 class="section-title text-gray-800"><i class="fas fa-pen-nib text-red-500 mr-2"></i>Step 3. 영작 훈련 (Kor to Eng)</h2><div class="grid grid-cols-1">${writeHtml}</div></section></div>`;
 
