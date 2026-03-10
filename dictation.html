@@ -44,9 +44,10 @@
             box-shadow: 5px 5px 10px var(--neu-dark), -5px -5px 10px var(--neu-light);
             border-radius: 12px;
             transition: all 0.2s ease;
+            position: relative;
         }
 
-        .neu-btn:active {
+        .neu-btn:active:not(:disabled) {
             box-shadow: inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light);
             transform: scale(0.98);
         }
@@ -55,6 +56,13 @@
             box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
             color: var(--primary-blue);
             font-weight: 800;
+        }
+
+        .neu-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+            background: #e5e7eb;
         }
 
         .neu-input {
@@ -80,6 +88,14 @@
             background-repeat: no-repeat;
             background-position: right 0.75rem center;
             background-size: 1.5em;
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 10px;
+            color: #9ca3af;
         }
     </style>
 </head>
@@ -115,9 +131,10 @@
                 <div class="flex items-center gap-3">
                     <span class="font-bold text-sm text-gray-500 w-16">Session</span>
                     <div class="grid grid-cols-3 gap-3 flex-1">
-                        <button class="session-btn neu-btn py-3 text-sm font-bold active" data-session="1">1차시</button>
-                        <button class="session-btn neu-btn py-3 text-sm font-bold" data-session="2">2차시</button>
-                        <button class="session-btn neu-btn py-3 text-sm font-bold" data-session="3">3차시</button>
+                        <button class="session-btn neu-btn py-3 text-sm font-bold active" data-session="1">Day
+                            1</button>
+                        <button class="session-btn neu-btn py-3 text-sm font-bold" data-session="2">Day 2</button>
+                        <button class="session-btn neu-btn py-3 text-sm font-bold" data-session="3">Day 3</button>
                     </div>
                 </div>
             </div>
@@ -134,18 +151,50 @@
         let currentSession = 1;
         let currentAudio = null;
 
-        function playAudio(audioPath) {
+        // Track listen counts for each question
+        // Structure: { "ch_id_session_id_question_idx": { fast: true, normal: false, slow: false } }
+        let progress = {};
+
+        function playAudio(audioPath, qId, type) {
             if (currentAudio) {
                 currentAudio.pause();
                 currentAudio.currentTime = 0;
             }
+
+            // Core logic: Fast -> Normal -> Slow
+            if (type === 'normal') {
+                if (!progress[qId]?.fast) {
+                    alert('먼저 "Fast(빠름)" 본을 들어야 합니다!');
+                    return;
+                }
+            } else if (type === 'slow') {
+                if (!progress[qId]?.normal) {
+                    alert('먼저 "Normal(보통)" 본을 들어야 합니다!');
+                    return;
+                }
+            }
+
             currentAudio = new Audio(audioPath);
+            currentAudio.onended = () => {
+                if (!progress[qId]) progress[qId] = { fast: false, normal: false, slow: false };
+                progress[qId][type] = true;
+                renderDictation(true); // Re-render only button states
+            };
             currentAudio.play().catch(e => console.error("오디오 재생 실패:", e));
         }
 
         const chapterSelect = document.getElementById('chapter-select');
         const sessionBtns = document.querySelectorAll('.session-btn');
         const container = document.getElementById('dictation-container');
+
+        // Shuffle function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
 
         function init() {
             db.forEach(ch => {
@@ -157,6 +206,7 @@
 
             chapterSelect.addEventListener('change', (e) => {
                 currentChapterId = parseInt(e.target.value);
+                progress = {}; // Reset progress on chapter change
                 renderDictation();
             });
 
@@ -165,6 +215,7 @@
                     sessionBtns.forEach(b => b.classList.remove('active'));
                     e.target.classList.add('active');
                     currentSession = parseInt(e.target.dataset.session);
+                    progress = {}; // Reset progress on day change
                     renderDictation();
                 });
             });
@@ -172,43 +223,52 @@
             renderDictation();
         }
 
-        function renderDictation() {
-            container.innerHTML = '';
+        function renderDictation(onlyButtons = false) {
             const chapterData = db.find(ch => ch.id === currentChapterId);
             if (!chapterData) return;
 
             const sStart = (currentSession - 1) * 14;
             const sEnd = sStart + 14;
-            const sessionWords = chapterData.words.slice(sStart, sEnd);
+            let sessionWords = chapterData.words.slice(sStart, sEnd);
 
-            const guide = document.createElement('div');
-            guide.className = 'neu-pressed p-5 mb-8 text-sm text-gray-500 leading-relaxed';
-            guide.innerHTML = `<i class="fas fa-magic mr-2 text-blue-400"></i> AI 원어민 음성을 듣고 문장을 완성해보세요!<br><span class="text-xs mt-1 block opacity-70">속도별 버튼: 🐇빠름 / ▶️보통 / 🐢느림</span>`;
-            container.appendChild(guide);
+            // Apply shuffle (unless onlyButtons is true to preserve current order)
+            if (!window.currentShuffledData || !onlyButtons) {
+                // Add unique original word index before shuffling
+                sessionWords = sessionWords.map((w, idx) => ({ ...w, originalIdx: sStart + idx + 1 }));
+                window.currentShuffledData = shuffleArray([...sessionWords]);
+            }
 
-            sessionWords.forEach((item, index) => {
-                const wordIdx = sStart + index + 1;
+            if (!onlyButtons) container.innerHTML = '';
+
+            if (!onlyButtons) {
+                const guide = document.createElement('div');
+                guide.className = 'neu-pressed p-5 mb-8 text-sm text-gray-500 leading-relaxed';
+                guide.innerHTML = `<i class="fas fa-magic mr-2 text-blue-400"></i> AI 원어민 음성을 단계별로 들어보세요!<br><span class="text-xs mt-1 block opacity-70">규칙: 🐇Fast를 들어야 ▶️Normal이 열리고, Normal을 들어야 🐢Slow가 열립니다.</span>`;
+                container.appendChild(guide);
+            }
+
+            window.currentShuffledData.forEach((item, index) => {
+                const qId = `${currentChapterId}_${currentSession}_${index}`;
+                const wordIdx = item.originalIdx;
+                const p = progress[qId] || { fast: false, normal: false, slow: false };
+
+                if (onlyButtons) {
+                    const btnContainer = document.getElementById(`btn-group-${index}`);
+                    if (btnContainer) {
+                        btnContainer.innerHTML = generateButtonHtml(qId, wordIdx, p);
+                    }
+                    return;
+                }
+
                 const card = document.createElement('div');
                 card.className = 'neu-flat p-6 mb-10 overflow-hidden';
-
                 card.innerHTML = `
                     <div class="flex items-center gap-3 mb-6 border-l-4 border-blue-500 pl-3">
                         <span class="font-black text-xl text-blue-600">Q${String(index + 1).padStart(2, '0')}</span>
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-4 mb-8">
-                        <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_fast.mp3')" class="neu-btn py-4 flex flex-col items-center gap-1 group">
-                            <span class="text-xl group-active:scale-90 transition-transform">🐇</span>
-                            <span class="text-[10px] uppercase font-black text-red-400">Fast</span>
-                        </button>
-                        <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_normal.mp3')" class="neu-btn py-4 flex flex-col items-center gap-1 group">
-                            <span class="text-xl group-active:scale-90 transition-transform">▶️</span>
-                            <span class="text-[10px] uppercase font-black text-blue-400">Normal</span>
-                        </button>
-                        <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_slow.mp3')" class="neu-btn py-4 flex flex-col items-center gap-1 group">
-                            <span class="text-xl group-active:scale-90 transition-transform">🐢</span>
-                            <span class="text-[10px] uppercase font-black text-green-400">Slow</span>
-                        </button>
+                    <div class="grid grid-cols-3 gap-4 mb-8" id="btn-group-${index}">
+                        ${generateButtonHtml(qId, wordIdx, p)}
                     </div>
 
                     <div class="mb-6">
@@ -227,6 +287,32 @@
                 `;
                 container.appendChild(card);
             });
+        }
+
+        function generateButtonHtml(qId, wordIdx, p) {
+            return `
+                <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_fast.mp3', '${qId}', 'fast')" class="neu-btn py-4 flex flex-col items-center gap-1 group ${p.fast ? 'active' : ''}">
+                    <span class="text-xl group-active:scale-90 transition-transform">🐇</span>
+                    <span class="text-[10px] uppercase font-black text-red-400">Fast</span>
+                    ${p.fast ? '<i class="fas fa-check-circle text-[10px] text-green-500 absolute top-1 right-1"></i>' : ''}
+                </button>
+                <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_normal.mp3', '${qId}', 'normal')" 
+                        class="neu-btn py-4 flex flex-col items-center gap-1 group ${p.normal ? 'active' : ''}" 
+                        ${!p.fast ? 'disabled' : ''}>
+                    <span class="text-xl group-active:scale-90 transition-transform">▶️</span>
+                    <span class="text-[10px] uppercase font-black text-blue-400">Normal</span>
+                    ${!p.fast ? '<i class="fas fa-lock lock-icon"></i>' : ''}
+                    ${p.normal ? '<i class="fas fa-check-circle text-[10px] text-green-500 absolute top-1 right-1"></i>' : ''}
+                </button>
+                <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_slow.mp3', '${qId}', 'slow')" 
+                        class="neu-btn py-4 flex flex-col items-center gap-1 group ${p.slow ? 'active' : ''}" 
+                        ${!p.normal ? 'disabled' : ''}>
+                    <span class="text-xl group-active:scale-90 transition-transform">🐢</span>
+                    <span class="text-[10px] uppercase font-black text-green-400">Slow</span>
+                    ${!p.normal ? '<i class="fas fa-lock lock-icon"></i>' : ''}
+                    ${p.slow ? '<i class="fas fa-check-circle text-[10px] text-green-500 absolute top-1 right-1"></i>' : ''}
+                </button>
+            `;
         }
 
         window.toggleAnswer = function (id) {
