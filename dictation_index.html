@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>주니어통번역사 - 받아쓰기 숙제</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- JS Data 불러오기 -->
+    <script src="data.js"></script>
+    <style>
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            --bg-color: #f3f4f6;
+            --neu-light: #ffffff;
+            --neu-dark: #d1d5db;
+            --primary-blue: #3b82f6;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: var(--bg-color);
+            color: #374151;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Neumorphism Styles */
+        .neu-flat {
+            background: var(--bg-color);
+            box-shadow: 6px 6px 12px var(--neu-dark), -6px -6px 12px var(--neu-light);
+            border-radius: 20px;
+        }
+
+        .neu-pressed {
+            background: var(--bg-color);
+            box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+            border-radius: 20px;
+        }
+
+        .neu-btn {
+            background: var(--bg-color);
+            box-shadow: 5px 5px 10px var(--neu-dark), -5px -5px 10px var(--neu-light);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .neu-btn:active:not(:disabled) {
+            box-shadow: inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light);
+            transform: scale(0.98);
+        }
+
+        .neu-btn.active {
+            box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+            color: var(--primary-blue);
+            font-weight: 800;
+        }
+
+        .neu-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            box-shadow: none;
+            background: #e5e7eb;
+        }
+
+        .neu-input {
+            background: var(--bg-color);
+            box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+            border: none;
+            outline: none;
+            border-radius: 15px;
+        }
+
+        .app-header {
+            background: var(--bg-color);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 1rem;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.5em;
+        }
+
+        .lock-icon {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            font-size: 10px;
+            color: #9ca3af;
+        }
+    </style>
+</head>
+
+<body class="pb-20">
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="max-w-2xl mx-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-xl font-black text-blue-600 tracking-tight flex items-center">
+                    <span class="neu-btn p-2 mr-3 bg-white text-blue-500 shadow-sm rounded-lg"
+                        style="box-shadow: 3px 3px 6px #d1d5db;">
+                        <i class="fas fa-headphones-alt"></i>
+                    </span>
+                    주니어 통번역 - Dictation
+                </h1>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Chapter Select -->
+                <div class="flex items-center gap-3">
+                    <span class="font-bold text-sm text-gray-500 w-16">Chapter</span>
+                    <div class="flex-1 neu-flat rounded-xl overflow-hidden">
+                        <select id="chapter-select"
+                            class="w-full bg-transparent border-none py-3 px-4 text-sm font-bold text-gray-800 focus:ring-0">
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Session Tabs -->
+                <div class="flex items-center gap-3">
+                    <span class="font-bold text-sm text-gray-500 w-16">Session</span>
+                    <div class="grid grid-cols-3 gap-3 flex-1">
+                        <button class="session-btn neu-btn py-3 text-sm font-bold active" data-session="1">Day
+                            1</button>
+                        <button class="session-btn neu-btn py-3 text-sm font-bold" data-session="2">Day 2</button>
+                        <button class="session-btn neu-btn py-3 text-sm font-bold" data-session="3">Day 3</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="p-6 max-w-2xl mx-auto" id="dictation-container">
+        <!-- Dictation cards populated by JS -->
+    </main>
+
+    <script>
+        let currentChapterId = db[0] ? db[0].id : 1;
+        let currentSession = 1;
+        let currentAudio = null;
+
+        // Track listen counts for each question
+        // Structure: { "ch_id_session_id_question_idx": { fast: true, normal: false, slow: false } }
+        let progress = {};
+
+        function playAudio(audioPath, qId, type) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+
+            // Core logic: Fast -> Normal -> Slow
+            if (type === 'normal') {
+                if (!progress[qId]?.fast) {
+                    alert('먼저 "Fast(빠름)" 본을 들어야 합니다!');
+                    return;
+                }
+            } else if (type === 'slow') {
+                if (!progress[qId]?.normal) {
+                    alert('먼저 "Normal(보통)" 본을 들어야 합니다!');
+                    return;
+                }
+            }
+
+            currentAudio = new Audio(audioPath);
+            currentAudio.onended = () => {
+                if (!progress[qId]) progress[qId] = { fast: false, normal: false, slow: false };
+                progress[qId][type] = true;
+                renderDictation(true); // Re-render only button states
+            };
+            currentAudio.play().catch(e => console.error("오디오 재생 실패:", e));
+        }
+
+        const chapterSelect = document.getElementById('chapter-select');
+        const sessionBtns = document.querySelectorAll('.session-btn');
+        const container = document.getElementById('dictation-container');
+
+        // Shuffle function
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function init() {
+            db.forEach(ch => {
+                const opt = document.createElement('option');
+                opt.value = ch.id;
+                opt.textContent = `Ch. ${ch.id} - ${ch.title}`;
+                chapterSelect.appendChild(opt);
+            });
+
+            chapterSelect.addEventListener('change', (e) => {
+                currentChapterId = parseInt(e.target.value);
+                progress = {}; // Reset progress on chapter change
+                renderDictation();
+            });
+
+            sessionBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    sessionBtns.forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentSession = parseInt(e.target.dataset.session);
+                    progress = {}; // Reset progress on day change
+                    renderDictation();
+                });
+            });
+
+            renderDictation();
+        }
+
+        function renderDictation(onlyButtons = false) {
+            const chapterData = db.find(ch => ch.id === currentChapterId);
+            if (!chapterData) return;
+
+            const sStart = (currentSession - 1) * 14;
+            const sEnd = sStart + 14;
+            let sessionWords = chapterData.words.slice(sStart, sEnd);
+
+            // Apply shuffle (unless onlyButtons is true to preserve current order)
+            if (!window.currentShuffledData || !onlyButtons) {
+                // Add unique original word index before shuffling
+                sessionWords = sessionWords.map((w, idx) => ({ ...w, originalIdx: sStart + idx + 1 }));
+                window.currentShuffledData = shuffleArray([...sessionWords]);
+            }
+
+            if (!onlyButtons) container.innerHTML = '';
+
+            if (!onlyButtons) {
+                const guide = document.createElement('div');
+                guide.className = 'neu-pressed p-5 mb-8 text-sm text-gray-500 leading-relaxed';
+                guide.innerHTML = `<i class="fas fa-magic mr-2 text-blue-400"></i> AI 원어민 음성을 단계별로 들어보세요!<br><span class="text-xs mt-1 block opacity-70">규칙: 🐇Fast를 들어야 ▶️Normal이 열리고, Normal을 들어야 🐢Slow가 열립니다.</span>`;
+                container.appendChild(guide);
+            }
+
+            window.currentShuffledData.forEach((item, index) => {
+                const qId = `${currentChapterId}_${currentSession}_${index}`;
+                const wordIdx = item.originalIdx;
+                const p = progress[qId] || { fast: false, normal: false, slow: false };
+
+                if (onlyButtons) {
+                    const btnContainer = document.getElementById(`btn-group-${index}`);
+                    if (btnContainer) {
+                        btnContainer.innerHTML = generateButtonHtml(qId, wordIdx, p);
+                    }
+                    return;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'neu-flat p-6 mb-10 overflow-hidden';
+                card.innerHTML = `
+                    <div class="flex items-center gap-3 mb-6 border-l-4 border-blue-500 pl-3">
+                        <span class="font-black text-xl text-blue-600">Q${String(index + 1).padStart(2, '0')}</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-4 mb-8" id="btn-group-${index}">
+                        ${generateButtonHtml(qId, wordIdx, p)}
+                    </div>
+
+                    <div class="mb-6">
+                        <textarea class="neu-input w-full p-4 text-lg font-medium text-gray-700 placeholder-gray-300 resize-none h-28 focus:ring-0" placeholder="Type here..."></textarea>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <button onclick="toggleAnswer('ans-${index}')" class="neu-btn py-2 px-4 text-xs font-bold text-gray-500 w-fit">
+                            <i class="fas fa-check-circle mr-1"></i> Check Korean Meaning
+                        </button>
+                        <div id="ans-${index}" class="hidden neu-pressed p-4 animate-fadeIn">
+                            <p class="text-sm text-gray-600 font-bold">${item.senKo}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function generateButtonHtml(qId, wordIdx, p) {
+            return `
+                <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_fast.mp3', '${qId}', 'fast')" class="neu-btn py-4 flex flex-col items-center gap-1 group ${p.fast ? 'active' : ''}">
+                    <span class="text-xl group-active:scale-90 transition-transform">🐇</span>
+                    <span class="text-[10px] uppercase font-black text-red-400">Fast</span>
+                    ${p.fast ? '<i class="fas fa-check-circle text-[10px] text-green-500 absolute top-1 right-1"></i>' : ''}
+                </button>
+                <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_normal.mp3', '${qId}', 'normal')" 
+                        class="neu-btn py-4 flex flex-col items-center gap-1 group ${p.normal ? 'active' : ''}" 
+                        ${!p.fast ? 'disabled' : ''}>
+                    <span class="text-xl group-active:scale-90 transition-transform">▶️</span>
+                    <span class="text-[10px] uppercase font-black text-blue-400">Normal</span>
+                    ${!p.fast ? '<i class="fas fa-lock lock-icon"></i>' : ''}
+                    ${p.normal ? '<i class="fas fa-check-circle text-[10px] text-green-500 absolute top-1 right-1"></i>' : ''}
+                </button>
+                <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_slow.mp3', '${qId}', 'slow')" 
+                        class="neu-btn py-4 flex flex-col items-center gap-1 group ${p.slow ? 'active' : ''}" 
+                        ${!p.normal ? 'disabled' : ''}>
+                    <span class="text-xl group-active:scale-90 transition-transform">🐢</span>
+                    <span class="text-[10px] uppercase font-black text-green-400">Slow</span>
+                    ${!p.normal ? '<i class="fas fa-lock lock-icon"></i>' : ''}
+                    ${p.slow ? '<i class="fas fa-check-circle text-[10px] text-green-500 absolute top-1 right-1"></i>' : ''}
+                </button>
+            `;
+        }
+
+        window.toggleAnswer = function (id) {
+            const el = document.getElementById(id);
+            el.classList.toggle('hidden');
+        };
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+
+</html>
