@@ -41,12 +41,16 @@ def parse_excel():
                     sen_en = str(row.iloc[3]).strip()
                     sen_ko = str(row.iloc[4]).strip()
 
-                    if pd.isna(word_en) or word_en == 'nan' or not word_en:
+                    # Filter out header rows or invalid rows
+                    if pd.isna(word_en) or word_en == 'nan' or not word_en or word_en == 'Word (Text)':
                         continue
                     
-                    # Also, the web app parses 14 words per session. We just read them sequentially.
+                    # Also skip other potential header indicators if they exist
+                    if 'Sentence' in sen_en and '(Text)' in sen_en:
+                        continue
+
                     words.append({
-                        "id": index + 1,
+                        "id": len(words) + 1,
                         "en": word_en,
                         "ko": word_ko,
                         "senEn": sen_en,

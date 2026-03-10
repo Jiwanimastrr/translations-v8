@@ -12,77 +12,126 @@
     <style>
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
 
+        :root {
+            --bg-color: #f3f4f6;
+            --neu-light: #ffffff;
+            --neu-dark: #d1d5db;
+            --primary-blue: #3b82f6;
+        }
+
         body {
             font-family: 'Pretendard', sans-serif;
-            background-color: #f3f4f6;
+            background-color: var(--bg-color);
+            color: #374151;
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* Neumorphism Styles */
+        .neu-flat {
+            background: var(--bg-color);
+            box-shadow: 6px 6px 12px var(--neu-dark), -6px -6px 12px var(--neu-light);
+            border-radius: 20px;
+        }
+
+        .neu-pressed {
+            background: var(--bg-color);
+            box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+            border-radius: 20px;
+        }
+
+        .neu-btn {
+            background: var(--bg-color);
+            box-shadow: 5px 5px 10px var(--neu-dark), -5px -5px 10px var(--neu-light);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .neu-btn:active {
+            box-shadow: inset 3px 3px 6px var(--neu-dark), inset -3px -3px 6px var(--neu-light);
+            transform: scale(0.98);
+        }
+
+        .neu-btn.active {
+            box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+            color: var(--primary-blue);
+            font-weight: 800;
+        }
+
+        .neu-input {
+            background: var(--bg-color);
+            box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+            border: none;
+            outline: none;
+            border-radius: 15px;
+        }
+
         .app-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            background: var(--bg-color);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
             position: sticky;
             top: 0;
             z-index: 50;
+            padding: 1rem;
         }
 
-        .speed-btn {
-            transition: all 0.2s;
-        }
-
-        .speed-btn:active {
-            transform: scale(0.95);
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.5em;
         }
     </style>
 </head>
 
-<body class="text-gray-800 pb-20">
+<body class="pb-20">
 
-    <!-- Header & Navigation -->
-    <header class="app-header px-4 py-3">
-        <div class="flex items-center justify-center mb-4 mt-2">
-            <h1 class="text-xl font-black text-blue-700 tracking-tight"><i class="fas fa-headphones-alt mr-2"></i>AI
-                받아쓰기 숙제</h1>
-        </div>
-
-        <div class="flex flex-col gap-3">
-            <!-- Chapter Select -->
-            <div class="flex items-center gap-2">
-                <span class="font-bold text-sm text-gray-600 w-12">Chapter</span>
-                <select id="chapter-select"
-                    class="flex-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 shadow-sm font-semibold">
-                    <!-- Options populated by JS -->
-                </select>
+    <!-- Header -->
+    <header class="app-header">
+        <div class="max-w-2xl mx-auto">
+            <div class="flex items-center justify-between mb-4">
+                <h1 class="text-xl font-black text-blue-600 tracking-tight flex items-center">
+                    <span class="neu-btn p-2 mr-3 bg-white text-blue-500 shadow-sm rounded-lg"
+                        style="box-shadow: 3px 3px 6px #d1d5db;">
+                        <i class="fas fa-headphones-alt"></i>
+                    </span>
+                    주니어 통번역 - Dictation
+                </h1>
             </div>
 
-            <!-- Session Select -->
-            <div class="flex items-center gap-2">
-                <span class="font-bold text-sm text-gray-600 w-12">Session</span>
-                <div class="grid grid-cols-3 gap-2 flex-1" id="session-tabs">
-                    <button class="session-btn bg-blue-600 text-white font-bold py-2 rounded-lg shadow-sm"
-                        data-session="1">1차시</button>
-                    <button
-                        class="session-btn bg-white text-gray-600 border border-gray-300 font-bold py-2 rounded-lg shadow-sm"
-                        data-session="2">2차시</button>
-                    <button
-                        class="session-btn bg-white text-gray-600 border border-gray-300 font-bold py-2 rounded-lg shadow-sm"
-                        data-session="3">3차시</button>
+            <div class="space-y-4">
+                <!-- Chapter Select -->
+                <div class="flex items-center gap-3">
+                    <span class="font-bold text-sm text-gray-500 w-16">Chapter</span>
+                    <div class="flex-1 neu-flat rounded-xl overflow-hidden">
+                        <select id="chapter-select"
+                            class="w-full bg-transparent border-none py-3 px-4 text-sm font-bold text-gray-800 focus:ring-0">
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Session Tabs -->
+                <div class="flex items-center gap-3">
+                    <span class="font-bold text-sm text-gray-500 w-16">Session</span>
+                    <div class="grid grid-cols-3 gap-3 flex-1">
+                        <button class="session-btn neu-btn py-3 text-sm font-bold active" data-session="1">1차시</button>
+                        <button class="session-btn neu-btn py-3 text-sm font-bold" data-session="2">2차시</button>
+                        <button class="session-btn neu-btn py-3 text-sm font-bold" data-session="3">3차시</button>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
     <!-- Main Content -->
-    <main class="p-4 max-w-2xl mx-auto" id="dictation-container">
+    <main class="p-6 max-w-2xl mx-auto" id="dictation-container">
         <!-- Dictation cards populated by JS -->
     </main>
 
     <script>
-        // State variables
         let currentChapterId = db[0] ? db[0].id : 1;
         let currentSession = 1;
-
         let currentAudio = null;
 
         function playAudio(audioPath) {
@@ -94,22 +143,18 @@
             currentAudio.play().catch(e => console.error("오디오 재생 실패:", e));
         }
 
-        // DOM Elements
         const chapterSelect = document.getElementById('chapter-select');
         const sessionBtns = document.querySelectorAll('.session-btn');
         const container = document.getElementById('dictation-container');
 
-        // Initialization
         function init() {
-            // Populate Chapter Dropdown
             db.forEach(ch => {
                 const opt = document.createElement('option');
                 opt.value = ch.id;
-                opt.textContent = `Chapter 0${ch.id}. ${ch.title}`;
+                opt.textContent = `Ch. ${ch.id} - ${ch.title}`;
                 chapterSelect.appendChild(opt);
             });
 
-            // Event Listeners
             chapterSelect.addEventListener('change', (e) => {
                 currentChapterId = parseInt(e.target.value);
                 renderDictation();
@@ -117,14 +162,9 @@
 
             sessionBtns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    sessionBtns.forEach(b => {
-                        b.classList.remove('bg-blue-600', 'text-white');
-                        b.classList.add('bg-white', 'text-gray-600');
-                    });
-                    const target = e.target;
-                    target.classList.remove('bg-white', 'text-gray-600');
-                    target.classList.add('bg-blue-600', 'text-white');
-                    currentSession = parseInt(target.dataset.session);
+                    sessionBtns.forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    currentSession = parseInt(e.target.dataset.session);
                     renderDictation();
                 });
             });
@@ -134,58 +174,54 @@
 
         function renderDictation() {
             container.innerHTML = '';
-
             const chapterData = db.find(ch => ch.id === currentChapterId);
             if (!chapterData) return;
 
-            // session slice logic (14 sentences per session)
             const sStart = (currentSession - 1) * 14;
             const sEnd = sStart + 14;
             const sessionWords = chapterData.words.slice(sStart, sEnd);
 
-            // Create Help Card
-            const helpCard = document.createElement('div');
-            helpCard.className = 'bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-sm text-blue-800 shadow-sm leading-relaxed';
-            helpCard.innerHTML = `<i class="fas fa-info-circle mr-1"></i> 아이콘을 눌러 원어민 음성을 듣고 문장을 받아 적어보세요. <br> 🐇 <b>빠르게</b> (1.2x) | ▶️ <b>보통</b> (1.0x) | 🐢 <b>느리게</b> (0.7x)`;
-            container.appendChild(helpCard);
+            const guide = document.createElement('div');
+            guide.className = 'neu-pressed p-5 mb-8 text-sm text-gray-500 leading-relaxed';
+            guide.innerHTML = `<i class="fas fa-magic mr-2 text-blue-400"></i> AI 원어민 음성을 듣고 문장을 완성해보세요!<br><span class="text-xs mt-1 block opacity-70">속도별 버튼: 🐇빠름 / ▶️보통 / 🐢느림</span>`;
+            container.appendChild(guide);
 
             sessionWords.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'bg-white rounded-2xl shadow-md p-5 mb-5 border border-gray-100 relative overflow-hidden';
-
-                // Use correct 1-indexed word id across entire chapter
                 const wordIdx = sStart + index + 1;
+                const card = document.createElement('div');
+                card.className = 'neu-flat p-6 mb-10 overflow-hidden';
 
                 card.innerHTML = `
-                    <div class="flex justify-between items-center border-b border-gray-100 pb-3 mb-4">
-                        <div class="font-black text-blue-600 text-lg">Q${String(index + 1).padStart(2, '0')}</div>
+                    <div class="flex items-center gap-3 mb-6 border-l-4 border-blue-500 pl-3">
+                        <span class="font-black text-xl text-blue-600">Q${String(index + 1).padStart(2, '0')}</span>
                     </div>
                     
-                    <div class="flex justify-between gap-2 mb-5">
-                        <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_fast.mp3')" class="speed-btn flex-1 bg-red-50 text-red-600 border border-red-200 rounded-xl py-3 font-bold text-sm shadow-sm flex flex-col items-center gap-1">
-                            <span class="text-xl">🐇</span> 빠르게
+                    <div class="grid grid-cols-3 gap-4 mb-8">
+                        <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_fast.mp3')" class="neu-btn py-4 flex flex-col items-center gap-1 group">
+                            <span class="text-xl group-active:scale-90 transition-transform">🐇</span>
+                            <span class="text-[10px] uppercase font-black text-red-400">Fast</span>
                         </button>
-                        <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_normal.mp3')" class="speed-btn flex-1 bg-blue-50 text-blue-600 border border-blue-200 rounded-xl py-3 font-bold text-sm shadow-sm flex flex-col items-center gap-1">
-                            <span class="text-xl">▶️</span> 보통
+                        <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_normal.mp3')" class="neu-btn py-4 flex flex-col items-center gap-1 group">
+                            <span class="text-xl group-active:scale-90 transition-transform">▶️</span>
+                            <span class="text-[10px] uppercase font-black text-blue-400">Normal</span>
                         </button>
-                        <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_slow.mp3')" class="speed-btn flex-1 bg-green-50 text-green-600 border border-green-200 rounded-xl py-3 font-bold text-sm shadow-sm flex flex-col items-center gap-1">
-                            <span class="text-xl">🐢</span> 느리게
+                        <button onclick="playAudio('audio/chapter_${currentChapterId}/sen_${wordIdx}_slow.mp3')" class="neu-btn py-4 flex flex-col items-center gap-1 group">
+                            <span class="text-xl group-active:scale-90 transition-transform">🐢</span>
+                            <span class="text-[10px] uppercase font-black text-green-400">Slow</span>
                         </button>
                     </div>
 
-                    <div class="mb-4">
-                        <textarea class="w-full bg-gray-50 border border-gray-300 text-gray-900 rounded-xl p-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none font-medium text-lg placeholder-gray-400 shadow-inner" rows="2" placeholder="이곳에 영어 문장을 받아 적으세요..."></textarea>
+                    <div class="mb-6">
+                        <textarea class="neu-input w-full p-4 text-lg font-medium text-gray-700 placeholder-gray-300 resize-none h-28 focus:ring-0" placeholder="Type here..."></textarea>
                     </div>
 
-                    <div class="mt-4">
-                        <div class="flex items-center gap-2 mb-2">
-                            <button onclick="toggleAnswer('ans-${index}')" class="text-sm font-bold text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg hover:bg-gray-200 active:bg-gray-300 transition-colors">
-                                <i class="fas fa-eye mr-1"></i> 정답 및 해석 보기
-                            </button>
-                        </div>
-                        <div id="ans-${index}" class="hidden mt-3 bg-blue-50/50 p-4 rounded-xl border border-blue-100">
-                            <p class="font-bold text-lg text-blue-800 mb-1 leading-tight">${item.senEn}</p>
-                            <p class="text-sm text-gray-600 font-medium">${item.senKo}</p>
+                    <div class="flex flex-col gap-3">
+                        <button onclick="toggleAnswer('ans-${index}')" class="neu-btn py-2 px-4 text-xs font-bold text-gray-500 w-fit">
+                            <i class="fas fa-check-circle mr-1"></i> Check Answer
+                        </button>
+                        <div id="ans-${index}" class="hidden neu-pressed p-4 animate-fadeIn">
+                            <p class="font-extrabold text-lg text-blue-700 mb-2 leading-tight">${item.senEn}</p>
+                            <p class="text-xs text-gray-500 font-bold">${item.senKo}</p>
                         </div>
                     </div>
                 `;
@@ -193,20 +229,11 @@
             });
         }
 
-        // Global function for toggle
         window.toggleAnswer = function (id) {
             const el = document.getElementById(id);
-            if (el.classList.contains('hidden')) {
-                el.classList.remove('hidden');
-                el.classList.add('block', 'animate-pulse');
-                setTimeout(() => el.classList.remove('animate-pulse'), 500);
-            } else {
-                el.classList.add('hidden');
-                el.classList.remove('block');
-            }
+            el.classList.toggle('hidden');
         };
 
-        // Run
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>

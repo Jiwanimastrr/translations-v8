@@ -5,14 +5,6 @@ const db = [
     "words": [
       {
         "id": 1,
-        "en": "Word (Text)",
-        "ko": "Interpretation01_Korean",
-        "senEn": "Sentence 1 (Text)",
-        "senKo": "Interpretation01_Korean",
-        "def": ""
-      },
-      {
-        "id": 2,
         "en": "air conditioner",
         "ko": "에어컨",
         "senEn": "Turn on the air conditioner.",
@@ -20,7 +12,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 3,
+        "id": 2,
         "en": "attic",
         "ko": "다락(방)",
         "senEn": "Anne lived in the attic of the house.",
@@ -28,7 +20,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 4,
+        "id": 3,
         "en": "aunt",
         "ko": "이모, 고모",
         "senEn": "My aunt lives in Busan.",
@@ -36,7 +28,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 5,
+        "id": 4,
         "en": "basement",
         "ko": "지하층",
         "senEn": "We have a large basement.",
@@ -44,7 +36,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 6,
+        "id": 5,
         "en": "bathroom",
         "ko": "욕실, 화장실",
         "senEn": "Where is the bathroom?",
@@ -52,7 +44,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 7,
+        "id": 6,
         "en": "bed",
         "ko": "침대",
         "senEn": "A pillow is on the bed.",
@@ -60,7 +52,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 8,
+        "id": 7,
         "en": "bedroom",
         "ko": "침실, 방",
         "senEn": "My bedroom is too small.",
@@ -68,7 +60,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 9,
+        "id": 8,
         "en": "blanket",
         "ko": "담요",
         "senEn": "The blanket is made of wool.",
@@ -76,7 +68,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 10,
+        "id": 9,
         "en": "bowl",
         "ko": "그릇",
         "senEn": "The bowl is full of milk.",
@@ -84,7 +76,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 11,
+        "id": 10,
         "en": "brother",
         "ko": "형제",
         "senEn": "I have two brothers.",
@@ -92,7 +84,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 12,
+        "id": 11,
         "en": "chair",
         "ko": "의자",
         "senEn": "I like the yellow chair.",
@@ -100,7 +92,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 13,
+        "id": 12,
         "en": "closet",
         "ko": "옷장",
         "senEn": "I put my clothes in the small closet.",
@@ -108,7 +100,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 14,
+        "id": 13,
         "en": "computer",
         "ko": "컴퓨터",
         "senEn": "What do you usually do with your computer?",
@@ -116,7 +108,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 15,
+        "id": 14,
         "en": "cook",
         "ko": "요리하다",
         "senEn": "My brother cooks very well.",
@@ -124,7 +116,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 16,
+        "id": 15,
         "en": "cousin",
         "ko": "사촌",
         "senEn": "My cousin has brown hair.",
@@ -132,7 +124,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 17,
+        "id": 16,
         "en": "cupboard",
         "ko": "찬장",
         "senEn": "There is a big cupboard in the kitchen.",
@@ -140,7 +132,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 18,
+        "id": 17,
         "en": "daughter",
         "ko": "딸",
         "senEn": "We have a daughter.",
@@ -148,7 +140,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 19,
+        "id": 18,
         "en": "desk",
         "ko": "책상",
         "senEn": "The desk is messy.",
@@ -156,7 +148,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 20,
+        "id": 19,
         "en": "dining area",
         "ko": "식탁공간",
         "senEn": "We have meals in the dining area.",
@@ -164,7 +156,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 21,
+        "id": 20,
         "en": "floor",
         "ko": "바닥",
         "senEn": "A baby is playing on the floor.",
@@ -172,7 +164,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 22,
+        "id": 21,
         "en": "garage",
         "ko": "차고, 창고",
         "senEn": "He parked his car in the garage.",
@@ -180,7 +172,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 23,
+        "id": 22,
         "en": "garbage",
         "ko": "쓰레기",
         "senEn": "A boy threw some trash in the garbage can.",
@@ -188,7 +180,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 24,
+        "id": 23,
         "en": "grandfather",
         "ko": "할아버지",
         "senEn": "My grandfather wants to live with me.",
@@ -196,7 +188,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 25,
+        "id": 24,
         "en": "grandmother",
         "ko": "할머니",
         "senEn": "My grandmother is in her sixties.",
@@ -204,7 +196,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 26,
+        "id": 25,
         "en": "grandparents",
         "ko": "조부모님",
         "senEn": "I live with my grandparents.",
@@ -212,7 +204,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 27,
+        "id": 26,
         "en": "kitchen",
         "ko": "부엌, 주방",
         "senEn": "A man is in the kitchen.",
@@ -220,7 +212,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 28,
+        "id": 27,
         "en": "living room",
         "ko": "거실",
         "senEn": "Let's watch TV in the living room.",
@@ -228,7 +220,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 29,
+        "id": 28,
         "en": "mobile phone",
         "ko": "휴대폰",
         "senEn": "Children don't need a mobile phone.",
@@ -236,7 +228,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 30,
+        "id": 29,
         "en": "parents",
         "ko": "부모님",
         "senEn": "I really love my parents.",
@@ -244,7 +236,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 31,
+        "id": 30,
         "en": "pillow",
         "ko": "베개",
         "senEn": "I like a soft pillow.",
@@ -252,7 +244,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 32,
+        "id": 31,
         "en": "porch light",
         "ko": "현관등",
         "senEn": "Turn on the porch light at 7 o'clock.",
@@ -260,7 +252,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 33,
+        "id": 32,
         "en": "refrigerator",
         "ko": "냉장고",
         "senEn": "We need a refrigerator in the summer.",
@@ -268,7 +260,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 34,
+        "id": 33,
         "en": "roof",
         "ko": "지붕",
         "senEn": "The house has a red roof.",
@@ -276,7 +268,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 35,
+        "id": 34,
         "en": "satellite dish",
         "ko": "위성안테나",
         "senEn": "There is a satellite dish on the window.",
@@ -284,7 +276,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 36,
+        "id": 35,
         "en": "sibling",
         "ko": "형제 자매",
         "senEn": "I have no siblings.",
@@ -292,7 +284,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 37,
+        "id": 36,
         "en": "sister",
         "ko": "자매",
         "senEn": "Diana is my sister.",
@@ -300,7 +292,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 38,
+        "id": 37,
         "en": "son",
         "ko": "아들",
         "senEn": "This is my son, Thomas.",
@@ -308,7 +300,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 39,
+        "id": 38,
         "en": "table",
         "ko": "탁자",
         "senEn": "Put the bowls on the table.",
@@ -316,7 +308,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 40,
+        "id": 39,
         "en": "telephone",
         "ko": "전화기",
         "senEn": "I'll answer the telephone.",
@@ -324,7 +316,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 41,
+        "id": 40,
         "en": "vacuum cleaner",
         "ko": "진공청소기",
         "senEn": "The vacuum cleaner sucked in all the dust.",
@@ -332,11 +324,19 @@ const db = [
         "def": ""
       },
       {
-        "id": 42,
+        "id": 41,
         "en": "window",
         "ko": "창문",
         "senEn": "Open the window, please.",
         "senKo": "창문 좀 열어 주세요.",
+        "def": ""
+      },
+      {
+        "id": 42,
+        "en": "yard",
+        "ko": "마당",
+        "senEn": "There's a fence around the yard.",
+        "senKo": "마당 주위에 담장이 있어요.",
         "def": ""
       }
     ]
@@ -347,14 +347,6 @@ const db = [
     "words": [
       {
         "id": 1,
-        "en": "Word (Text)",
-        "ko": "Interpretation01_Korean",
-        "senEn": "Sentence 1 (Text)",
-        "senKo": "Interpretation01_Korean",
-        "def": ""
-      },
-      {
-        "id": 2,
         "en": "afternoon",
         "ko": "오후",
         "senEn": "It is a rainny afternoon.",
@@ -362,7 +354,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 3,
+        "id": 2,
         "en": "annual",
         "ko": "매년, 연례의",
         "senEn": "They spent their annual holiday on a yacht in the Caribbean.",
@@ -370,7 +362,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 4,
+        "id": 3,
         "en": "April",
         "ko": "4월",
         "senEn": "My birthday is in April.",
@@ -378,7 +370,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 5,
+        "id": 4,
         "en": "August",
         "ko": "8월",
         "senEn": "The special event is in August.",
@@ -386,7 +378,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 6,
+        "id": 5,
         "en": "clock",
         "ko": "시계",
         "senEn": "I have an antique clock.",
@@ -394,7 +386,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 7,
+        "id": 6,
         "en": "decade",
         "ko": "10년간",
         "senEn": "They change their leader every decade.",
@@ -402,7 +394,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 8,
+        "id": 7,
         "en": "December",
         "ko": "12월",
         "senEn": "I was born in December.",
@@ -410,7 +402,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 9,
+        "id": 8,
         "en": "evening",
         "ko": "저녁",
         "senEn": "I usually watch TV in the evening.",
@@ -418,7 +410,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 10,
+        "id": 9,
         "en": "February",
         "ko": "2월",
         "senEn": "My birthday is in February.",
@@ -426,7 +418,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 11,
+        "id": 10,
         "en": "Friday",
         "ko": "금요일",
         "senEn": "Shall we go to the theater on Friday?",
@@ -434,7 +426,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 12,
+        "id": 11,
         "en": "hour",
         "ko": "1 시간",
         "senEn": "There are 24 hours in a day.",
@@ -442,7 +434,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 13,
+        "id": 12,
         "en": "January",
         "ko": "1월",
         "senEn": "Her father died in January.",
@@ -450,7 +442,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 14,
+        "id": 13,
         "en": "July",
         "ko": "7월",
         "senEn": "My birthday is in July.",
@@ -458,7 +450,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 15,
+        "id": 14,
         "en": "June",
         "ko": "6월",
         "senEn": "Her birthday in on the 25th of June.",
@@ -466,7 +458,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 16,
+        "id": 15,
         "en": "March",
         "ko": "3월",
         "senEn": "He left on the 26th of March.",
@@ -474,7 +466,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 17,
+        "id": 16,
         "en": "May",
         "ko": "5월",
         "senEn": "My mother's birthday is in May.",
@@ -482,7 +474,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 18,
+        "id": 17,
         "en": "midnight",
         "ko": "한밤중",
         "senEn": "I heard the clock strike during the midnight.",
@@ -490,7 +482,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 19,
+        "id": 18,
         "en": "minute",
         "ko": "분",
         "senEn": "Wait a minute.",
@@ -498,7 +490,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 20,
+        "id": 19,
         "en": "Monday",
         "ko": "월요일",
         "senEn": "I'll see you next Monday.",
@@ -506,7 +498,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 21,
+        "id": 20,
         "en": "month",
         "ko": "월(달)",
         "senEn": "February is the shortest month.",
@@ -514,7 +506,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 22,
+        "id": 21,
         "en": "morning",
         "ko": "아침",
         "senEn": "I get up early in the morning.",
@@ -522,7 +514,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 23,
+        "id": 22,
         "en": "night",
         "ko": "밤",
         "senEn": "It gets cold at night.",
@@ -530,7 +522,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 24,
+        "id": 23,
         "en": "noon",
         "ko": "정오",
         "senEn": "I usually have lunch at noon.",
@@ -538,7 +530,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 25,
+        "id": 24,
         "en": "November",
         "ko": "11월",
         "senEn": "The bakery opened last November.",
@@ -546,7 +538,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 26,
+        "id": 25,
         "en": "October",
         "ko": "10월",
         "senEn": "Halloween is on October 31st.",
@@ -554,7 +546,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 27,
+        "id": 26,
         "en": "once",
         "ko": "한번",
         "senEn": "I want to try it once again.",
@@ -562,7 +554,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 28,
+        "id": 27,
         "en": "overnight",
         "ko": "밤새",
         "senEn": "He became a star overnight.",
@@ -570,7 +562,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 29,
+        "id": 28,
         "en": "quarter",
         "ko": "15분",
         "senEn": "It is a quarter to six.",
@@ -578,7 +570,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 30,
+        "id": 29,
         "en": "Saturday",
         "ko": "토요일",
         "senEn": "David is leaving on Saturday.",
@@ -586,7 +578,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 31,
+        "id": 30,
         "en": "schedule",
         "ko": "일정",
         "senEn": "I'm really on a tight schedule.",
@@ -594,7 +586,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 32,
+        "id": 31,
         "en": "September",
         "ko": "9월",
         "senEn": "My birthday is in September.",
@@ -602,7 +594,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 33,
+        "id": 32,
         "en": "Sunday",
         "ko": "일요일",
         "senEn": "We go to church every Sunday.",
@@ -610,7 +602,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 34,
+        "id": 33,
         "en": "Thursday",
         "ko": "목요일",
         "senEn": "See you next Thursday!",
@@ -618,7 +610,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 35,
+        "id": 34,
         "en": "today",
         "ko": "오늘",
         "senEn": "What’s the date today?",
@@ -626,7 +618,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 36,
+        "id": 35,
         "en": "tomorrow",
         "ko": "내일",
         "senEn": "See you tomorrow.",
@@ -634,7 +626,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 37,
+        "id": 36,
         "en": "Tuesday",
         "ko": "화요일",
         "senEn": "We always meet on Tuesdays.",
@@ -642,7 +634,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 38,
+        "id": 37,
         "en": "twice",
         "ko": "두번",
         "senEn": "I've already asked him twice.",
@@ -650,7 +642,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 39,
+        "id": 38,
         "en": "Wednesday",
         "ko": "수요일",
         "senEn": "I didn't go to school last Wednesday.",
@@ -658,7 +650,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 40,
+        "id": 39,
         "en": "week",
         "ko": "주간",
         "senEn": "I go to aerobics three times a week.",
@@ -666,7 +658,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 41,
+        "id": 40,
         "en": "weekend",
         "ko": "주말",
         "senEn": "He spent the weekend fishing with his brother.",
@@ -674,11 +666,19 @@ const db = [
         "def": ""
       },
       {
-        "id": 42,
+        "id": 41,
         "en": "year",
         "ko": "연",
         "senEn": "Annette worked in Italy for two years.",
         "senKo": "Annette은 2년동안 이탈리아에서 일했다.",
+        "def": ""
+      },
+      {
+        "id": 42,
+        "en": "yesterday",
+        "ko": "어제",
+        "senEn": "I studied with my friend yesterday.",
+        "senKo": "나는 어제 친구와 함께 공부했다.",
         "def": ""
       }
     ]
@@ -689,14 +689,6 @@ const db = [
     "words": [
       {
         "id": 1,
-        "en": "Word (Text)",
-        "ko": "Interpretation01_Korean",
-        "senEn": "Sentence 1 (Text)",
-        "senKo": "Interpretation01_Korean",
-        "def": ""
-      },
-      {
-        "id": 2,
         "en": "autumn",
         "ko": "가을",
         "senEn": "My favorite season is autumn.",
@@ -704,7 +696,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 3,
+        "id": 2,
         "en": "blizzard",
         "ko": "눈보라",
         "senEn": "The blizzard was blowing outside.",
@@ -712,7 +704,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 4,
+        "id": 3,
         "en": "breeze",
         "ko": "산들바람, 미풍",
         "senEn": "Flags are flapping in the breeze.",
@@ -720,7 +712,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 5,
+        "id": 4,
         "en": "chilly",
         "ko": "쌀쌀한",
         "senEn": "It's rather chilly this morning.",
@@ -728,7 +720,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 6,
+        "id": 5,
         "en": "cloud",
         "ko": "구름",
         "senEn": "There is a big cloud in the sky.",
@@ -736,7 +728,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 7,
+        "id": 6,
         "en": "desert",
         "ko": "사막",
         "senEn": "The little prince met a fox in a desert.",
@@ -744,7 +736,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 8,
+        "id": 7,
         "en": "dew",
         "ko": "이슬",
         "senEn": "The plants were wet with dew.",
@@ -752,7 +744,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 9,
+        "id": 8,
         "en": "drought",
         "ko": "가뭄",
         "senEn": "We need the rain after that long drought.",
@@ -760,7 +752,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 10,
+        "id": 9,
         "en": "dust",
         "ko": "먼지",
         "senEn": "The table was covered with a lot of dust.",
@@ -768,7 +760,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 11,
+        "id": 10,
         "en": "earthquake",
         "ko": "지진",
         "senEn": "An earthquake was felt last night.",
@@ -776,7 +768,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 12,
+        "id": 11,
         "en": "flood",
         "ko": "홍수",
         "senEn": "There was a flood in New Orleans.",
@@ -784,7 +776,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 13,
+        "id": 12,
         "en": "fog (foggy)",
         "ko": "안개",
         "senEn": "The fog lifted in the afternoon.",
@@ -792,7 +784,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 14,
+        "id": 13,
         "en": "freezing",
         "ko": "몹시 추운",
         "senEn": "I am freezing to death.",
@@ -800,7 +792,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 15,
+        "id": 14,
         "en": "frost",
         "ko": "서리",
         "senEn": "There was a heavy frost last night.",
@@ -808,7 +800,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 16,
+        "id": 15,
         "en": "glacier",
         "ko": "빙하",
         "senEn": "A glacier is a mass of ice.",
@@ -816,7 +808,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 17,
+        "id": 16,
         "en": "ground",
         "ko": "땅, 지면",
         "senEn": "There was trash on the ground.",
@@ -824,7 +816,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 18,
+        "id": 17,
         "en": "hail",
         "ko": "우박",
         "senEn": "Hail was falling from the sky like rain.",
@@ -832,7 +824,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 19,
+        "id": 18,
         "en": "harvest",
         "ko": "수확하다, 추수하다",
         "senEn": "We had a good harvest this year.",
@@ -840,7 +832,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 20,
+        "id": 19,
         "en": "haze",
         "ko": "안개, 연무",
         "senEn": "I can't see you due to the haze.",
@@ -848,7 +840,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 21,
+        "id": 20,
         "en": "humid",
         "ko": "습한",
         "senEn": "The city is very hot and humid in August.",
@@ -856,7 +848,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 22,
+        "id": 21,
         "en": "hurricane",
         "ko": "허리케인",
         "senEn": "A hurricane hit the city last month.",
@@ -864,7 +856,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 23,
+        "id": 22,
         "en": "iceberg",
         "ko": "빙산",
         "senEn": "It's the tip of the iceberg.",
@@ -872,7 +864,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 24,
+        "id": 23,
         "en": "lightning",
         "ko": "번개",
         "senEn": "Lightning crackled in the skies.",
@@ -880,7 +872,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 25,
+        "id": 24,
         "en": "mist",
         "ko": "옅은 안개, 분무",
         "senEn": "Mist was rolling from the sea.",
@@ -888,7 +880,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 26,
+        "id": 25,
         "en": "monsoon",
         "ko": "우기, 장마",
         "senEn": "Every year they have monsoon season in Korea.",
@@ -896,7 +888,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 27,
+        "id": 26,
         "en": "muggy",
         "ko": "후덥지근한",
         "senEn": "It was so hot from the muggy air.",
@@ -904,7 +896,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 28,
+        "id": 27,
         "en": "ocean",
         "ko": "대양",
         "senEn": "There is a lot of water in the ocean.",
@@ -912,7 +904,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 29,
+        "id": 28,
         "en": "rainforest",
         "ko": "(열대)우림",
         "senEn": "Plants grow quickly in a rainforest.",
@@ -920,7 +912,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 30,
+        "id": 29,
         "en": "season",
         "ko": "계절",
         "senEn": "What is your favorite season?",
@@ -928,7 +920,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 31,
+        "id": 30,
         "en": "sow",
         "ko": "씨뿌리다",
         "senEn": "I will sow the seeds in the pot.",
@@ -936,7 +928,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 32,
+        "id": 31,
         "en": "spring",
         "ko": "봄",
         "senEn": "Spring is my favorite time.",
@@ -944,7 +936,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 33,
+        "id": 32,
         "en": "storm",
         "ko": "폭풍",
         "senEn": "The storm continued for a week.",
@@ -952,7 +944,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 34,
+        "id": 33,
         "en": "summer",
         "ko": "여름",
         "senEn": "It's really hot this summer.",
@@ -960,7 +952,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 35,
+        "id": 34,
         "en": "temperature",
         "ko": "온도, 기온",
         "senEn": "The temperature today reached 30°C.",
@@ -968,7 +960,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 36,
+        "id": 35,
         "en": "thunder",
         "ko": "천둥",
         "senEn": "The baby woke from thunder.",
@@ -976,7 +968,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 37,
+        "id": 36,
         "en": "tornado",
         "ko": "토네이도",
         "senEn": "The tornado was very strong and dangerous.",
@@ -984,7 +976,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 38,
+        "id": 37,
         "en": "tropical",
         "ko": "열대의",
         "senEn": "They love the colorful tropical fish.",
@@ -992,7 +984,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 39,
+        "id": 38,
         "en": "volcano",
         "ko": "화산",
         "senEn": "The mountain is a dormant volcano.",
@@ -1000,7 +992,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 40,
+        "id": 39,
         "en": "warm",
         "ko": "따뜻한",
         "senEn": "It's warm in April.",
@@ -1008,7 +1000,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 41,
+        "id": 40,
         "en": "wet",
         "ko": "젖은",
         "senEn": "They are depressed by the wet weather.",
@@ -1016,11 +1008,19 @@ const db = [
         "def": ""
       },
       {
-        "id": 42,
+        "id": 41,
         "en": "wind",
         "ko": "바람",
         "senEn": "There was a light wind blowing.",
         "senKo": "미풍이 불었어요.",
+        "def": ""
+      },
+      {
+        "id": 42,
+        "en": "winter",
+        "ko": "겨울",
+        "senEn": "We usually go skiing in the winter.",
+        "senKo": "우리는 겨울에 보통 스키 타러 가요.",
         "def": ""
       }
     ]
@@ -1031,14 +1031,6 @@ const db = [
     "words": [
       {
         "id": 1,
-        "en": "Word (text)",
-        "ko": "Interpretation01_Korean",
-        "senEn": "Sentence 1 (Text)",
-        "senKo": "Interpretation01_Korean",
-        "def": ""
-      },
-      {
-        "id": 2,
         "en": "actor",
         "ko": "배우",
         "senEn": "He is a famous actor in France.",
@@ -1046,7 +1038,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 3,
+        "id": 2,
         "en": "artist",
         "ko": "화가",
         "senEn": "The artist painted this picture using watercolors.",
@@ -1054,7 +1046,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 4,
+        "id": 3,
         "en": "astronaut",
         "ko": "우주비행사",
         "senEn": "An astronaut is a person who travels in space.",
@@ -1062,7 +1054,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 5,
+        "id": 4,
         "en": "athlete",
         "ko": "운동선수",
         "senEn": "He is a famous athlete in the USA.",
@@ -1070,7 +1062,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 6,
+        "id": 5,
         "en": "author",
         "ko": "작가",
         "senEn": "Aesop was the author of many fables.",
@@ -1078,7 +1070,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 7,
+        "id": 6,
         "en": "baker",
         "ko": "제빵사",
         "senEn": "Joseph is a baker at the bakery.",
@@ -1086,7 +1078,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 8,
+        "id": 7,
         "en": "barista",
         "ko": "바리스타",
         "senEn": "I want to be the best barista.",
@@ -1094,7 +1086,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 9,
+        "id": 8,
         "en": "broadcaster",
         "ko": "방송기술자",
         "senEn": "She was a famous broadcaster in 1990s.",
@@ -1102,7 +1094,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 10,
+        "id": 9,
         "en": "businessman",
         "ko": "사업가",
         "senEn": "My father is a businessman.",
@@ -1110,7 +1102,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 11,
+        "id": 10,
         "en": "cartoonist",
         "ko": "만화가, 카툰작가",
         "senEn": "Walt Disney was a poor cartoonist.",
@@ -1118,7 +1110,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 12,
+        "id": 11,
         "en": "cashier",
         "ko": "계산원",
         "senEn": "The cashier gave me the change for a $5.",
@@ -1126,7 +1118,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 13,
+        "id": 12,
         "en": "chef",
         "ko": "요리사, 쉐프",
         "senEn": "He is one of the top chefs in Paris.",
@@ -1134,7 +1126,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 14,
+        "id": 13,
         "en": "clerk",
         "ko": "점원",
         "senEn": "I asked the clerk show another one.",
@@ -1142,7 +1134,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 15,
+        "id": 14,
         "en": "dentist",
         "ko": "치과의사",
         "senEn": "I want to be a dentist.",
@@ -1150,7 +1142,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 16,
+        "id": 15,
         "en": "diplomat",
         "ko": "외교관",
         "senEn": "She is the daughter of a diplomat.",
@@ -1158,7 +1150,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 17,
+        "id": 16,
         "en": "farmer",
         "ko": "농부",
         "senEn": "My parents are farmers working in the field.",
@@ -1166,7 +1158,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 18,
+        "id": 17,
         "en": "firefighter",
         "ko": "소방수",
         "senEn": "My father was a brave firefighter.",
@@ -1174,7 +1166,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 19,
+        "id": 18,
         "en": "fisherman",
         "ko": "어부",
         "senEn": "The fisherman cast the net into the water.",
@@ -1182,7 +1174,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 20,
+        "id": 19,
         "en": "hairdresser",
         "ko": "미용사",
         "senEn": "David works as a hairdresser in the shop.",
@@ -1190,7 +1182,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 21,
+        "id": 20,
         "en": "housekeeper",
         "ko": "가사도우미",
         "senEn": "He is a good housekeeper.",
@@ -1198,7 +1190,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 22,
+        "id": 21,
         "en": "interpreter",
         "ko": "통역사",
         "senEn": "She wants to become an interpreter.",
@@ -1206,7 +1198,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 23,
+        "id": 22,
         "en": "janitor",
         "ko": "관리인",
         "senEn": "The janitor became a mayer of the city.",
@@ -1214,7 +1206,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 24,
+        "id": 23,
         "en": "judge",
         "ko": "판사",
         "senEn": "The judge asked the witnesses to pledge.",
@@ -1222,7 +1214,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 25,
+        "id": 24,
         "en": "lawyer",
         "ko": "변호사",
         "senEn": "The lawyer made an appearance in court.",
@@ -1230,7 +1222,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 26,
+        "id": 25,
         "en": "librarian",
         "ko": "사서",
         "senEn": "I asked the librarian for the picture book.",
@@ -1238,7 +1230,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 27,
+        "id": 26,
         "en": "magician",
         "ko": "마술사",
         "senEn": "I want to be a magician.",
@@ -1246,7 +1238,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 28,
+        "id": 27,
         "en": "mail carrier",
         "ko": "우편 배달부",
         "senEn": "She is a mail carrier.",
@@ -1254,7 +1246,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 29,
+        "id": 28,
         "en": "film director",
         "ko": "영화 감독",
         "senEn": "Bong Joon Ho is a famous film director.",
@@ -1262,7 +1254,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 30,
+        "id": 29,
         "en": "musician",
         "ko": "음악가",
         "senEn": "She is the famous jazz musician.",
@@ -1270,7 +1262,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 31,
+        "id": 30,
         "en": "novelist",
         "ko": "소설가",
         "senEn": "Charles Dickens is one of the best-known novelists.",
@@ -1278,7 +1270,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 32,
+        "id": 31,
         "en": "nurse",
         "ko": "간호사",
         "senEn": "He worked as a nurse in a hospital.",
@@ -1286,7 +1278,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 33,
+        "id": 32,
         "en": "pharmacist",
         "ko": "약사",
         "senEn": "Jessica is studying to be a pharmacist.",
@@ -1294,7 +1286,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 34,
+        "id": 33,
         "en": "photographer",
         "ko": "사진 작가",
         "senEn": "I want to be a professional photographer.",
@@ -1302,7 +1294,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 35,
+        "id": 34,
         "en": "pilot",
         "ko": "비행기 조종사",
         "senEn": "I’d like to grow up to be a fighter pilot.",
@@ -1310,7 +1302,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 36,
+        "id": 35,
         "en": "police officer",
         "ko": "경찰관",
         "senEn": "She's a police officer in my town.",
@@ -1318,7 +1310,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 37,
+        "id": 36,
         "en": "public official",
         "ko": "공무원",
         "senEn": "Public officials helped their citizens.",
@@ -1326,7 +1318,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 38,
+        "id": 37,
         "en": "scientist",
         "ko": "과학자",
         "senEn": "You look like a scientist.",
@@ -1334,7 +1326,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 39,
+        "id": 38,
         "en": "security guard",
         "ko": "경비원, 보안요원",
         "senEn": "He started working as a security guard.",
@@ -1342,7 +1334,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 40,
+        "id": 39,
         "en": "soldier",
         "ko": "군인",
         "senEn": "Soldiers must learn how to handle the weapon.",
@@ -1350,7 +1342,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 41,
+        "id": 40,
         "en": "statesman",
         "ko": "정치인",
         "senEn": "He is a statesman and poet.",
@@ -1358,11 +1350,19 @@ const db = [
         "def": ""
       },
       {
-        "id": 42,
+        "id": 41,
         "en": "vet",
         "ko": "수의사",
         "senEn": "I know the new bet well.",
         "senKo": "나는 그 새로 온 수의사를 잘 안다.",
+        "def": ""
+      },
+      {
+        "id": 42,
+        "en": "zookeeper",
+        "ko": "사육사",
+        "senEn": "I wanted to be a zookeeper.",
+        "senKo": "나는 동물 사육사가 되고 싶어요.",
         "def": ""
       }
     ]
@@ -1373,14 +1373,6 @@ const db = [
     "words": [
       {
         "id": 1,
-        "en": "Word (text)",
-        "ko": "Interpretation01_Korean",
-        "senEn": "Sentence 1 (Text)",
-        "senKo": "Interpretation01_Korean",
-        "def": ""
-      },
-      {
-        "id": 2,
         "en": "airport",
         "ko": "공항",
         "senEn": "What time do you go to the airport?",
@@ -1388,7 +1380,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 3,
+        "id": 2,
         "en": "amusement park",
         "ko": "놀이공원",
         "senEn": "How about going to the amusement park?",
@@ -1396,7 +1388,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 4,
+        "id": 3,
         "en": "bakery",
         "ko": "빵집",
         "senEn": "I like the bread from the small bakery.",
@@ -1404,7 +1396,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 5,
+        "id": 4,
         "en": "bank",
         "ko": "은행",
         "senEn": "There are two banks on this street.",
@@ -1412,7 +1404,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 6,
+        "id": 5,
         "en": "beach",
         "ko": "해변",
         "senEn": "I often play on the beach with my brother.",
@@ -1420,7 +1412,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 7,
+        "id": 6,
         "en": "beauty shop",
         "ko": "미용실",
         "senEn": "I cut my hair at a beauty shop.",
@@ -1428,7 +1420,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 8,
+        "id": 7,
         "en": "bookstore",
         "ko": "서점",
         "senEn": "I'm going to the bookstore.",
@@ -1436,7 +1428,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 9,
+        "id": 8,
         "en": "bus stop",
         "ko": "버스정류장",
         "senEn": "I'm looking for a bus stop.",
@@ -1444,7 +1436,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 10,
+        "id": 9,
         "en": "campus",
         "ko": "교정, 캠퍼스",
         "senEn": "My parents first met on the campus.",
@@ -1452,7 +1444,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 11,
+        "id": 10,
         "en": "church",
         "ko": "교회",
         "senEn": "Please take me to the nearest church.",
@@ -1460,7 +1452,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 12,
+        "id": 11,
         "en": "city hall",
         "ko": "시청",
         "senEn": "I live near the city hall.",
@@ -1468,7 +1460,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 13,
+        "id": 12,
         "en": "concert hall",
         "ko": "연주회장",
         "senEn": "It is the most famous concert hall in the world.",
@@ -1476,7 +1468,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 14,
+        "id": 13,
         "en": "convenience store",
         "ko": "편의점",
         "senEn": "Convenience stores are usually open until late.",
@@ -1484,7 +1476,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 15,
+        "id": 14,
         "en": "department store",
         "ko": "백화점",
         "senEn": "Department stores are divided into several parts.",
@@ -1492,7 +1484,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 16,
+        "id": 15,
         "en": "downtown",
         "ko": "시내",
         "senEn": "I live two hours from downtown.",
@@ -1500,7 +1492,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 17,
+        "id": 16,
         "en": "factory",
         "ko": "공장",
         "senEn": "The factory produces cars.",
@@ -1508,7 +1500,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 18,
+        "id": 17,
         "en": "farm",
         "ko": "농장",
         "senEn": "My grandparents have a small farm.",
@@ -1516,7 +1508,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 19,
+        "id": 18,
         "en": "fire station",
         "ko": "소방서",
         "senEn": "There is a fire station near my house.",
@@ -1524,7 +1516,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 20,
+        "id": 19,
         "en": "flower shop",
         "ko": "꽃집",
         "senEn": "Do you know of a flower shop nearby?",
@@ -1532,7 +1524,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 21,
+        "id": 20,
         "en": "forest",
         "ko": "숲",
         "senEn": "Let's go to the forest hike.",
@@ -1540,7 +1532,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 22,
+        "id": 21,
         "en": "gallery",
         "ko": "미술관, 화랑",
         "senEn": "I like to go to the National Gallery in London.",
@@ -1548,7 +1540,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 23,
+        "id": 22,
         "en": "garden",
         "ko": "정원",
         "senEn": "Sometimes they have a party in their garden.",
@@ -1556,7 +1548,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 24,
+        "id": 23,
         "en": "gas station",
         "ko": "주유소",
         "senEn": "Drivers can buy fuel and oil at a gas station.",
@@ -1564,7 +1556,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 25,
+        "id": 24,
         "en": "harbor",
         "ko": "항구",
         "senEn": "A large ship was docking in the harbor.",
@@ -1572,7 +1564,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 26,
+        "id": 25,
         "en": "hospital",
         "ko": "병원",
         "senEn": "Where is the nearest hospital?",
@@ -1580,7 +1572,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 27,
+        "id": 26,
         "en": "library",
         "ko": "도서관",
         "senEn": "I go to the library once a week.",
@@ -1588,7 +1580,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 28,
+        "id": 27,
         "en": "market",
         "ko": "시장",
         "senEn": "I like shopping at a flea market.",
@@ -1596,7 +1588,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 29,
+        "id": 28,
         "en": "mudflat",
         "ko": "갯벌",
         "senEn": "They can get a lot of food from the mudflat.",
@@ -1604,7 +1596,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 30,
+        "id": 29,
         "en": "museum",
         "ko": "박물관",
         "senEn": "What time does the museum close?",
@@ -1612,7 +1604,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 31,
+        "id": 30,
         "en": "orchard",
         "ko": "과수원",
         "senEn": "My parents work at an apple orchard.",
@@ -1620,7 +1612,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 32,
+        "id": 31,
         "en": "park",
         "ko": "공원",
         "senEn": "Let's go to the park and ride a bike.",
@@ -1628,7 +1620,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 33,
+        "id": 32,
         "en": "parking lot",
         "ko": "주차장",
         "senEn": "Is there a parking lot nearby?",
@@ -1636,7 +1628,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 34,
+        "id": 33,
         "en": "police station",
         "ko": "경찰서",
         "senEn": "Let's take the old man to the police station.",
@@ -1644,7 +1636,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 35,
+        "id": 34,
         "en": "post office",
         "ko": "우체국",
         "senEn": "My father works at a post office.",
@@ -1652,7 +1644,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 36,
+        "id": 35,
         "en": "restaurant",
         "ko": "식당",
         "senEn": "I like the family restaurant.",
@@ -1660,7 +1652,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 37,
+        "id": 36,
         "en": "shopping mall",
         "ko": "쇼핑 몰",
         "senEn": "She is running an Internet shopping mall.",
@@ -1668,7 +1660,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 38,
+        "id": 37,
         "en": "stadium",
         "ko": "경기장",
         "senEn": "The big game is played in the stadium.",
@@ -1676,7 +1668,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 39,
+        "id": 38,
         "en": "stationery store",
         "ko": "문구점",
         "senEn": "I usually buy pencils at a stationery store.",
@@ -1684,7 +1676,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 40,
+        "id": 39,
         "en": "street",
         "ko": "거리",
         "senEn": "There are many sculptures along the street.",
@@ -1692,7 +1684,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 41,
+        "id": 40,
         "en": "subway station",
         "ko": "지하철 역",
         "senEn": "Let's meet at the subway station this afternoon.",
@@ -1700,11 +1692,19 @@ const db = [
         "def": ""
       },
       {
-        "id": 42,
+        "id": 41,
         "en": "temple",
         "ko": "사찰, 사원",
         "senEn": "Angkor Wat is a famous temple in Cambodia.",
         "senKo": "앙코르와트는 캄보디아에 있는 유명한 사원입니다.",
+        "def": ""
+      },
+      {
+        "id": 42,
+        "en": "theater",
+        "ko": "영화관",
+        "senEn": "The multiflex has eight movie theaters.",
+        "senKo": "그 복합 공간에는 8개의 영화관이 있어요.",
         "def": ""
       }
     ]
@@ -1715,14 +1715,6 @@ const db = [
     "words": [
       {
         "id": 1,
-        "en": "Word (Text)",
-        "ko": "Interpretation01_Korean",
-        "senEn": "Sentence 1 (Text)",
-        "senKo": "Interpretation01_Korean",
-        "def": ""
-      },
-      {
-        "id": 2,
         "en": "ambulance",
         "ko": "구급차",
         "senEn": "They called an ambulance.",
@@ -1730,7 +1722,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 3,
+        "id": 2,
         "en": "automobile",
         "ko": "자동차",
         "senEn": "The automobile is a necessity in our lives.",
@@ -1738,7 +1730,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 4,
+        "id": 3,
         "en": "bicycle",
         "ko": "자전거",
         "senEn": "I go to school by bicycle.",
@@ -1746,7 +1738,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 5,
+        "id": 4,
         "en": "boat",
         "ko": "보트",
         "senEn": "A boat is a small vehicle on water.",
@@ -1754,7 +1746,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 6,
+        "id": 5,
         "en": "crossing",
         "ko": "건널목",
         "senEn": "The children are walking through the crossing.",
@@ -1762,7 +1754,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 7,
+        "id": 6,
         "en": "cruise ship",
         "ko": "유람선",
         "senEn": "Our cruise ship is like a five-star hotel.",
@@ -1770,7 +1762,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 8,
+        "id": 7,
         "en": "dock",
         "ko": "부두",
         "senEn": "My uncle works at the dock.",
@@ -1778,7 +1770,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 9,
+        "id": 8,
         "en": "driver",
         "ko": "운전자",
         "senEn": "He is a taxi driver in Paris.",
@@ -1786,7 +1778,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 10,
+        "id": 9,
         "en": "driver's license",
         "ko": "운전면허증",
         "senEn": "When can I get a driver's license?",
@@ -1794,7 +1786,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 11,
+        "id": 10,
         "en": "dump truck",
         "ko": "덤프트럭",
         "senEn": "It looks exciting to drive a dump truck.",
@@ -1802,7 +1794,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 12,
+        "id": 11,
         "en": "fire engine",
         "ko": "소방차",
         "senEn": "He drives a big fire engine.",
@@ -1810,7 +1802,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 13,
+        "id": 12,
         "en": "flight",
         "ko": "비행, 항공편",
         "senEn": "Your flight leaves from Gate 28 now.",
@@ -1818,7 +1810,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 14,
+        "id": 13,
         "en": "go straight",
         "ko": "직진하다",
         "senEn": "Go straight and cross the street.",
@@ -1826,7 +1818,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 15,
+        "id": 14,
         "en": "greenway",
         "ko": "자전거 전용도로",
         "senEn": "There is a greenway for bikes beside the river.",
@@ -1834,7 +1826,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 16,
+        "id": 15,
         "en": "helicopter",
         "ko": "헬리콥터",
         "senEn": "I like making model helicopters.",
@@ -1842,7 +1834,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 17,
+        "id": 16,
         "en": "highway",
         "ko": "고속도로",
         "senEn": "We were driving along the highway.",
@@ -1850,7 +1842,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 18,
+        "id": 17,
         "en": "intersection",
         "ko": "교차로",
         "senEn": "They placed traffic lights at all intersections.",
@@ -1858,7 +1850,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 19,
+        "id": 18,
         "en": "lorry",
         "ko": "대형트럭(화물차)",
         "senEn": "A lorry dropped its load on the motorway.",
@@ -1866,7 +1858,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 20,
+        "id": 19,
         "en": "map",
         "ko": "지도",
         "senEn": "I like my globe with a world map.",
@@ -1874,7 +1866,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 21,
+        "id": 20,
         "en": "motorcycle",
         "ko": "오토바이",
         "senEn": "He wrote a book about a motorcycle.",
@@ -1882,7 +1874,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 22,
+        "id": 21,
         "en": "no parking",
         "ko": "주차금지",
         "senEn": "The no-parking zone opens from 9 a.m. to 9 p.m.",
@@ -1890,7 +1882,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 23,
+        "id": 22,
         "en": "one way",
         "ko": "일방통행, 편도",
         "senEn": "It is dangerous to go on a one-way street.",
@@ -1898,7 +1890,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 24,
+        "id": 23,
         "en": "opposite",
         "ko": "반대편 (길 건너편)",
         "senEn": "The old palace stands opposite to the City Hall.",
@@ -1906,7 +1898,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 25,
+        "id": 24,
         "en": "overpass",
         "ko": "육교",
         "senEn": "You can cross the railway through the overpass.",
@@ -1914,7 +1906,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 26,
+        "id": 25,
         "en": "passenger",
         "ko": "승객 (여행객)",
         "senEn": "We will help our passengers stay safe.",
@@ -1922,7 +1914,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 27,
+        "id": 26,
         "en": "patrol (car)",
         "ko": "경찰차",
         "senEn": "I want to drive a patrol car.",
@@ -1930,7 +1922,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 28,
+        "id": 27,
         "en": "railroad",
         "ko": "철도",
         "senEn": "The railroad passed through a long desert.",
@@ -1938,7 +1930,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 29,
+        "id": 28,
         "en": "runway",
         "ko": "활주로",
         "senEn": "The aircraft takes off or lands over the runway.",
@@ -1946,7 +1938,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 30,
+        "id": 29,
         "en": "sailboat",
         "ko": "범선",
         "senEn": "A sailboat moves through the water.",
@@ -1954,7 +1946,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 31,
+        "id": 30,
         "en": "scooter",
         "ko": "스쿠터",
         "senEn": "I like to ride my scooter.",
@@ -1962,7 +1954,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 32,
+        "id": 31,
         "en": "ship",
         "ko": "배",
         "senEn": "I went to the island by ship.",
@@ -1970,7 +1962,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 33,
+        "id": 32,
         "en": "sidewalk",
         "ko": "인도, 보도",
         "senEn": "I found the bag on the sidewalk.",
@@ -1978,7 +1970,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 34,
+        "id": 33,
         "en": "submarine",
         "ko": "잠수함",
         "senEn": "Have you ever been in a submarine?",
@@ -1986,7 +1978,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 35,
+        "id": 34,
         "en": "subway",
         "ko": "지하철",
         "senEn": "I go to school by subway.",
@@ -1994,7 +1986,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 36,
+        "id": 35,
         "en": "tollgate",
         "ko": "톨게이트",
         "senEn": "She works at a tollgate as a cashier.",
@@ -2002,7 +1994,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 37,
+        "id": 36,
         "en": "trailer",
         "ko": "트레일러",
         "senEn": "We need a trailer for camping trips.",
@@ -2010,7 +2002,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 38,
+        "id": 37,
         "en": "tram",
         "ko": "전차",
         "senEn": "We can go around the city by tram.",
@@ -2018,7 +2010,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 39,
+        "id": 38,
         "en": "truck",
         "ko": "트럭",
         "senEn": "My hobby is collecting toy trucks.",
@@ -2026,7 +2018,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 40,
+        "id": 39,
         "en": "turn left",
         "ko": "좌회전",
         "senEn": "Turn left at the crossroad.",
@@ -2034,7 +2026,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 41,
+        "id": 40,
         "en": "turn right",
         "ko": "우회전",
         "senEn": "Turn right at the next corner.",
@@ -2042,11 +2034,19 @@ const db = [
         "def": ""
       },
       {
-        "id": 42,
+        "id": 41,
         "en": "van",
         "ko": "밴",
         "senEn": "The shuttle van leaves every 10 minutes.",
         "senKo": "순환용 밴은 매 10분에 출발합니다.",
+        "def": ""
+      },
+      {
+        "id": 42,
+        "en": "yacht",
+        "ko": "요트",
+        "senEn": "There are some yachts on the lake.",
+        "senKo": "호수에 요트 몇 척이 떠 있어요.",
         "def": ""
       }
     ]
@@ -2057,14 +2057,6 @@ const db = [
     "words": [
       {
         "id": 1,
-        "en": "Word (Text)",
-        "ko": "Interpretation01_Korean",
-        "senEn": "Sentence 1 (Text)",
-        "senKo": "Interpretation01_Korean",
-        "def": ""
-      },
-      {
-        "id": 2,
         "en": "absent",
         "ko": "결석한",
         "senEn": "Michael was absent from school yesterday.",
@@ -2072,7 +2064,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 3,
+        "id": 2,
         "en": "present",
         "ko": "출석한",
         "senEn": "We are present for the meeting every Monday.",
@@ -2080,7 +2072,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 4,
+        "id": 3,
         "en": "accept",
         "ko": "받아들이다",
         "senEn": "Please accept my apology.",
@@ -2088,7 +2080,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 5,
+        "id": 4,
         "en": "refuse",
         "ko": "거절하다",
         "senEn": "Please don't refuse my request.",
@@ -2096,7 +2088,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 6,
+        "id": 5,
         "en": "agree",
         "ko": "찬성하다",
         "senEn": "I agree with you on this issue.",
@@ -2104,7 +2096,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 7,
+        "id": 6,
         "en": "disagree",
         "ko": "반대하다",
         "senEn": "They disagree with what you say.",
@@ -2112,7 +2104,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 8,
+        "id": 7,
         "en": "bad",
         "ko": "나쁜",
         "senEn": "It's bad news for me.",
@@ -2120,7 +2112,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 9,
+        "id": 8,
         "en": "good",
         "ko": "좋은",
         "senEn": "She is a good teacher.",
@@ -2128,7 +2120,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 10,
+        "id": 9,
         "en": "before",
         "ko": "~ 전에",
         "senEn": "You should wash your hands before meals.",
@@ -2136,7 +2128,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 11,
+        "id": 10,
         "en": "after",
         "ko": "~ 후에",
         "senEn": "Let's go for a walk after dinner.",
@@ -2144,7 +2136,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 12,
+        "id": 11,
         "en": "begin",
         "ko": "시작하다",
         "senEn": "What time does the festival begin?",
@@ -2152,7 +2144,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 13,
+        "id": 12,
         "en": "end",
         "ko": "마치다",
         "senEn": "What time does the festival end?",
@@ -2160,7 +2152,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 14,
+        "id": 13,
         "en": "below",
         "ko": "아래에",
         "senEn": "The sun sank slowly below the horizon.",
@@ -2168,7 +2160,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 15,
+        "id": 14,
         "en": "above",
         "ko": "위에",
         "senEn": "The sun rose slowly above the mountain.",
@@ -2176,7 +2168,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 16,
+        "id": 15,
         "en": "best",
         "ko": "최고의",
         "senEn": "Joseph is my best friend.",
@@ -2184,7 +2176,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 17,
+        "id": 16,
         "en": "worst",
         "ko": "최악의",
         "senEn": "You are my worst enemy.",
@@ -2192,7 +2184,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 18,
+        "id": 17,
         "en": "big",
         "ko": "크다",
         "senEn": "The animal is big and slow.",
@@ -2200,7 +2192,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 19,
+        "id": 18,
         "en": "small",
         "ko": "작다",
         "senEn": "The animal is small and quick.",
@@ -2208,7 +2200,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 20,
+        "id": 19,
         "en": "borrow",
         "ko": "빌리다",
         "senEn": "You can borrow books at the library.",
@@ -2216,7 +2208,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 21,
+        "id": 20,
         "en": "lend",
         "ko": "빌려주다",
         "senEn": "I often lend books to my friends.",
@@ -2224,7 +2216,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 22,
+        "id": 21,
         "en": "bottom",
         "ko": "바닥",
         "senEn": "I learned English from the bottom up.",
@@ -2232,7 +2224,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 23,
+        "id": 22,
         "en": "top",
         "ko": "꼭대기",
         "senEn": "I teach English to the student using the top-down style.",
@@ -2240,7 +2232,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 24,
+        "id": 23,
         "en": "brave",
         "ko": "용감한",
         "senEn": "The lion wants to have a brave heart.",
@@ -2248,7 +2240,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 25,
+        "id": 24,
         "en": "cowardly",
         "ko": "비겁한",
         "senEn": "The lion thinks he is very cowardly.",
@@ -2256,7 +2248,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 26,
+        "id": 25,
         "en": "broad",
         "ko": "넓은",
         "senEn": "We have a broad square in front of the City Hall.",
@@ -2264,7 +2256,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 27,
+        "id": 26,
         "en": "narrow",
         "ko": "좁은",
         "senEn": "Our apartment corridor is too narrow.",
@@ -2272,7 +2264,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 28,
+        "id": 27,
         "en": "build",
         "ko": "짓다, 세우다",
         "senEn": "I want to build my house by the river.",
@@ -2280,7 +2272,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 29,
+        "id": 28,
         "en": "destroy",
         "ko": "파괴하다",
         "senEn": "They will destroy the old cabin.",
@@ -2288,7 +2280,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 30,
+        "id": 29,
         "en": "cheap",
         "ko": "값이 싼",
         "senEn": "The restaurant is cheap and famous.",
@@ -2296,7 +2288,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 31,
+        "id": 30,
         "en": "expensive",
         "ko": "값이 비싼",
         "senEn": "The restaurant is very expensive.",
@@ -2304,7 +2296,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 32,
+        "id": 31,
         "en": "clever",
         "ko": "영리한",
         "senEn": "My little sister is very clever.",
@@ -2312,7 +2304,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 33,
+        "id": 32,
         "en": "stupid",
         "ko": "미련한",
         "senEn": "I don't think my brother is stupid.",
@@ -2320,7 +2312,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 34,
+        "id": 33,
         "en": "near",
         "ko": "가까운",
         "senEn": "Is there a Chinese restaurant near here?",
@@ -2328,7 +2320,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 35,
+        "id": 34,
         "en": "far",
         "ko": "먼",
         "senEn": "Is the subway station far away?",
@@ -2336,7 +2328,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 36,
+        "id": 35,
         "en": "closed",
         "ko": "닫힌",
         "senEn": "The restaurant is always closed on Sunday.",
@@ -2344,7 +2336,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 37,
+        "id": 36,
         "en": "open",
         "ko": "열린",
         "senEn": "The restaurant is always open at nine in the morning.",
@@ -2352,7 +2344,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 38,
+        "id": 37,
         "en": "answer",
         "ko": "대답",
         "senEn": "The teacher told me the answers to the test.",
@@ -2360,7 +2352,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 39,
+        "id": 38,
         "en": "question",
         "ko": "질문",
         "senEn": "The teacher asked me some difficult questions.",
@@ -2368,7 +2360,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 40,
+        "id": 39,
         "en": "danger",
         "ko": "위험",
         "senEn": "Driving too fast puts people in danger.",
@@ -2376,7 +2368,7 @@ const db = [
         "def": ""
       },
       {
-        "id": 41,
+        "id": 40,
         "en": "safety",
         "ko": "안전",
         "senEn": "For your safety, it is best not to speed.",
@@ -2384,11 +2376,19 @@ const db = [
         "def": ""
       },
       {
-        "id": 42,
+        "id": 41,
         "en": "dark",
         "ko": "어두운",
         "senEn": "I don't like the dark side.",
         "senKo": "나는 어두운 면을 좋아하지 않아요.",
+        "def": ""
+      },
+      {
+        "id": 42,
+        "en": "bright",
+        "ko": "밝은",
+        "senEn": "I like the bright side.",
+        "senKo": "나는 밝은 면을 좋아해요.",
         "def": ""
       }
     ]
