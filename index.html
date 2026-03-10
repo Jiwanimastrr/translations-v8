@@ -1733,6 +1733,23 @@
                     </div>
                     <div class="print-page-break">${headerHtml}
                         <section class="avoid-break mb-12"><h2 class="section-title">Part 8. 오류 수정 숙제 (Error Correction)</h2><div class="grid grid-cols-1 w-full">${errHtml}</div></section>
+                    </div>
+                    <div class="print-page-break">${headerHtml}
+                        <section class="avoid-break mb-12">
+                            <h2 class="section-title"><i class="fas fa-microphone-alt text-blue-600 mr-2"></i>Part 9. 받아쓰기 숙제 (Dictation Practice)</h2>
+                            <div class="grid grid-cols-1 gap-6 mt-6">
+                                ${Array.from({ length: 14 }).map((_, i) => `
+                                    <div class="avoid-break mb-4">
+                                        <div class="flex items-center gap-3 mb-2">
+                                            <span class="font-black text-[14pt] text-blue-600">Q${String(i + 1).padStart(2, '0')}.</span>
+                                            <div class="flex-1 border-b-2 border-gray-400 h-10 relative">
+                                                ${answerMode && sessionWords[i] ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[12pt]">${sessionWords[i].senEn}</span>` : ''}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </section>
                     </div>`;
             }
             return pageHtml;
