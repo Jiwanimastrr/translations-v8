@@ -1736,7 +1736,16 @@
                     </div>
                     <div class="print-page-break">${headerHtml}
                         <section class="avoid-break mb-12">
-                            <h2 class="section-title"><i class="fas fa-microphone-alt text-blue-600 mr-2"></i>Part 9. 받아쓰기 숙제 (Dictation Practice)</h2>
+                            <div class="flex items-center justify-between">
+                                <h2 class="section-title"><i class="fas fa-microphone-alt text-blue-600 mr-2"></i>Part 9. 받아쓰기 숙제 (Dictation Practice)</h2>
+                                <div class="flex items-center gap-2 border-[1.5px] border-dashed border-blue-400 p-1.5 rounded bg-blue-50 shadow-sm print-color-adjust-exact">
+                                    <div class="text-right leading-tight min-w-[max-content]">
+                                        <div class="text-[10pt] font-black text-blue-700">받아쓰기 음원</div>
+                                        <div class="text-[7.5pt] text-gray-600 font-bold mt-0.5">스마트폰 스캔 ▶</div>
+                                    </div>
+                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://junior-dictation.pages.dev" alt="Dictation QR" class="w-12 h-12 border border-blue-200">
+                                </div>
+                            </div>
                             <div class="grid grid-cols-1 gap-6 mt-6">
                                 ${Array.from({ length: 14 }).map((_, i) => `
                                     <div class="avoid-break mb-4">
