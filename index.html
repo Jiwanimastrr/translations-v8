@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주니어통번역사 교재 생성기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f3f4f6;
+            /* Neumorphism base color */
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* -------------------------------------
+           Neumorphism UI
+        -------------------------------------- */
+        .sidebar {
+            width: 320px;
+            background-color: #f3f4f6;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 10;
+            box-shadow: 8px 0 20px rgba(0, 0, 0, 0.04);
+        }
+
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .sidebar::-webkit-scrollbar-track {
+            background: #f3f4f6;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        /* Neumorphic Button */
+        .neumo-btn {
+            background-color: #f3f4f6;
+            border-radius: 12px;
+            box-shadow: 6px 6px 12px #d1d5db, -6px -6px 12px #ffffff;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .neumo-btn:hover {
+            box-shadow: 3px 3px 6px #d1d5db, -3px -3px 6px #ffffff;
+            transform: translateY(1px);
+        }
+
+        .neumo-btn.active {
+            box-shadow: inset 4px 4px 8px #d1d5db, inset -4px -4px 8px #ffffff;
+        }
+
+        /* Neumorphic Button (For answer key special styling) */
+        .neumo-btn-answer.active {
+            box-shadow: inset 4px 4px 8px #d1d5db, inset -4px -4px 8px #ffffff;
+        }
+
+        /* Neumorphic Panel (for upload sections) */
+        .neumo-panel {
+            background-color: #f3f4f6;
+            border-radius: 16px;
+            box-shadow: inset 6px 6px 12px #d1d5db, inset -6px -6px 12px #ffffff;
+            padding: 1rem;
+            margin: 0.75rem 1.25rem;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 40px 50px;
+            position: relative;
+            border-radius: 8px;
+        }
+
+        .writing-line {
+            border-bottom: 1px dashed #cbd5e1;
+            height: 28px;
+            width: 100%;
+            margin-top: 8px;
+            margin-bottom: 16px;
+        }
+
+        .homework-line {
+            border-bottom: 1px solid #94a3b8;
+            height: 24px;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: #3b82f6;
+            border-radius: 2px;
+            opacity: 0.3;
+        }
+
+        .watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.06;
+            z-index: 0;
+            pointer-events: none;
+            width: 450px;
+            max-width: 80%;
+            object-fit: contain;
+        }
+
+        /* -------------------------------------
+           A4 Print Settings (인쇄 최적화 - 정밀 분할)
+        -------------------------------------- */
+        @media print {
+            @page {
+                size: A4;
+                margin: 0mm;
+            }
+
+            body {
+                background-color: white;
+                display: block;
+                height: auto;
+                overflow: visible;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                margin: 0;
+            }
+
+            .sidebar,
+            .print-btn-container,
+            .view-tabs,
+            .session-tabs {
+                display: none !important;
+            }
+
+            .main-content {
+                padding: 0 !important;
+                margin: 0 !important;
+                overflow: visible;
+            }
+
+            .a4-page {
+                margin: 0 !important;
+                box-shadow: none !important;
+                padding: 15mm 15mm !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                background: transparent !important;
+                border-radius: 0 !important;
+                box-sizing: border-box !important;
+            }
+
+            .print-page-break {
+                page-break-after: always !important;
+                break-after: page !important;
+                clear: both;
+            }
+
+            .page-break-before {
+                page-break-before: always !important;
+                break-before: page !important;
+            }
+
+            .avoid-break {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            table {
+                page-break-inside: auto;
+                break-inside: auto;
+                border-collapse: collapse;
+                width: 100% !important;
+                table-layout: fixed;
+            }
+
+            tr {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .word-card {
+                padding: 0.6rem 0.4rem !important;
+            }
+
+            .writing-line {
+                margin-top: 2px !important;
+                margin-bottom: 8px !important;
+                height: 16px !important;
+                border-bottom: 1px solid #ccc !important;
+            }
+
+            .print-item {
+                margin-bottom: 0.3rem !important;
+            }
+
+            .homework-row {
+                height: 34px !important;
+            }
+
+            .homework-line {
+                margin-top: 4px !important;
+                margin-bottom: 6px !important;
+                height: 20px !important;
+                border-bottom: 1px solid #ccc !important;
+            }
+
+            .roleplay-line {
+                margin-bottom: 0.3rem !important;
+                line-height: 1.4 !important;
+                font-size: 10pt !important;
+            }
+
+            .roleplay-section {
+                padding: 1rem !important;
+                border-radius: 10px !important;
+            }
+
+            .roleplay-inner-box {
+                padding: 0.5rem 0.75rem !important;
+                border-radius: 8px !important;
+            }
+
+            .section-title {
+                margin-bottom: 0.75rem !important;
+                font-size: 16pt !important;
+            }
+
+            .grid {
+                gap: 1rem !important;
+            }
+
+            .answer-text {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                display: inline-block;
+                max-width: 100%;
+                color: #dc2626 !important;
+            }
+
+            /* Typography scaling for print */
+            h1 {
+                font-size: 22pt !important;
+            }
+
+            h2 {
+                font-size: 16pt !important;
+            }
+
+            h3 {
+                font-size: 12pt !important;
+            }
+
+            p,
+            div,
+            td {
+                font-size: 10pt !important;
+            }
+
+            .text-xs {
+                font-size: 8pt !important;
+            }
+
+            .text-sm {
+                font-size: 9pt !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Sidebar (Neumorphism Design) -->
+    <div class="sidebar no-print">
+        <div class="p-5 pb-2 pt-6">
+            <h1 class="text-xl font-black flex items-center gap-2 text-gray-800">
+                <i class="fas fa-layer-group text-blue-500"></i> 주니어통번역사
+            </h1>
+            <p class="text-[11px] text-gray-500 mt-2 mb-4">출력할 테마를 선택하세요.</p>
+
+            <!-- Print Button (Moved to Sidebar) -->
+            <button onclick="window.print()"
+                class="w-full neumo-btn font-bold py-2 px-4 flex items-center justify-center gap-2 text-sm text-blue-600 mb-2 cursor-pointer">
+                <i class="fas fa-print"></i> 현재 페이지 인쇄
+            </button>
+
+            <!-- Chapter All Print Button -->
+            <button onclick="printChapterAll()"
+                class="w-full neumo-btn font-bold py-2 px-4 flex items-center justify-center gap-2 text-sm text-green-600 mb-1 cursor-pointer">
+                <i class="fas fa-file-pdf"></i> 전체 차시 인쇄 (1~3차시)
+            </button>
+        </div>
+
+        <div id="menu-container" class="flex-1 pb-2">
+            <!-- Menu items generated by JS -->
+        </div>
+
+        <div class="mt-auto">
+            <!-- Logo Upload Section -->
+            <div class="neumo-panel">
+                <h3 class="text-[13px] font-bold text-gray-700 mb-1"><i class="fas fa-image mr-2 text-blue-400"></i>학원
+                    로고 설정</h3>
+                <p class="text-[9px] text-gray-500 mb-2.5 leading-tight">로고 이미지를 업로드하면 교재 상단에 적용됩니다.</p>
+                <input type="file" id="logo-upload" accept="image/*" class="hidden">
+                <label for="logo-upload"
+                    class="block w-full text-center neumo-btn text-xs font-bold py-2 px-4 cursor-pointer text-gray-600">
+                    로고 이미지 선택
+                </label>
+            </div>
+
+            <!-- CSV Upload Section -->
+            <div class="neumo-panel mb-4 mt-0">
+                <h3 class="text-[13px] font-bold text-gray-700 mb-1"><i
+                        class="fas fa-file-csv mr-2 text-green-500"></i>데이터 불러오기</h3>
+                <p class="text-[9px] text-gray-500 mb-2.5 leading-tight">CSV 파일을 업로드하면 단어가 자동 적용됩니다.</p>
+                <input type="file" id="csv-upload" accept=".csv" class="hidden">
+                <label for="csv-upload"
+                    class="block w-full text-center neumo-btn text-xs font-bold py-2 px-4 cursor-pointer text-gray-600">
+                    CSV 파일 선택
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content relative">
+        <!-- View Tabs (Neumorphism Design) -->
+        <div class="view-tabs flex flex-wrap justify-center gap-4 mb-8 w-full max-w-[210mm] mx-auto z-10 relative">
+            <button id="tab-textbook" onclick="changeView('textbook')"
+                class="flex-1 py-3 px-2 font-bold text-sm neumo-btn text-gray-600 cursor-pointer">
+                <i class="fas fa-book mr-1"></i>교재
+            </button>
+            <button id="tab-vocalist" onclick="changeView('vocalist')"
+                class="flex-1 py-3 px-2 font-bold text-sm neumo-btn text-gray-600 cursor-pointer">
+                <i class="fas fa-list-ul mr-1"></i>단어/문장
+            </button>
+            <button id="tab-hw1" onclick="changeView('hw1')"
+                class="flex-1 py-3 px-2 font-bold text-sm neumo-btn text-gray-600 cursor-pointer">
+                <i class="fas fa-pen-to-square mr-1"></i>1차 숙제
+            </button>
+            <button id="tab-hw2" onclick="changeView('hw2')"
+                class="flex-1 py-3 px-2 font-bold text-sm neumo-btn text-gray-600 cursor-pointer">
+                <i class="fas fa-puzzle-piece mr-1"></i>2차 숙제
+            </button>
+            <button id="tab-hw3" onclick="changeView('hw3')"
+                class="flex-1 py-3 px-2 font-bold text-sm neumo-btn text-gray-600 cursor-pointer">
+                <i class="fas fa-spell-check mr-1"></i>3차 숙제
+            </button>
+            <!-- 답지 인쇄 토글 버튼 -->
+            <button id="tab-answer" onclick="toggleAnswer()"
+                class="w-24 py-3 px-2 font-bold text-sm neumo-btn neumo-btn-answer text-red-500 hidden cursor-pointer">
+                <i class="fas fa-check-circle mr-1"></i>답지
+            </button>
+        </div>
+
+        <!-- Session Selection Tabs (Add this) -->
+        <div class="session-tabs flex justify-center gap-6 mb-8 w-full max-w-[210mm] mx-auto z-10 relative">
+            <button id="sess-1" onclick="changeSession(1)"
+                class="w-32 py-2 px-4 font-bold text-sm neumo-btn active cursor-pointer">
+                <i class="fas fa-calendar-day mr-1"></i>1차시
+            </button>
+            <button id="sess-2" onclick="changeSession(2)"
+                class="w-32 py-2 px-4 font-bold text-sm neumo-btn text-gray-500 cursor-pointer">
+                <i class="fas fa-calendar-day mr-1"></i>2차시
+            </button>
+            <button id="sess-3" onclick="changeSession(3)"
+                class="w-32 py-2 px-4 font-bold text-sm neumo-btn text-gray-500 cursor-pointer">
+                <i class="fas fa-calendar-day mr-1"></i>3차시
+            </button>
+        </div>
+
+        <div id="page-container" class="a4-page">
+            <!-- Content generated by JS -->
+        </div>
+    </div>
+
+    <script>
+        // 데이터 압축 헬퍼 (로딩 최적화 및 에러 방지)
+        function expW(arr) { return arr.map(w => ({ en: w[0], ko: w[1], def: w[2], senEn: w[3], senKo: w[4] })); }
+
+        // Database - 고도로 압축된 포맷
+        const db = [
+            {
+                id: 1, title: "Home", subtitle: "집 안의 공간, 가구 등과 관련된 단어를 배웁니다.", icon: "fa-house",
+                data: "air conditioner|에어컨|a machine that cools the air|Turn on the air conditioner.|에어컨을 켜세요.^attic|다락(방)|a space just below the roof|Anne lived in the attic of the house.|앤은 그 집 다락방에 살았어요.^aunt|이모, 고모|the sister of your father or mother|My aunt lives in Busan.|우리 이모는 부산에 살고 계세요.^basement|지하층|a room below ground level|We have a large basement.|우리집에는 큰 지하실이 있어요.^bathroom|욕실, 화장실|a room with a toilet and shower|Where is the bathroom?|화장실이 어디예요?^bed|침대|a piece of furniture for sleeping|A pillow is on the bed.|침대 위에 베개가 있어요.^bedroom|침실, 방|a room for sleeping|My bedroom is too small.|내 방은 아주 작아요.^blanket|담요|a warm cover for a bed|The blanket is made of wool.|그 담요는 양모로 만들어졌어요.^bowl|그릇|a round deep dish for food|The bowl is full of milk.|그릇에 우유가 가득 담겨있네요.^brother|형제|a male sibling|I have two brothers.|나는 남자 형제가 두명 있어요.^chair|의자|a seat with a back and four legs|I like the yellow chair.|나는 노란 의자를 좋아해요.^closet|옷장|a small room for storing clothes|I put my clothes in the small closet.|내 옷을 작은 옷장에 두었어요.^computer|컴퓨터|a machine used for storing data|What do you usually do with your computer?|당신은 컴퓨터로 주로 무슨 일을 하나요?^cook|요리하다|to prepare food for eating|My brother cooks very well.|우리 오빠는 요리를 아주 잘 해요.^desk|책상|a table for studying or working|He is sitting at the desk.|그는 책상에 앉아 있어요.^dining room|식당|a room for eating meals|We had dinner in the dining room.|우리는 식당에서 저녁을 먹었어요.^door|문|a barrier to close an opening|Close the door, please.|문을 닫으세요.^fan|선풍기|a machine that creates a breeze|Turn on the fan.|선풍기를 켜세요.^floor|바닥|the surface you walk on|A baby is playing on the floor.|아기가 바닥에서 놀고 있어요.^garage|차고, 창고|a building for parking cars|He parked his car in the garage.|그는 차고에 차를 주차했어요.^garbage|쓰레기|waste material or trash|A boy threw some trash in the garbage can.|소년이 쓰레기통에 쓰레기를 버렸어요.^grandfather|할아버지|the father of your parent|My grandfather wants to live with me.|우리 할아버지는 나와 함께 살고 싶어하세요.^grandmother|할머니|the mother of your parent|My grandmother is in her sixties.|우리 할머니는 60대입니다.^grandparents|조부모님|the parents of your parents|I live with my grandparents.|나는 조부모님과 살고 있어요.^kitchen|부엌, 주방|a room where food is cooked|A man is in the kitchen.|한 남자가 주방에 있어요.^living room|거실|a room for relaxing with family|Let's watch TV in the living room.|거실에서 TV를 보자.^mobile phone|휴대폰|a portable wireless phone|Children don't need a mobile phone.|어린이는 휴대폰이 필요하지 않아요.^parents|부모님|one's father or mother|I really love my parents.|나는 부모님을 정말 사랑해요.^pillow|베개|a soft cushion for your head|I like a soft pillow.|나는 부드러운 베개를 좋아해요.^porch light|현관등|a light outside the front door|Turn on the porch light at 7 o'clock.|7시에 현관등을 켜세요.^refrigerator|냉장고|a machine that keeps food cold|We need a refrigerator in the summer.|여름에는 냉장고가 필요합니다.^roof|지붕|the top covering of a building|The house has a red roof.|그 집은 빨간 지붕이에요.^room|방|a divided part of a house|There are two rooms.|두개의 방이 있어요.^sink|싱크대|a basin used for washing|I wash the dishes in the sink.|나는 싱크대에서 설거지를 합니다.^sister|여자형제|a female sibling|She is my little sister.|그녀는 내 여동생이에요.^sofa|소파|a long comfortable seat|Don't jump on the sofa.|소파 위에서 뛰지 마세요.^stairs|계단|a set of steps between floors|Don't run down the stairs.|계단에서 뛰어 내려가지 마라.^table|테이블|furniture with a flat top and legs|There is an apple on the table.|테이블 위에 사과가 있어요.^telephone|전화기|a device to talk to far people|Your telephone is ringing.|당신 전화벨이 울리고 있어요.^television|텔레비전|a device for watching broadcasts|Watch television after you finish your homework.|숙제 끝내고 텔레비전을 봐라.^toilet|화장실(변기)|a bowl to get rid of body waste|Where is the toilet?|화장실이 어디입니까?^window|창문|an opening covered with glass|Open the window, please.|창문을 열어주세요."
+            },
+            {
+                id: 2, title: "Time", subtitle: "시간, 계절, 요일 등과 관련된 단어를 배웁니다.", icon: "fa-clock",
+                data: "afternoon|오후|the part of the day after noon|It is a rainy afternoon.|비가 오는 오후입니다.^annual|매년, 연례의|happening once every year|They spent their annual holiday on a yacht in the Caribbean.|그들은 카리브해에서 요트를 타고 연차 휴가를 보냈어요.^April|4월|the fourth month of the year|My birthday is in April.|내 생일은 4월이예요.^August|8월|the eighth month of the year|The special event is in August.|그 특별 행사는 8월에 있어요.^clock|시계|a device that shows the time|I have an antique clock.|난 오래된 시계를 가지고 있어요.^decade|10년간|a period of ten years|They change their leader every decade.|그들은 10년마다 그들의 지도자를 바꿉니다.^December|12월|the twelfth month of the year|I was born in December.|나는 12월에 태어났어요.^evening|저녁|the early part of the night|I usually watch TV in the evening.|나는 주로 저녁에 TV를 봅니다.^February|2월|the second month of the year|My birthday is in February.|내 생일은 2월이에요.^Friday|금요일|the day before Saturday|Shall we go to the theater on Friday?|금요일에 극장에 갈까?^hour|1시간|a period of 60 minutes|There are 24 hours in a day.|하루는 24시간입니다.^January|1월|the first month of the year|Her father died in January.|그녀의 아버지는 1월에 돌아가셨습니다.^July|7월|the seventh month of the year|My family goes to the beach in July.|가족들은 7월에 바다로 놀러가요.^June|6월|the sixth month of the year|She is getting married in June.|그녀는 6월에 결혼합니다.^March|3월|the third month of the year|My brother's birthday is in March.|내 남동생의 생일은 3월입니다.^May|5월|the fifth month of the year|Teachers' day is in May.|스승의 날은 5월이에요.^midnight|자정, 한밤중|twelve o'clock at night|I woke up at midnight.|자정에 잠이 깼어요.^minute|분|a period of 60 seconds|It takes about 10 minutes.|약 10분이 걸려요.^Monday|월요일|the day after Sunday|I'll see you next Monday.|다음 월요일에 만나요.^month|월(달)|a period of about thirty days|February is the shortest month.|2월은 가장 짧은 달이에요.^morning|아침|the early part of the day|I get up early in the morning.|나는 아침에 일찍 일어나요.^night|밤|the dark part of the day|It gets cold at night.|밤에는 추워져요.^noon|정오|twelve o'clock in the day|I usually have lunch at noon.|나는 보통 12시 정각에 점심을 먹어요.^November|11월|the eleventh month of the year|The bakery opened last November.|그 제과점은 지난 11월에 오픈했어요.^October|10월|the tenth month of the year|Halloween is on October 31st.|할로윈은 10월 31일이에요.^once|한번|one single time|I want to try it once again.|한 번 더 해보고 싶어요.^overnight|밤새|during or for the night|He became a star overnight.|그는 하룻밤새 스타가 되었네요.^quarter|15분, 4분의 1|fifteen minutes|It is a quarter to six.|6시 15분 전입니다.^Saturday|토요일|the day after Friday|David is leaving on Saturday.|David는 토요일에 떠납니다.^schedule|일정|a plan of events and times|I'm really on a tight schedule.|정말로 빡빡한 일정이에요.^September|9월|the ninth month of the year|My birthday is in September.|내 생일은 9월이에요.^Sunday|일요일|the day of rest after Saturday|We go to church every Sunday.|우리는 매주 일요일에 교회에 갑니다.^Thursday|목요일|the day after Wednesday|I was very busy last Thursday.|나는 지난 목요일에 무척 바빴어요.^time|시간|measured period of events|I don't have enough time.|나는 시간이 충분하지 않아요.^today|오늘|this present day|I have a cold today.|오늘 감기에 걸렸어요.^tomorrow|내일|the day after today|We have an English test tomorrow.|내일 영어 시험이 있어요.^Tuesday|화요일|the day after Monday|We have an English class next Tuesday.|다음 주 화요일에 영어 수업이 있어요.^watch|손목시계|a small clock worn on the wrist|My watch is broken.|내 손목시계가 망가졌어요.^Wednesday|수요일|the day after Tuesday|My parents will come back on Wednesday.|부모님은 수요일에 돌아오실거야.^week|주, 1주일|a period of seven days|We have English classes twice a week.|우리는 일주일에 두 번 영어 수업이 있어요.^weekend|주말|Saturday and Sunday|Have a good weekend.|좋은 주말 보내세요.^year|년, 1년|a period of 365 days|A year has four seasons.|1년은 4계절이 있습니다."
+            },
+            {
+                id: 3, title: "Season & Weather", subtitle: "계절과 날씨, 기상 현상과 관련된 단어를 배웁니다.", icon: "fa-cloud-sun",
+                data: "autumn|가을|the season before winter|My favorite season is autumn.|내가 가장 좋아하는 계절은 가을이야.^blizzard|눈보라|a severe snowstorm|The blizzard was blowing outside.|밖에는 눈보라가 치고 있었어.^breeze|산들바람, 미풍|a gentle wind|Flags are flapping in the breeze.|산들바람에 깃발이 날리고 있어.^chilly|쌀쌀한|uncomfortably cold|It's rather chilly this morning.|오늘 아침은 좀 쌀쌀하네요.^cloud|구름|a white or gray mass in the sky|There is a big cloud in the sky.|커다란 구름이 하늘에 떠 있어요.^desert|사막|a very dry sandy area|The little prince met a fox in a desert.|어린왕자는 사막에서 여우를 만났어요.^dew|이슬|tiny water drops in the morning|The plants were wet with dew.|식물이 이슬에 젖었네요.^drought|가뭄|a long period with no rain|We need the rain after that long drought.|오랜 가뭄이 지난 후 비가 와야 해요.^dust|먼지|fine dry powder on surfaces|The table was covered with a lot of dust.|테이블이 많은 먼지로 덮여 있어요.^earthquake|지진|a sudden shaking of the ground|An earthquake was felt last night.|어제 밤에 지진이 감지되었다.^flood|홍수|too much water on dry land|There was a flood in New Orleans.|뉴올리언즈에 홍수가 났어요.^fog|안개|thick cloud near the ground|Thick fog is spreading over the city.|짙은 안개가 도시에 퍼지고 있어요.^freeze|얼다, 몹시 춥다|to turn to ice due to cold|The water will freeze.|물이 얼을 것입니다.^frost|서리|a thin white layer of ice|The flowers were damaged by frost.|서리로 꽃들이 시들었어요.^hurricane|허리케인|a powerful tropical storm|A hurricane hit the city last month.|지난 달에 허리케인이 도시를 강타했어요.^ice|얼음|frozen solid water|The lake was covered with ice.|호수가 얼음으로 덮여 있어요.^iceberg|빙산|a huge block of floating ice|It's the tip of the iceberg.|빙산의 일각이에요.^lightning|번개|a flash of bright light in the sky|Lightning crackled in the skies.|하늘에서 번개가 번쩍였어요.^mist|옅은 안개, 분무|a light fog|Mist was rolling from the sea.|바다로부터 옅은 안개가 밀려왔어요.^monsoon|우기, 장마|a season of heavy rain|Every year they have monsoon season in Korea.|한국에는 매년 장마철이 있어요.^muggy|후덥지근한|unpleasantly warm and humid|It was so hot from the muggy air.|후덥지근한 공기때문에 너무 더웠어요.^ocean|대양|a very large body of salt water|There is a lot of water in the ocean.|바다에는 물이 많지요.^rain|비|water falling from clouds|Don't go out in the rain.|비 오는데 나가지 마세요.^rainforest|열대 우림|a thick wet tropical forest|Plants grow quickly in a rainforest.|열대우림에서는 식물이 빨리 자랍니다.^season|계절|a period of the year|What is your favorite season?|가장 좋아하는 계절이 언제야?^snow|눈|soft white ice flakes|Let's play in the snow.|눈 속에서 놀자.^sow|씨뿌리다|to plant seeds in the ground|I will sow the seeds in the pot.|나는 화분에 씨앗을 심을 거예요.^spring|봄|the season before summer|Spring is my favorite time.|봄은 내가 가장 좋아하는 시간이에요.^storm|폭풍|weather with strong winds and heavy rain|The storm continued for a week.|폭풍이 일주일간 계속되었어요.^summer|여름|the warmest season of the year|It's really hot in the summer.|여름엔 정말 더워요.^sun|태양|the star that gives light|The sun rises in the east.|태양은 동쪽에서 떠오릅니다.^sunny|화창한|bright with sunlight|It's a sunny day.|화창한 날입니다.^temperature|온도, 기온|how hot or cold something is|The temperature has suddenly dropped.|기온이 갑자기 떨어졌어요.^thermometer|온도계|a tool to measure heat|The thermometer reads zero.|온도계가 0도를 가리키고 있어요.^thunder|천둥|the loud noise of lightning|There is a lot of thunder and lightning.|천둥번개가 많이 치네요.^tornado|토네이도|a violent spinning wind|The tornado ruined my village.|토네이도가 내 마을을 폐허로 만들었어요.^typhoon|태풍|a violent tropical storm|The roof blew off in the typhoon.|지붕이 태풍에 날아갔어요.^umbrella|우산|a tool to keep off rain|Don't forget your umbrella.|우산 잊지마세요.^warm|따뜻한|a pleasant temperature that is not too hot|Keep yourself warm.|몸을 따뜻하게 유지하세요.^weather|날씨|the condition of the air outside|How is the weather today?|오늘 날씨 어때요?^wet|젖은|covered with liquid|My shoes are wet.|내 신발이 다 젖었어요.^wind|바람|moving air|The wind blew away his hat.|바람이 그의 모자를 날려버렸어요."
+            },
+            {
+                id: 4, title: "Job & Work", subtitle: "다양한 직업의 종류와 하는 일에 대해 배웁니다.", icon: "fa-user-doctor",
+                data: "actor|배우|a person acting in movies|He is a famous actor in France.|그는 프랑스에서 유명한 배우야.^artist|화가|a person who paints pictures|The artist painted this picture using watercolors.|화가는 수채화로 이 그림을 그렸어요.^astronaut|우주비행사|a person who travels to space|An astronaut is a person who travels in space.|우주비행사는 우주공간을 여행하는 사람입니다.^athlete|운동선수|a person skilled in sports|He is a famous athlete in the USA.|그는 미국의 유명한 운동선수예요.^author|작가|a person who writes books|Aesop was the author of many fables.|이솝은 많은 우화의 저자예요.^baker|제빵사|a person who makes bread|Joseph is a baker at the bakery.|Joseph은 그 빵집에서 일하는 제빵사예요.^barista|바리스타|a person who makes coffee|I want to be the best barista.|나는 최고의 바리스타가 되고 싶어요.^broadcaster|방송기술자, 방송인|someone who presents on TV|She was a famous broadcaster in 1990s.|그녀는 1990년대의 유명한 방송인입니다.^businessman|사업가|a man who works in business|My father is a businessman.|우리 아버지는 사업가입니다.^cartoonist|만화가, 카툰작가|a person who draws cartoons|Walt Disney was a poor cartoonist.|월트 디즈니는 가난한 만화가였어요.^cashier|계산원|a person who takes money in a shop|The cashier will check out the books.|계산원이 책을 대출해줄 겁니다.^chef|요리사, 주방장|a skilled and trained cook|My uncle is a hotel chef.|우리 삼촌은 호텔 요리사예요.^clerk|점원, 직원|a person who works at an office|She works as a bank clerk.|그녀는 은행원으로 일합니다.^cook|요리사|someone who prepares food|We need a new cook.|우리는 새로운 요리사가 필요해요.^dentist|치과의사|a doctor who cares for teeth|The dentist is treating my teeth.|치과의사 선생님이 내 이빨을 치료하고 있어요.^designer|디자이너|a person who plans how things look|Coco Chanel was a famous clothes designer.|코코샤넬은 유명한 의상 디자이너였어요.^detective|탐정, 형사|a person who investigates crimes|Sherlock Holmes is a famous detective.|셜록 홈즈는 유명한 탐정입니다.^doctor|의사|a person who treats sick people|The doctor checked my throat.|의사 선생님이 내 목을 확인했어요.^driver|운전사, 기사|someone who drives a vehicle|The bus driver gave me a big smile.|버스 기사 아저씨가 나에게 활짝 웃어주셨어요.^engineer|기술자, 엔지니어|a person who designs machines|He works as a computer engineer.|그는 컴퓨터 엔지니어로 일합니다.^farmer|농부|a person who owns or runs a farm|The farmer works hard every day.|농부는 매일 열심히 일합니다.^firefighter|소방관|a person who puts out fires|The firefighters put out the fire.|소방관들이 불을 껐습니다.^florist|플로리스트|a person who sells flowers|She became a famous florist.|그녀는 유명한 플로리스트가 되었어요.^guard|경비원, 보초|a person who protects places|There are two guards at the door.|문 앞에 경비원이 두 명 있어요.^hairdresser|미용사|a person who cuts hair|The hairdresser cuts my hair.|미용사가 내 머리를 잘라줍니다.^judge|판사|a person who decides in a court|The judge asked the witnesses to pledge.|판사는 증인에게 서약을 요청했다.^lawyer|변호사|a person who gives legal advice|The lawyer made an appearance in court.|변호사가 법정에 나왔다.^librarian|사서|a person who works in a library|I asked the librarian for the picture book.|나는 사서에게 그림책을 요청했다.^magician|마술사|an entertainer doing tricks|I want to be a magician.|마술사가 되고 싶어요.^mail carrier|우편 배달부|a person who delivers letters|She is a mail carrier.|그녀는 우편배달부예요.^film director|영화 감독|a person who tells actors what to do|Bong Joon Ho is a famous film director.|봉준호는 유명한 영화감독이지요.^musician|음악가|a person who plays instruments|She is the famous jazz musician.|그녀는 유명한 재즈 뮤지션(음악가)예요.^novelist|소설가|a person who writes novels|Charles Dickens is one of the best-known novelists.|찰스 디킨슨은 가장 유명한 소설가 중 한명이에요.^nurse|간호사|a person who cares for the sick|He worked as a nurse in a hospital.|그는 병원에서 간호사로 일하고 있어요.^pharmacist|약사|a person who prepares medicines|Jessica is studying to be a pharmacist.|Jessica는 약사가 되려고 공부하고 있어요.^photographer|사진 작가|a person who takes photos|I want to be a professional photographer.|나는 전문 사진 작가가 되고 싶어요.^pilot|비행기 조종사|a person who flies airplanes|I’d like to grow up to be a fighter pilot.|나는 커서 전투기 조종사가 되고 싶습니다.^police officer|경찰관|someone who catches criminals|He is a brave police officer.|그는 용감한 경찰관이에요.^programmer|프로그래머|a person who writes computer code|I became a computer programmer.|나는 컴퓨터 프로그래머가 되었어.^reporter|기자, 리포터|a person who reports news|The TV reporter gave us a warning.|TV 리포터가 경고 방송을 했어요.^scientist|과학자|a person who studies nature and science|She is a famous scientist.|그녀는 유명한 과학자예요.^singer|가수|a person who sings professionally|She wants to be a pop singer.|그녀는 팝 가수가 되고 싶어해요."
+            },
+            {
+                id: 5, title: "Place", subtitle: "다양한 장소와 건물 시설에 대해 배웁니다.", icon: "fa-map-location-dot",
+                data: "airport|공항|a place where airplanes land|What time do you go to the airport?|몇시에 공항에 가나요?^amusement park|놀이공원|a park with rides and games|How about going to the amusement park?|놀이공원에 가는 건 어때요?^bakery|빵집|a shop making and selling bread|I like the bread from the small bakery.|나는 그 작은 빵집의 빵이 좋아요.^bank|은행|a place keeping money safe|There are two banks on this street.|이 거리에는 은행이 두 곳 있어요.^beach|해변|a sandy area next to the sea|I often play on the beach with my brother.|나는 종종 동생과 함께 해변에서 놀아요.^beauty shop|미용실|a place to get haircuts|I cut my hair at a beauty shop.|미용실에서 머리카락을 잘랐어요.^bookstore|서점|a shop selling books|I'm going to the bookstore.|서점에 가고 있어요.^bus stop|버스정류장|a place where buses stop|I'm looking for a bus stop.|버스정류장을 찾고 있어요.^campus|교정, 캠퍼스|the grounds of a university|My parents first met on the campus.|부모님은 캠퍼스에서 처음 만났대요.^church|교회|a building for Christian worship|Please take me to the nearest church.|가장 가까운 교회로 데려다 주세요.^city hall|시청|the government building of a city|I live near the city hall.|나는 시청 근처에 살아요.^concert hall|연주회장|a room for musical performances|It is the most famous concert hall in the world.|거긴 세계에서 가장 유명한 콘서트 홀이에요.^convenience store|편의점|a small store open long hours|You can buy a bus card at a convenience store.|편의점에서 버스카드를 살 수 있어요.^crosswalk|횡단보도|a marked place to cross safely|Look both ways at the crosswalk.|횡단보도에서는 양쪽을 다 살피세요.^department store|백화점|a large shop with many sections|I went to the department store to buy a skirt.|나는 치마를 사러 백화점에 갔어요.^factory|공장|a building where goods are made|This is a big shoe factory.|이곳은 큰 신발 공장이에요.^fire station|소방서|a building for firefighters|Our town has a new fire station.|우리 마을에 새 소방서가 생겼어요.^gallery|미술관, 화랑|a room for showing art|I like to go to the National Gallery in London.|런던에 있는 국립미술관에 가고 싶어요.^garden|정원|a piece of land for flowers|Sometimes they have a party in their garden.|그들은 가끔 정원에서 파티를 합니다.^gas station|주유소|a place to buy car fuel|Drivers can buy fuel and oil at a gas station.|운전자들은 주유소에서 연료와 기름을 구입할 수 있어요.^harbor|항구|a safe place for ships to dock|A large ship was docking in the harbor.|커다란 배 한 척이 항구에 정박했습니다.^hospital|병원|a place treating sick people|Where is the nearest hospital?|가장 가까운 병원이 어디인가요?^library|도서관|a place to borrow books|I go to the library once a week.|나는 일주일에 한번 도서관에 갑니다.^market|시장|a place where people buy and sell goods|I like shopping at a flea market.|나는 벼룩시장에서 쇼핑하는 것을 좋아합니다.^mudflat|갯벌|a muddy area near the sea|They can get a lot of food from the mudflat.|그들은 갯벌에서 많은 먹을 거리를 구할 수 있습니다.^museum|박물관|a building showing historical items|What time does the museum close?|박물관은 언제 문을 닫나요?^orchard|과수원|a land where fruit trees grow|My parents work at an apple orchard.|부모님은 사과 과수원에서 일하십니다.^park|공원|a public green area with trees|Let's go to the park and ride a bike.|공원에 가서 자전거를 타자.^parking lot|주차장|an area for parking cars|Is there a parking lot nearby?|이 근처에 주차장이 있나요?^police station|경찰서|the local office of the police|Let's take the old man to the police station.|그 노인을 경찰서에 모시고 갑시다.^post office|우체국|a place to buy stamps and mail letters|My father works at a post office.|우리 아버지는 우체국에서 일하십니다.^restaurant|식당|a place where meals are served|I like the family restaurant.|나는 그 패밀리 레스토랑을 좋아해요.^rest room|화장실(공공건물)|a room with toilets in a public place|Where is the rest room?|화장실이 어디예요?^school|학교|a place where children are educated|I walk to school every morning.|나는 매일 아침 학교에 걸어갑니다.^stadium|경기장|a sports ground with seats|The soccer game will be held at the stadium.|축구 경기가 이 경기장에서 열릴 것입니다.^station|역|a place where trains stop|You can find a subway station easily in Seoul.|서울에서는 쉽게 지하철역을 찾을 수 있어요.^store|가게, 상점|a shop where goods are sold|Did you go to the store?|가게에 갔었니?^supermarket|슈퍼마켓|a large grocery store|You can buy a lot of things at the supermarket.|슈퍼마켓에서 많은 물건을 살 수 있어요.^theater|극장|a building for plays or movies|I saw a nice movie at the theater.|극장에서 멋진 영화를 보았어요.^university|대학교|a high-level educational school|Oxford is a famous university.|옥스포드는 유명한 대학입니다.^village|마을|a small community in the country|There is an old tree in the village.|마을에 오래된 나무가 한 그루 있습니다.^zoo|동물원|a park keeping live animals|Let's go to the zoo.|동물원에 가자."
+            },
+            {
+                id: 6, title: "Traffic", subtitle: "여러가지 탈것과 교통 수단에 대해 배웁니다.", icon: "fa-car",
+                data: "ambulance|구급차|a vehicle for taking sick to hospital|They called an ambulance.|그들은 구급차를 불렀다.^automobile|자동차|a four-wheeled passenger vehicle|The automobile is a necessity in our lives.|자동차는 우리 삶의 필수품이다.^bicycle|자전거|a two-wheeled human-powered vehicle|I go to school by bicycle.|나는 자전거를 타고 학교에 간다.^boat|보트|a small vessel for traveling on water|A boat is a small vehicle on water.|보트는 물 위를 다니는 작은 차량이다.^crossing|건널목|a place where lines or roads cross|The children are walking through the crossing.|아이들이 교차로를 걷고 있어요.^cruise ship|유람선|a large ship used for holidays|Our cruise ship is like a five-star hotel.|우리 유람선은 오성급 호텔 같습니다.^dock|부두|a place where ships tie up|My uncle works at the dock.|우리 삼촌은 부두에서 일합니다.^driver|운전자|someone who drives a vehicle|He is a taxi driver in Paris.|그는 파리의 택시 기사입니다.^driver's license|운전면허증|an official document to do something|When can I get a driver's license?|나는 언제 운전면허증을 받을 수 있을까요?^dump truck|덤프트럭|a heavy truck for moving dirt|It looks exciting to drive a dump truck.|덤프 트럭 운전하는 것이 흥미로워 보여요.^fire engine|소방차|a large truck to stop fires|He drives a big fire engine.|그는 대형 소방차를 운전합니다.^flight|비행|a journey in an aircraft|How was your flight?|비행 어땠어요?^helicopter|헬리콥터|an aircraft with spinning blades|He is flying in a helicopter.|그는 헬리콥터를 타고 날고 있어요.^highway|고속도로|a main road connecting towns|They are driving on the highway.|그들은 고속도로를 달리고 있습니다.^intersection|교차로|a place where roads cross|Don't turn left at this intersection.|이 교차로에서 좌회전하지 마세요.^motorcycle|오토바이|a two-wheeled engine vehicle|Riding a motorcycle without a helmet is dangerous.|헬멧없이 오토바이 타는 것은 위험합니다.^one-way street|일방통행로|a road you can travel one direction|It's dangerous to go on a one-way street.|일방통행로로 가는 것은 위험합니다.^opposite|반대편|across from or facing|The old palace stands opposite to the City Hall.|고궁은 시청 맞은 편에 있어요.^overpass|육교|a bridge over another road|You can cross the railway through the overpass.|육교를 통해서 철로를 건널 수 있어요.^passenger|승객|a person traveling in a vehicle|We will help our passengers stay safe.|우리는 승객이 안전하게 지낼 수 있도록 도와드리겠습니다.^patrol car|경찰차|a car used by police|I want to drive a patrol car.|경찰차를 운전하고 싶어요.^railroad|철도|a track with rails for trains|The railroad passed through a long desert.|그 철도는 긴 사막을 통과했습니다.^runway|활주로|a road for airplanes to take off|The aircraft takes off or lands over the runway.|항공기는 활주로에서 이륙하거나 착륙합니다.^sailboat|범선|a boat powered by wind|A sailboat moves through the water.|범선이 물을 가르며 움직입니다.^scooter|스쿠터|a small light motorcycle|I like to ride my scooter.|나는 스쿠터 타는 것을 좋아합니다.^ship|배|a large boat on water|I went to the island by ship.|나는 그 섬에 배를 타고 갔어요.^sidewalk|인도, 보도|a path for walking by a road|I found the bag on the sidewalk.|보도에서 가방을 찾았어요.^submarine|잠수함|a ship traveling underwater|Have you ever been in a submarine?|잠수함에 타 본 적이 있어요?^subway|지하철|an underground railway system|I go to school by subway.|나는 지하철을 타고 학교에 갑니다.^taxi|택시|a car you pay to travel in|Did you come here by taxi?|여기에 택시 타고 왔니?^ticket|티켓, 표|paper needed to ride a train|You need a ticket to take the train.|기차를 타려면 표가 필요해요.^tire|타이어|a rubber ring around a wheel|Oh, I have a flat tire.|오, 내 차 타이어가 펑크났어요.^traffic|교통|vehicles moving on a road|We were stuck in heavy traffic.|우리는 꽉 막힌 교통에 갇혔어요.^traffic light|신호등|lights that control moving cars|Stop at the red traffic light.|빨간 신호등에서 멈추세요.^train|기차|connected cars pulled along a railway|The train is very fast.|기차는 매우 빠릅니다.^tram|전차|a passenger vehicle on street rails|Melbourne is famous for the tram.|멜버른은 전차로 유명합니다.^transit|수송, 대중교통|the carrying of people or goods|In London, public transit is free for children.|런던에서 대중교통은 어린이는 무료입니다.^truck|트럭|a large road vehicle for moving goods|The truck is carrying heavy boxes.|그 트럭은 무거운 상자들을 나르고 있어요.^van|승합차|a medium vehicle for goods|My father has a blue van.|우리 아버지는 파란색 승합차를 갖고 계세요.^wagon|마차|a vehicle pulled by horses|The old man was riding on a wagon.|그 노인은 마차를 타고 있었어요.^wheel|바퀴|a round object turning a vehicle|My car has four wheels.|내 자동차는 바퀴가 네 개 있습니다.^yacht|요트|a large luxury boat|His dream is to buy a yacht.|그의 꿈은 요트를 사는 것입니다."
+            },
+            {
+                id: 7, title: "Condition & Situation", subtitle: "상태와 상황을 나타내는 단어들을 배웁니다.", icon: "fa-scale-balanced",
+                data: "absent|결석한|not in a certain place|Michael was absent from school yesterday.|Michael은 어제 결석했어요.^present|출석한|being in a certain place|We are present for the meeting every Monday.|우리는 매주 월요일 회의에 참석합니다.^accept|받아들이다|to say yes to an offer|Please accept my apology.|내 사과를 받아 주세요. (사과드립니다.)^refuse|거절하다|to say no to something|Please don't refuse my request.|나의 제안을 거절하지 말아 주세요.^agree|찬성하다|to have the same opinion|I agree with you on this issue.|이 문제에 대해서는 당신에게 동의합니다.^disagree|반대하다|to have a different opinion|They disagree with what you say.|그들은 당신이 말한 것을 반대합니다.^bad|나쁜|not good in quality|It's bad news for me.|그것은 내게 나쁜 뉴스야.^good|좋은|of high quality; excellent|She is a good teacher.|그녀는 좋은 선생님이예요.^before|~ 전에|earlier in time|You should wash your hands before meals.|식사 전에 손을 씻어야 합니다.^after|~ 후에|later in time|Let's go for a walk after dinner.|저녁 식사 후에 산책 가자.^begin|시작하다|to start doing something|What time does the festival begin?|축제는 몇시에 시작하나요?^end|마치다|the final part of something|What time does the festival end?|축제는 몇시에 끝나나요?^big|큰|large in size or amount|They live in a big house.|그들은 큰 집에 살아요.^small|작은|not large in size|My town is a very small place.|나의 마을은 아주 작은 곳이에요.^black|검은|the darkest color|I don't like the black color.|나는 검은색을 좋아하지 않아요.^white|흰|the color of snow or milk|I like the white snow.|나는 하얀 눈을 좋아해요.^bold|대담한|not afraid of risk|It was a bold decision for her.|그녀를 위해 대담한 결정을 했어요.^timid|소심한|showing a lack of courage|The boy is very timid.|그 소년은 몹시 소심해요.^boring|지루한|not interesting|The movie was so boring.|그 영화는 몹시 지루했어요.^interesting|재미있는|holding one's attention|The movie was so interesting.|그 영화는 무척 재미있었어요.^bottom|바닥|the lowest part|He went down to the bottom of the sea.|그는 바다 맨 아래까지 내려갔어요.^top|꼭대기|the highest part|I can see the snow at the top of the mountain.|산 꼭대기에 쌓인 눈이 보여요.^brave|용감한|showing no fear of danger|The lion wants to have a brave heart.|사자는 용감한 마음을 갖고 싶어합니다.^cowardly|비겁한|lacking courage; afraid|The lion thinks he is very cowardly.|사자는 자신이 몹시 비겁하다고 생각합니다.^broad|넓은|wide in distance|We have a broad square in front of the City Hall.|시청 앞에 넓은 광장이 있어요.^narrow|좁은|not wide; thin|Our apartment corridor is too narrow.|아파트 복도가 너무 좁아요.^build|짓다, 세우다|to make by joining parts|I want to build my house by the river.|나는 강가에 집을 짓고 싶어요.^destroy|파괴하다|to break or ruin something|They will destroy the old cabin.|그들은 그 낡은 오두막을 부술거예요.^cheap|값이 싼|costing little money|The restaurant is cheap and famous.|그 식당은 싸고 유명해요.^expensive|값이 비싼|costing a lot of money|The restaurant is very expensive.|그 식당은 너무 비싸요.^clever|영리한|quick to understand|My little sister is very clever.|내 동생은 참 영리해요.^stupid|미련한|lacking intelligence|I don't think my brother is stupid.|나는 내 동생이 미련하다고 생각하지 않아요.^near|가까운|close in distance|Is there a Chinese restaurant near here?|이 근처에 중국 음식점이 있나요?^far|먼|at a great distance|Is the subway station far away?|지하철 역이 먼가요?^clean|깨끗한|free from dirt or marks|Keep your room clean.|방을 깨끗하게 유지하세요.^dirty|더러운|not clean|Your hands are so dirty.|손이 무척 더럽네요.^cold|차가운|having a low temperature|I want to drink cold water.|나는 차가운 물을 마시고 싶어요.^hot|뜨거운|having a high temperature|Be careful! It's so hot.|조심하세요! 아주 뜨겁습니다.^difficult|어려운|not easy to do or understand|This math problem is difficult.|이 수학 문제는 어려워요.^easy|쉬운|needing very little effort|The exam was very easy.|그 시험은 매우 쉬웠어요.^fast|빠른|moving or happening quickly|He is a fast runner.|그는 빠른 달리기 선수입니다.^slow|느린|moving without speed|She is a slow learner.|그녀는 느리게 배우는 학생이에요."
+            }
+        ].map(ch => ({
+            ...ch,
+            words: ch.data.split('^').map(row => {
+                let p = row.split('|');
+                return { en: p[0], ko: p[1], def: p[2], senEn: p[3], senKo: p[4] };
+            })
+        }));
+
+        const rpData = {
+            1: {
+                intro: "주어진 뜻과 문맥을 보고, 빈칸에 알맞은 영어 단어를 적어 21줄의 대화문을 완성하세요.",
+                dialogue: [
+                    { speaker: "A", text: "Mom, where is my [brother]? He is not in his [bedroom].", ko: "엄마, 제 남동생 어디 있어요? 자기 침실에 없어요." },
+                    { speaker: "B", text: "He is looking for a new [chair] for his [computer] desk.", ko: "그는 자기 컴퓨터 책상에 놓을 새 의자를 찾고 있단다." },
+                    { speaker: "A", text: "Is our [aunt] using the [bathroom] right now?", ko: "우리 이모가 지금 욕실을 쓰고 계신가요?" },
+                    { speaker: "B", text: "Yes, and she turned on the [air conditioner] because it's hot.", ko: "응, 그리고 날이 더워서 에어컨을 켜두셨어." },
+                    { speaker: "A", text: "I found a warm [blanket] in the [closet] earlier.", ko: "아까 옷장에서 따뜻한 담요를 하나 찾았어요." },
+                    { speaker: "B", text: "Good. Can you check the [attic] or the [basement] for more?", ko: "좋구나. 다락방이나 지하실에 더 있는지 확인해 줄래?" },
+                    { speaker: "A", text: "Sure, but first I will [cook] some soup in this [bowl].", ko: "네, 하지만 먼저 이 사발에 수프를 요리할게요." },
+                    { speaker: "B", text: "I'll go to the [bedroom] and rest on my [bed].", ko: "난 침실에 가서 내 침대에서 좀 쉴게." },
+                    { speaker: "A", text: "Where are your [parents]? I think they are in the [kitchen].", ko: "너희 부모님은 어디 계시니? 내 생각엔 주방에 계신 것 같아." },
+                    { speaker: "B", text: "They are having tea with our [grandparents] in the [dining room].", ko: "그분들은 식당에서 우리 조부모님과 차를 마시고 계셔." },
+                    { speaker: "A", text: "Look, my [grandfather] is standing near the [door].", ko: "봐, 우리 할아버지께서 문 근처에 서 계셔." },
+                    { speaker: "B", text: "And my [grandmother] is cleaning the [floor] with a cloth.", ko: "그리고 우리 할머니께서는 걸레로 바닥을 청소하고 계시네." },
+                    { speaker: "A", text: "I left my [mobile phone] on the [desk] over there.", ko: "저기 책상 위에 내 휴대폰을 두고 왔어." },
+                    { speaker: "B", text: "Go to the [living room] and turn on the [fan] for her.", ko: "거실에 가서 할머니를 위해 선풍기를 좀 켜드려." },
+                    { speaker: "A", text: "Okay, and I will take the [garbage] out to the [garage].", ko: "알았어, 그리고 쓰레기를 차고로 내다 놓을게." },
+                    { speaker: "B", text: "That sounds helpful. Thank you.", ko: "정말 도움이 되겠구나. 고맙다." },
+                    { speaker: "A", text: "My [sister] is sleeping on the [sofa] right now.", ko: "내 여동생은 지금 소파에서 자고 있어." },
+                    { speaker: "B", text: "She needs a [pillow] while watching [television] all night.", ko: "밤새 TV를 보느라 베개가 필요하겠네." },
+                    { speaker: "A", text: "Is there any cold water in the [refrigerator]?", ko: "냉장고에 시원한 물 좀 있니?" },
+                    { speaker: "B", text: "Yes, it's on the [table] next to the [sink].", ko: "응, 싱크대 옆 식탁 위에 있어." },
+                    { speaker: "A", text: "I need to clean the [toilet] in the other [room].", ko: "나는 다른 방에 있는 변기를 청소해야 해." },
+                    { speaker: "B", text: "Wait, the [telephone] is ringing near the [window].", ko: "잠깐만, 창문 근처에서 전화기가 울리고 있어." },
+                    { speaker: "A", text: "I'll go down the [stairs] and turn on the [porch light].", ko: "계단으로 내려가서 현관등을 켤게." },
+                    { speaker: "B", text: "Be careful not to trip. Look at the [roof] outside!", ko: "넘어지지 않게 조심해. 밖의 지붕을 좀 봐!" }
+                ]
+            },
+            2: {
+                intro: "주어진 뜻과 문맥을 보고, 빈칸에 알맞은 영어 단어를 적어 21줄의 대화문을 완성하세요.",
+                dialogue: [
+                    { speaker: "A", text: "We have an [annual] party every [June] or [July].", ko: "우리는 매년 6월이나 7월에 연례 파티를 열어." },
+                    { speaker: "B", text: "My [clock] says it is already [Friday] [afternoon].", ko: "내 시계를 보니 벌써 금요일 오후야." },
+                    { speaker: "A", text: "I started planning this a [decade] ago in [January].", ko: "나는 이걸 10년 전인 1월부터 계획하기 시작했어." },
+                    { speaker: "B", text: "We can meet in [February] or early [April] for an [hour].", ko: "우리는 2월이나 4월 초에 한 시간 동안 만날 수 있어." },
+                    { speaker: "A", text: "The [evening] festival in [August] was great.", ko: "8월에 열린 저녁 축제는 정말 멋졌어." },
+                    { speaker: "B", text: "Wait, wasn't it in [December] instead?", ko: "잠깐만, 그게 대신 12월 아니었어?" },
+                    { speaker: "A", text: "I need to check the exact [date] of the event.", ko: "행사의 정확한 날짜를 확인해봐야겠어." },
+                    { speaker: "A", text: "It's [Monday] [morning] and the new [month] starts soon.", ko: "월요일 아침이고 새로운 달이 곧 시작돼." },
+                    { speaker: "B", text: "We should meet at [noon] once in [March] or [May].", ko: "우리는 3월이나 5월 중에 정오에 한 번 만나야 해." },
+                    { speaker: "A", text: "I stayed there [overnight] [once] last [October].", ko: "나는 지난 10월에 그곳에 하룻밤 동안 한 번 머물렀어." },
+                    { speaker: "B", text: "It was a cold [night] in [November], right?", ko: "그건 11월의 어느 추운 밤이었지, 맞지?" },
+                    { speaker: "A", text: "Yes, I woke up at [midnight] and waited for a [quarter].", ko: "응, 자정에 깨어나서 15분(4분의 1시간) 동안 기다렸어." },
+                    { speaker: "B", text: "Give me a [minute] to check the calendar.", ko: "달력을 확인할 시간을 잠깐(1분만) 줘." },
+                    { speaker: "A", text: "Time is running out, please hurry up.", ko: "시간이 없으니 서둘러 줘." },
+                    { speaker: "A", text: "Check your [schedule] for the upcoming [week].", ko: "다가오는 주를 위한 너의 일정을 확인해 봐." },
+                    { speaker: "B", text: "[Today] is [Tuesday] and [tomorrow] is [Wednesday].", ko: "오늘은 화요일이고 내일은 수요일이야." },
+                    { speaker: "A", text: "We can spend the [weekend] on [Saturday] and [Sunday].", ko: "우리는 토요일과 일요일 주말을 보낼 수 있어." },
+                    { speaker: "B", text: "I have some [time] on [Thursday] or next [year].", ko: "목요일이나 내년에 시간이 좀 있어." },
+                    { speaker: "A", text: "Is your [watch] broken since last [September]?", ko: "너의 손목시계가 지난 9월부터 고장 난 거니?" },
+                    { speaker: "B", text: "Yes, it stopped moving on that rainy day.", ko: "응, 비 오던 그날에 움직임을 멈췄어." },
+                    { speaker: "A", text: "I hope we can fix it before the next meeting.", ko: "다음 모임 전에는 고칠 수 있으면 좋겠다." }
+                ]
+            },
+            3: {
+                intro: "주어진 뜻과 문맥을 보고, 빈칸에 알맞은 영어 단어를 적어 21줄의 대화문을 완성하세요.",
+                dialogue: [
+                    { speaker: "A", text: "In [autumn], a gentle [breeze] can turn [chilly].", ko: "가을에는 산들바람이 쌀쌀하게 변할 수 있어." },
+                    { speaker: "B", text: "A sudden [earthquake] can cause a dangerous [flood].", ko: "갑작스러운 지진은 위험한 홍수를 일으킬 수 있지." },
+                    { speaker: "A", text: "The [blizzard] outside will [freeze] everything tonight.", ko: "밖의 눈보라가 오늘 밤 모든 것을 얼려버릴 거야." },
+                    { speaker: "B", text: "There is [frost] and [dew] on the grass near the [fog].", ko: "안개 낀 잔디 근처에는 서리와 이슬이 맺혀 있어." },
+                    { speaker: "A", text: "The [desert] suffers from a long [drought] and [dust].", ko: "사막은 오랜 가뭄과 먼지로 고통받고 있어." },
+                    { speaker: "B", text: "Look at that dark [cloud] in the sky.", ko: "하늘에 저 어두운 구름 좀 봐." },
+                    { speaker: "A", text: "It looks like a storm is coming.", ko: "폭풍이 올 것 같아 보여." },
+                    { speaker: "A", text: "The [hurricane] over the [ocean] brought heavy [rain].", ko: "대양 너머의 허리케인이 폭우를 몰고 왔어." },
+                    { speaker: "B", text: "In [spring], we [sow] seeds after the [snow] melts.", ko: "봄에는 눈이 녹은 뒤에 씨를 뿌리지." },
+                    { speaker: "A", text: "The [monsoon] [season] makes the air very [muggy].", ko: "장마철에는 공기가 매우 후덥지근해져." },
+                    { speaker: "B", text: "I saw [lightning] through the thick [mist] in the [rainforest].", ko: "나는 열대우림의 짙은 안개 속에서 번개를 봤어." },
+                    { speaker: "A", text: "Is that an [iceberg] made of solid [ice]?", ko: "저건 단단한 얼음으로 만들어진 빙산이니?" },
+                    { speaker: "B", text: "Yes, it's floating on the cold water.", ko: "응, 차가운 물 위에 떠 있네." },
+                    { speaker: "A", text: "The view is absolutely stunning.", ko: "경치가 정말 멋지다." },
+                    { speaker: "A", text: "The [weather] will be [sunny] and [warm] this [summer].", ko: "이번 여름 날씨는 화창하고 따뜻할 거야." },
+                    { speaker: "B", text: "Check the [thermometer] as the [temperature] rises under the [sun].", ko: "태양 아래서 기온이 올라가니까 온도계를 확인해 봐." },
+                    { speaker: "A", text: "A big [storm] with [thunder] and [wind] is coming.", ko: "천둥과 바람을 동반한 큰 폭풍이 오고 있어." },
+                    { speaker: "B", text: "Don't forget your [umbrella] or you will get [wet].", ko: "우산을 잊지 마, 아니면 다 젖을 거야." },
+                    { speaker: "A", text: "A violent [tornado] or a [typhoon] can be scary.", ko: "격렬한 토네이도나 태풍은 무서울 수 있어." },
+                    { speaker: "B", text: "Nature has so much power.", ko: "자연은 정말 큰 힘을 가지고 있어." },
+                    { speaker: "A", text: "We must always be prepared.", ko: "우리는 항상 대비하고 있어야 해." }
+                ]
+            },
+            4: {
+                intro: "주어진 뜻과 문맥을 보고, 빈칸에 알맞은 영어 단어를 적어 21줄의 대화문을 완성하세요.",
+                dialogue: [
+                    { speaker: "A", text: "An [actor] and an [artist] met a brave [astronaut].", ko: "어느 배우와 화가가 용감한 우주비행사를 만났어." },
+                    { speaker: "B", text: "The [baker] and the [barista] served the [athlete].", ko: "제빵사와 바리스타가 그 운동선수에게 음식을 대접했지." },
+                    { speaker: "A", text: "The [author] talked to a famous [broadcaster] and a [businessman].", ko: "작가는 유명한 방송인과 사업가에게 말을 걸었어." },
+                    { speaker: "B", text: "A [cartoonist] and a [chef] are working together.", ko: "만화가와 주방장이 함께 일하고 있어." },
+                    { speaker: "A", text: "The [cashier] and the [clerk] told the [cook] to hurry.", ko: "계산원과 점원이 요리사에게 서두르라고 말했어." },
+                    { speaker: "B", text: "Everyone is doing their job well.", ko: "모두가 자기 일을 잘하고 있구나." },
+                    { speaker: "A", text: "It's a busy day for everyone.", ko: "모두에게 바쁜 하루네." },
+                    { speaker: "A", text: "The [dentist] and the [doctor] saw a [firefighter].", ko: "치과의사와 의사가 소방관을 봤어." },
+                    { speaker: "B", text: "A [designer] and an [engineer] are talking to the [driver].", ko: "디자이너와 엔지니어가 운전기사와 이야기하고 있어." },
+                    { speaker: "A", text: "The [detective] asked the [guard] and the [farmer] some questions.", ko: "형사가 경비원과 농부에게 몇 가지 질문을 했어." },
+                    { speaker: "B", text: "A [florist] and a [hairdresser] visited the [librarian].", ko: "꽃집 주인과 미용사가 사서를 방문했지." },
+                    { speaker: "A", text: "The [judge] listened to the [lawyer] in court.", ko: "판사는 법정에서 변호사의 말을 들었어." },
+                    { speaker: "B", text: "The court trial was very serious.", ko: "법정 재판은 매우 진지했어." },
+                    { speaker: "A", text: "Justice must be served.", ko: "정의가 이루어져야 해." },
+                    { speaker: "A", text: "A [magician] and a [film director] watched the [musician] perform.", ko: "마술사와 영화 감독이 음악가의 연주를 지켜봤어." },
+                    { speaker: "B", text: "The [novelist] and the [photographer] interviewed the [singer].", ko: "소설가와 사진작가는 그 가수를 인터뷰했지." },
+                    { speaker: "A", text: "A [mail carrier] delivered a package to the [nurse] and the [pharmacist].", ko: "우편배달부가 간호사와 약사에게 소포를 배달했어." },
+                    { speaker: "B", text: "The [pilot] and the [police officer] spoke with the [programmer].", ko: "조종사와 경찰관이 프로그래머와 대화했어." },
+                    { speaker: "A", text: "The [reporter] and the [scientist] studied the results.", ko: "기자와 과학자가 그 결과들을 연구했지." },
+                    { speaker: "B", text: "They found something very interesting.", ko: "그들은 무척 흥미로운 점을 발견했어." },
+                    { speaker: "A", text: "It could change everything.", ko: "그게 모든 것을 바꿀 수도 있어." }
+                ]
+            },
+            5: {
+                intro: "주어진 뜻과 문맥을 보고, 빈칸에 알맞은 영어 단어를 적어 21줄의 대화문을 완성하세요.",
+                dialogue: [
+                    { speaker: "A", text: "I'll go to the [bank] and then meet you at the [bus stop].", ko: "나는 은행에 갔다가 버스 정류장에서 너를 만날게." },
+                    { speaker: "B", text: "Let's visit the [campus] and the grand [city hall].", ko: "캠퍼스와 웅장한 시청을 방문해 보자." },
+                    { speaker: "A", text: "We can buy books at the [bookstore] and bread at the [bakery].", ko: "서점에서 책을 사고 빵집에서 빵을 살 수 있어." },
+                    { speaker: "B", text: "Let's walk on the [beach] after a haircut at the [beauty shop].", ko: "미용실에서 머리를 자른 뒤에 해변을 걷자." },
+                    { speaker: "A", text: "Check out the [amusement park] and the [concert hall].", ko: "놀이공원과 연주회장도 확인해 봐." },
+                    { speaker: "B", text: "Use the [crosswalk] to go to the [church] and then the [airport].", ko: "횡단보도를 이용해 교회에 갔다가 공항으로 가자." },
+                    { speaker: "A", text: "Buy an apple at the [convenience store].", ko: "편의점에서 사과를 하나 사자." },
+                    { speaker: "B", text: "I'm looking forward to our trip.", ko: "우리 여행이 정말 기대돼." },
+                    { speaker: "A", text: "I went to the [department store] and the local [market].", ko: "나는 백화점과 지역 시장에 갔어." },
+                    { speaker: "B", text: "Let's see the art at the [gallery] and the trees in the [park].", ko: "미술관에서 예술품을 보고 공원에서 나무들을 보자." },
+                    { speaker: "A", text: "The [hospital] is next to the [fire station] and the [library].", ko: "병원은 소방서와 도서관 옆에 있어." },
+                    { speaker: "B", text: "My dad works at the [factory] and has a [garden] at home.", ko: "우리 아빠는 공장에서 일하시고 집에 정원이 있어." },
+                    { speaker: "A", text: "We can visit the [museum] or the apple [orchard].", ko: "우리는 박물관이나 사과 과수원을 방문할 수 있어." },
+                    { speaker: "B", text: "Stop at the [gas station] before we head to the [harbor] or the [mudflat].", ko: "항구나 갯벌로 향하기 전에 주유소에 들르자." },
+                    { speaker: "A", text: "The environment is so diverse here.", ko: "여기는 환경이 매우 다양하구나." },
+                    { speaker: "A", text: "I'll park in the [parking lot] and go to the [post office].", ko: "주차장에 주차하고 우체국에 갈게." },
+                    { speaker: "B", text: "Let's eat at the [restaurant] and then go to the [theater].", ko: "식당에서 밥을 먹고 극장에 가자." },
+                    { speaker: "A", text: "I need to go to the [school] and then the [university].", ko: "나는 학교에 갔다가 대학교에 가야 해." },
+                    { speaker: "B", text: "The [supermarket] and the [store] are near the [station].", ko: "슈퍼마켓과 가게는 역 근처에 있어." },
+                    { speaker: "A", text: "Visit the animals at the [zoo] in our small [village].", ko: "우리 작은 마을에 있는 동물원에서 동물들을 구경하자." },
+                    { speaker: "B", text: "Use the [rest room] at the [stadium] near the [police station].", ko: "경찰서 근처 경기장에 있는 화장실을 이용해." }
+                ]
+            },
+            6: {
+                intro: "주어진 뜻과 문맥을 보고, 빈칸에 알맞은 영어 단어를 적어 21줄의 대화문을 완성하세요.",
+                dialogue: [
+                    { speaker: "A", text: "The [driver] has a new [driver's license] for his [automobile].", ko: "그 운전사는 자기 자동차를 위한 새 운전면허증을 가지고 있어." },
+                    { speaker: "B", text: "I saw an [ambulance] and a [fire engine] on the [highway].", ko: "나는 고속도로에서 구급차와 소방차를 봤어." },
+                    { speaker: "A", text: "The [dump truck] is parked near the [crossing] and the [dock].", ko: "덤프트럭이 건널목과 부두 근처에 주차되어 있어." },
+                    { speaker: "B", text: "He took a [flight] and then rode in a [helicopter].", ko: "그는 비행을 마친 뒤 헬리콥터를 탔어." },
+                    { speaker: "A", text: "I want to travel on a huge [cruise ship] or a small [boat].", ko: "나는 거대한 유람선이나 작은 보트를 타고 여행하고 싶어." },
+                    { speaker: "B", text: "I prefer riding my [bicycle] every day.", ko: "나는 매일 내 자전거를 타는 걸 더 좋아해." },
+                    { speaker: "A", text: "Cycling is a great way to stay fit.", ko: "자전거 타기는 체력을 유지하는 좋은 방법이야." },
+                    { speaker: "A", text: "The [passenger] on the [motorcycle] is on a [one-way street].", ko: "오토바이에 탄 승객이 일방통행로에 있어." },
+                    { speaker: "B", text: "Wait at the [intersection] [opposite] the [railroad] tracks.", ko: "철로 반대편 교차로에서 기다려." },
+                    { speaker: "A", text: "I saw a [patrol car] from the [overpass] above the [sidewalk].", ko: "인도 위의 육교에서 경찰차를 봤어." },
+                    { speaker: "B", text: "The aircraft is on the [runway] near the large [ship].", ko: "항공기가 큰 배 근처의 활주로에 있어." },
+                    { speaker: "A", text: "I like riding my [scooter] more than a [sailboat].", ko: "나는 범선보다 내 스쿠터를 타는 걸 좋아해." },
+                    { speaker: "B", text: "Have you ever been in a [submarine] underwater?", ko: "물속 잠수함에 타본 적이 있니?" },
+                    { speaker: "A", text: "Exploring the ocean depths would be amazing.", ko: "바다 깊은 곳을 탐험하는 건 정말 놀라울 거야." },
+                    { speaker: "A", text: "The [traffic] is heavy near the red [traffic light].", ko: "빨간 신호등 근처에 교통이 혼잡해." },
+                    { speaker: "B", text: "I'll take the [subway] or a [taxi] with my [ticket].", ko: "나는 티켓을 가지고 지하철이나 택시를 탈 거야." },
+                    { speaker: "A", text: "The [train] and the [tram] are great public [transit] options.", ko: "기차와 전차는 훌륭한 대중교통 선택지야." },
+                    { speaker: "B", text: "My [van] had a flat [tire] on its large [wheel].", ko: "내 승합차의 큰 바퀴 타이어가 펑크 났어." },
+                    { speaker: "A", text: "A big [truck] and an old [wagon] passed by the [yacht].", ko: "큰 트럭과 낡은 마차가 요트 옆을 지나갔어." },
+                    { speaker: "B", text: "Transport history is very interesting.", ko: "운송의 역사는 정말 흥미로워." },
+                    { speaker: "A", text: "Technology keeps changing the way we move.", ko: "기술은 우리가 이동하는 방식을 계속 바꾸고 있어." }
+                ]
+            },
+            7: {
+                intro: "주어진 뜻과 문맥을 보고, 빈칸에 알맞은 영어 단어를 적어 21줄의 대화문을 완성하세요.",
+                dialogue: [
+                    { speaker: "A", text: "Was he [absent] or [present] for the [big] event?", ko: "그가 큰 행사에 결석했니, 아니면 출석했니?" },
+                    { speaker: "B", text: "He had to [refuse] the [bad] offer [before] it could [begin].", ko: "그는 그것이 시작되기도 전에 나쁜 제안을 거절해야 했어." },
+                    { speaker: "A", text: "I [agree] that it was a [good] idea to [accept] the [small] gift.", ko: "작은 선물을 받은 건 좋은 생각이었다고 나도 동의해." },
+                    { speaker: "B", text: "I [disagree], we should wait until [after] the [end] of the meeting.", ko: "나는 반대해, 우리는 회의가 끝난 뒤까지 기다려야 해." },
+                    { speaker: "A", text: "Are you [fast] or [slow] at solving the problems?", ko: "너는 문제를 푸는 게 빠르니 아니면 느리니?" },
+                    { speaker: "B", text: "It depends on the complexity of the task.", ko: "태스크의 복잡도에 따라 달라." },
+                    { speaker: "A", text: "Patience and effort are key to success.", ko: "인내와 노력은 성공의 열쇠야." },
+                    { speaker: "A", text: "He made a [bold] move from the [bottom] to the [top].", ko: "그는 바닥에서 꼭대기까지 대담한 행보를 보였어." },
+                    { speaker: "B", text: "The [brave] man refused to be [timid] or [cowardly].", ko: "그 용감한 남자는 소심하거나 비겁해지는 걸 거부했지." },
+                    { speaker: "A", text: "Is the [interesting] story in the [black] or [white] book?", ko: "그 흥미로운 이야기가 검은색 책에 있니, 흰색 책에 있니?" },
+                    { speaker: "B", text: "It's a [broad] topic, not a [narrow] or [boring] one.", ko: "그건 좁거나 지루한 게 아니라 넓은 주제야." },
+                    { speaker: "A", text: "We will [build] a new house and [destroy] the old one.", ko: "우리는 새 집을 짓고 낡은 집을 부술 거야." },
+                    { speaker: "B", text: "Moving forward is always a challenge.", ko: "앞으로 나아가는 것은 항상 도전이야." },
+                    { speaker: "A", text: "But it's necessary for growth.", ko: "하지만 성장을 위해서는 필요해." },
+                    { speaker: "A", text: "This [cheap] watch is [dirty] but that [expensive] one is [clean].", ko: "이 싼 시계는 더럽지만 저 비싼 시계는 깨끗해." },
+                    { speaker: "B", text: "Is the [hot] soup [near] or [far] from the [cold] water?", ko: "뜨거운 수프가 차가운 물에서 가깝니 아니면 머니?" },
+                    { speaker: "A", text: "He is a [clever] boy who is never [stupid].", ko: "그는 결코 미련하지 않은 영리한 소년이야." },
+                    { speaker: "B", text: "This [difficult] task is [easy] for a fast learner.", ko: "이 어려운 업무도 빨리 배우는 이에겐 쉬워." },
+                    { speaker: "A", text: "Contrasts help us understand the world better.", ko: "대조는 세상을 더 잘 이해하게 도와줘." },
+                    { speaker: "B", text: "Everything has its opposite side.", ko: "모든 것에는 그 반대 면이 있어." },
+                    { speaker: "A", text: "Wisdom comes from balancing them.", ko: "지혜는 그것들의 균형을 맞추는 데서 와." }
+                ]
+            }
+        };
+
+        db.forEach(ch => { ch.roleplay = rpData[ch.id]; });
+
+        const verbForms = {
+            'be': { base: 'be', past: 'was', presSingular: 'is' }, 'is': { base: 'be', past: 'was', presSingular: 'is' },
+            'am': { base: 'be', past: 'was', presSingular: 'is' }, 'are': { base: 'be', past: 'were', presSingular: 'is' },
+            'was': { base: 'be', past: 'was', presSingular: 'is' }, 'were': { base: 'be', past: 'were', presSingular: 'is' },
+            'have': { base: 'have', past: 'had', presSingular: 'has' }, 'has': { base: 'have', past: 'had', presSingular: 'has' },
+            'had': { base: 'have', past: 'had', presSingular: 'has' }, 'do': { base: 'do', past: 'did', presSingular: 'does' },
+            'does': { base: 'do', past: 'did', presSingular: 'does' }, 'did': { base: 'do', past: 'did', presSingular: 'does' },
+            'go': { base: 'go', past: 'went', presSingular: 'goes' }, 'goes': { base: 'go', past: 'went', presSingular: 'goes' }, 'went': { base: 'go', past: 'went', presSingular: 'goes' },
+            'take': { base: 'take', past: 'took', presSingular: 'takes' }, 'takes': { base: 'take', past: 'took', presSingular: 'takes' }, 'took': { base: 'take', past: 'took', presSingular: 'takes' },
+            'make': { base: 'make', past: 'made', presSingular: 'makes' }, 'makes': { base: 'make', past: 'made', presSingular: 'makes' }, 'made': { base: 'make', past: 'made', presSingular: 'makes' },
+            'get': { base: 'get', past: 'got', presSingular: 'gets' }, 'gets': { base: 'get', past: 'got', presSingular: 'gets' }, 'got': { base: 'get', past: 'got', presSingular: 'gets' },
+            'see': { base: 'see', past: 'saw', presSingular: 'sees' }, 'sees': { base: 'see', past: 'saw', presSingular: 'sees' }, 'saw': { base: 'see', past: 'saw', presSingular: 'sees' },
+            'meet': { base: 'meet', past: 'met', presSingular: 'meets' }, 'meets': { base: 'meet', past: 'met', presSingular: 'meets' }, 'met': { base: 'meet', past: 'met', presSingular: 'meets' },
+            'throw': { base: 'throw', past: 'threw', presSingular: 'throws' }, 'throws': { base: 'throw', past: 'threw', presSingular: 'throws' }, 'threw': { base: 'throw', past: 'threw', presSingular: 'throws' },
+            'fly': { base: 'fly', past: 'flew', presSingular: 'flies' }, 'flies': { base: 'fly', past: 'flew', presSingular: 'flies' }, 'flew': { base: 'fly', past: 'flew', presSingular: 'flies' },
+            'blow': { base: 'blow', past: 'blew', presSingular: 'blows' }, 'blows': { base: 'blow', past: 'blew', presSingular: 'blows' }, 'blew': { base: 'blow', past: 'blew', presSingular: 'blows' },
+            'feel': { base: 'feel', past: 'felt', presSingular: 'feels' }, 'feels': { base: 'feel', past: 'felt', presSingular: 'feels' }, 'felt': { base: 'feel', past: 'felt', presSingular: 'feels' },
+            'fall': { base: 'fall', past: 'fell', presSingular: 'falls' }, 'falls': { base: 'fall', past: 'fell', presSingular: 'falls' }, 'fell': { base: 'fall', past: 'fell', presSingular: 'falls' },
+            'catch': { base: 'catch', past: 'caught', presSingular: 'catches' }, 'catches': { base: 'catch', past: 'caught', presSingular: 'catches' }, 'caught': { base: 'catch', past: 'caught', presSingular: 'catches' },
+            'stand': { base: 'stand', past: 'stood', presSingular: 'stands' }, 'stands': { base: 'stand', past: 'stood', presSingular: 'stands' }, 'stood': { base: 'stand', past: 'stood', presSingular: 'stands' },
+            'say': { base: 'say', past: 'said', presSingular: 'says' }, 'says': { base: 'say', past: 'said', presSingular: 'says' }, 'said': { base: 'say', past: 'said', presSingular: 'says' },
+            'tell': { base: 'tell', past: 'told', presSingular: 'tells' }, 'tells': { base: 'tell', past: 'told', presSingular: 'tells' }, 'told': { base: 'tell', past: 'told', presSingular: 'tells' },
+            'come': { base: 'come', past: 'came', presSingular: 'comes' }, 'comes': { base: 'come', past: 'came', presSingular: 'comes' }, 'came': { base: 'come', past: 'came', presSingular: 'comes' },
+            'spend': { base: 'spend', past: 'spent', presSingular: 'spends' }, 'spends': { base: 'spend', past: 'spent', presSingular: 'spends' }, 'spent': { base: 'spend', past: 'spent', presSingular: 'spends' },
+            'wake': { base: 'wake', past: 'woke', presSingular: 'wakes' }, 'wakes': { base: 'wake', past: 'woke', presSingular: 'wakes' }, 'woke': { base: 'wake', past: 'woke', presSingular: 'wakes' },
+            'read': { base: 'read', past: 'read', presSingular: 'reads' }, 'reads': { base: 'read', past: 'read', presSingular: 'reads' },
+            'put': { base: 'put', past: 'put', presSingular: 'puts' }, 'puts': { base: 'put', past: 'put', presSingular: 'puts' },
+            'cut': { base: 'cut', past: 'cut', presSingular: 'cuts' }, 'cuts': { base: 'cut', past: 'cut', presSingular: 'cuts' },
+            'hit': { base: 'hit', past: 'hit', presSingular: 'hits' }, 'hits': { base: 'hit', past: 'hit', presSingular: 'hits' },
+            'leave': { base: 'leave', past: 'left', presSingular: 'leaves' }, 'leaves': { base: 'leave', past: 'left', presSingular: 'leaves' }, 'left': { base: 'leave', past: 'left', presSingular: 'leaves' },
+            'build': { base: 'build', past: 'built', presSingular: 'builds' }, 'builds': { base: 'build', past: 'built', presSingular: 'builds' }, 'built': { base: 'build', past: 'built', presSingular: 'builds' },
+            'think': { base: 'think', past: 'thought', presSingular: 'thinks' }, 'thinks': { base: 'think', past: 'thought', presSingular: 'thinks' }, 'thought': { base: 'think', past: 'thought', presSingular: 'thinks' },
+            'know': { base: 'know', past: 'knew', presSingular: 'knows' }, 'knows': { base: 'know', past: 'knew', presSingular: 'knows' }, 'knew': { base: 'know', past: 'knew', presSingular: 'knows' },
+            'mean': { base: 'mean', past: 'meant', presSingular: 'means' }, 'means': { base: 'mean', past: 'meant', presSingular: 'means' }, 'meant': { base: 'mean', past: 'meant', presSingular: 'means' },
+            'bring': { base: 'bring', past: 'brought', presSingular: 'brings' }, 'brings': { base: 'bring', past: 'brought', presSingular: 'brings' }, 'brought': { base: 'bring', past: 'brought', presSingular: 'brings' },
+            'ride': { base: 'ride', past: 'rode', presSingular: 'rides' }, 'rides': { base: 'ride', past: 'rode', presSingular: 'rides' }, 'rode': { base: 'ride', past: 'rode', presSingular: 'rides' },
+            'find': { base: 'find', past: 'found', presSingular: 'finds' }, 'finds': { base: 'find', past: 'found', presSingular: 'finds' }, 'found': { base: 'find', past: 'found', presSingular: 'finds' },
+            'give': { base: 'give', past: 'gave', presSingular: 'gives' }, 'gives': { base: 'give', past: 'gave', presSingular: 'gives' }, 'gave': { base: 'give', past: 'gave', presSingular: 'gives' },
+            'become': { base: 'become', past: 'became', presSingular: 'becomes' }, 'becomes': { base: 'become', past: 'became', presSingular: 'becomes' }, 'became': { base: 'become', past: 'became', presSingular: 'becomes' },
+            'begin': { base: 'begin', past: 'began', presSingular: 'begins' }, 'begins': { base: 'begin', past: 'began', presSingular: 'begins' }, 'began': { base: 'begin', past: 'began', presSingular: 'begins' },
+            'draw': { base: 'draw', past: 'drew', presSingular: 'draws' }, 'draws': { base: 'draw', past: 'drew', presSingular: 'draws' }, 'drew': { base: 'draw', past: 'drew', presSingular: 'draws' },
+            'sing': { base: 'sing', past: 'sang', presSingular: 'sings' }, 'sings': { base: 'sing', past: 'sang', presSingular: 'sings' }, 'sang': { base: 'sing', past: 'sang', presSingular: 'sings' },
+            'buy': { base: 'buy', past: 'bought', presSingular: 'buys' }, 'buys': { base: 'buy', past: 'bought', presSingular: 'buys' }, 'bought': { base: 'buy', past: 'bought', presSingular: 'buys' },
+            'drink': { base: 'drink', past: 'drank', presSingular: 'drinks' }, 'drinks': { base: 'drink', past: 'drank', presSingular: 'drinks' }, 'drank': { base: 'drink', past: 'drank', presSingular: 'drinks' },
+            'rise': { base: 'rise', past: 'rose', presSingular: 'rises' }, 'rises': { base: 'rise', past: 'rose', presSingular: 'rises' }, 'rose': { base: 'rise', past: 'rose', presSingular: 'rises' },
+            'sell': { base: 'sell', past: 'sold', presSingular: 'sells' }, 'sells': { base: 'sell', past: 'sold', presSingular: 'sells' }, 'sold': { base: 'sell', past: 'sold', presSingular: 'sells' },
+            'want': { base: 'want', past: 'wanted', presSingular: 'wants' }, 'wants': { base: 'want', past: 'wanted', presSingular: 'wants' }, 'wanted': { base: 'want', past: 'wanted', presSingular: 'wants' },
+            'watch': { base: 'watch', past: 'watched', presSingular: 'watches' }, 'watches': { base: 'watch', past: 'watched', presSingular: 'watches' }, 'watched': { base: 'watch', past: 'watched', presSingular: 'watches' },
+            'wash': { base: 'wash', past: 'washed', presSingular: 'washes' }, 'washes': { base: 'wash', past: 'washed', presSingular: 'washes' }, 'washed': { base: 'wash', past: 'washed', presSingular: 'washes' }
+        };
+
+        function padDataTo42() {
+            db.forEach(ch => {
+                if (ch.words.length >= 42) return;
+                const originalWords = [...ch.words];
+                let fallbackIdx = 0;
+                while (ch.words.length < 42) {
+                    const wordToCopy = originalWords[fallbackIdx % originalWords.length];
+                    ch.words.push({ ...wordToCopy });
+                    fallbackIdx++;
+                }
+                ch.words = ch.words.slice(0, 42);
+            });
+        }
+
+        function replaceProperNouns(sen) {
+            let s = sen;
+            const map = {
+                'Anne': 'She', 'Michael': 'He', 'David': 'He', 'Joseph': 'He', 'Coco Chanel': 'She',
+                'Sherlock Holmes': 'He', 'Bong Joon Ho': 'He', 'Charles Dickens': 'He', 'Jessica': 'She',
+                'Aesop': 'He', 'Walt Disney': 'He', 'London': 'it', 'Paris': 'it', 'Busan': 'it', 'Seoul': 'it',
+                'Melbourne': 'it', 'Oxford': 'it', 'New Orleans': 'it'
+            };
+            for (let [k, v] of Object.entries(map)) {
+                s = s.replace(new RegExp(`\\b${k}\\b`, 'g'), v);
+            }
+            return s;
+        }
+
+        function shuffleString(str) {
+            const arr = str.split('');
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr.join('');
+        }
+
+        function scrambleWord(word) {
+            return word.split(' ').map(w => {
+                let shuffled = shuffleString(w);
+                let attempts = 0;
+                while (w.length > 2 && shuffled === w && attempts < 5) {
+                    shuffled = shuffleString(w);
+                    attempts++;
+                }
+                return shuffled.split('').join(' ');
+            }).join('   ');
+        }
+
+        function scrambleSentence(sen) {
+            let cleanSen = sen.replace(/[.?!]$/, '');
+            let words = cleanSen.split(' ');
+            for (let i = words.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [words[i], words[j]] = [words[j], words[i]];
+            }
+            return "( " + words.join(' / ') + " )";
+        }
+
+        function splitSubjVerb(s) {
+            let sen = replaceProperNouns(s.trim());
+            let negMatch = sen.match(/^(.*?)\b(don't|doesn't|didn't|cannot|can't|won't|isn't|aren't|wasn't|weren't|shouldn't|wouldn't|couldn't|mustn't)\b(.*)$/i);
+            if (negMatch) {
+                let subj = negMatch[1].trim();
+                let aux = negMatch[2].toLowerCase();
+                let rest = negMatch[3].trim();
+
+                if (['isn\'t', 'aren\'t', 'wasn\'t', 'weren\'t'].includes(aux)) {
+                    return { subj: subj, adv: 'not ', verb: aux.replace("n't", ""), rest: rest, isNeg: true };
+                }
+                if (aux === 'won\'t') return { subj: subj, adv: 'not ', verb: 'will', rest: rest, isNeg: true };
+                if (aux === 'can\'t' || aux === 'cannot') return { subj: subj, adv: 'not ', verb: 'can', rest: rest, isNeg: true };
+
+                if (['don\'t', 'doesn\'t', 'didn\'t'].includes(aux)) {
+                    let restWords = rest.split(' ');
+                    let mainVerb = restWords[0];
+                    let realRest = restWords.slice(1).join(' ');
+                    return { subj: subj, adv: 'not ', verb: mainVerb, aux: aux.replace("n't", ""), rest: realRest, isNeg: true };
+                }
+            }
+
+            const allVerbsList = [
+                'is', 'am', 'are', 'was', 'were', 'will', 'can', 'could', 'should', 'would', 'must', 'has', 'have', 'had', 'does', 'do', 'did',
+                'want', 'wants', 'wanted', 'live', 'lives', 'lived', 'park', 'parks', 'parked', 'throw', 'throws', 'threw', 'cook', 'cooks', 'cooked',
+                'watch', 'watches', 'watched', 'need', 'needs', 'needed', 'love', 'loves', 'loved', 'wash', 'washes', 'washed', 'jump', 'jumps', 'jumped',
+                'run', 'runs', 'ran', 'ring', 'rings', 'rang', 'meet', 'meets', 'met', 'change', 'changes', 'changed', 'get', 'gets', 'got',
+                'open', 'opens', 'opened', 'try', 'tries', 'tried', 'become', 'becomes', 'became', 'spend', 'spends', 'spent', 'leave', 'leaves', 'left',
+                'die', 'dies', 'died', 'start', 'starts', 'started', 'fly', 'flies', 'flew', 'wake', 'wakes', 'woke', 'ruin', 'ruins', 'ruined',
+                'blow', 'blows', 'blew', 'hit', 'hits', 'read', 'reads', 'feel', 'feels', 'felt', 'crackle', 'crackles', 'crackled', 'see', 'sees', 'saw',
+                'paint', 'paints', 'painted', 'grow', 'grows', 'grew', 'pass', 'passes', 'passed', 'stand', 'stands', 'stood', 'work', 'works', 'worked',
+                'take', 'takes', 'took', 'make', 'makes', 'made', 'tell', 'tells', 'told', 'say', 'says', 'said', 'come', 'comes', 'came',
+                'write', 'writes', 'wrote', 'catch', 'catches', 'caught', 'put', 'puts', 'cut', 'cuts', 'cost', 'costs', 'set', 'sets', 'let', 'lets',
+                'fall', 'falls', 'fell', 'play', 'plays', 'played', 'continue', 'continues', 'continued', 'arrive', 'arrives', 'arrived',
+                'defend', 'defends', 'defended', 'investigate', 'investigates', 'investigated', 'assist', 'assists', 'assisted', 'give', 'gives', 'gave',
+                'find', 'finds', 'found', 'close', 'closes', 'closed', 'walk', 'walks', 'walked', 'ride', 'rides', 'rode', 'bring', 'brings', 'brought',
+                'cause', 'causes', 'caused', 'mean', 'means', 'meant', 'like', 'likes', 'liked', 'enjoy', 'enjoys', 'enjoyed', 'check', 'checks', 'checked',
+                'happen', 'happens', 'happened', 'bloom', 'blooms', 'bloomed', 'agree', 'agrees', 'agreed', 'disagree', 'disagrees', 'disagreed',
+                'accept', 'accepts', 'accepted', 'refuse', 'refuses', 'refused', 'begin', 'begins', 'began', 'end', 'ends', 'ended', 'build', 'builds', 'built',
+                'destroy', 'destroys', 'destroyed', 'belong', 'belongs', 'belonged', 'think', 'thinks', 'thought', 'know', 'knows', 'knew',
+                'drop', 'drops', 'dropped', 'stop', 'stops', 'stopped', 'study', 'studies', 'studied', 'relax', 'relaxes', 'relaxed',
+                'look', 'looks', 'looked', 'seem', 'seems', 'seemed', 'sound', 'sounds', 'sounded', 'ask', 'asks', 'asked', 'call', 'calls', 'called',
+                'help', 'helps', 'helped', 'show', 'shows', 'showed', 'sell', 'sells', 'sold', 'draw', 'draws', 'drew', 'sing', 'sings', 'sang',
+                'buy', 'buys', 'bought', 'drink', 'drinks', 'drank', 'flap', 'flaps', 'flapped', 'roll', 'rolls', 'rolled', 'rise', 'rises', 'rose',
+                'travel', 'travels', 'traveled', 'present', 'presents', 'presented', 'prepare', 'prepares', 'prepared', 'treat', 'treats', 'treated',
+                'design', 'designs', 'designed', 'protect', 'protects', 'protected', 'deliver', 'delivers', 'delivered', 'care', 'cares', 'cared',
+                'report', 'reports', 'reported', 'borrow', 'borrows', 'borrowed'
+            ];
+
+            let sClean = sen.replace(/[.?!,]/g, '').trim();
+            let words = sClean.split(' ');
+            let verbIdx = -1;
+            let verbSet = new Set(allVerbsList);
+            let determiners = new Set(['the', 'a', 'an', 'my', 'your', 'his', 'her', 'our', 'their', 'this', 'that', 'some', 'every', 'no', 'two', 'three', 'many', 'much', 'all', 'new', 'old', 'small', 'big', 'large']);
+
+            for (let i = 0; i < words.length; i++) {
+                let w = words[i].toLowerCase();
+                if (verbSet.has(w)) {
+                    if (i === 0 && !['is', 'are', 'was', 'were', 'do', 'does', 'did', 'can', 'will'].includes(w)) continue;
+                    if (i > 0 && determiners.has(words[i - 1].toLowerCase())) continue;
+
+                    if (w === 'train' && words[i - 1] && words[i - 1].toLowerCase() === 'the') continue;
+                    if (w === 'watch' && words[i - 1] && words[i - 1].toLowerCase() === 'my') continue;
+                    if (w === 'rain' && words[i - 1] && words[i - 1].toLowerCase() === 'the') continue;
+                    if (w === 'snow' && words[i - 1] && words[i - 1].toLowerCase() === 'the') continue;
+                    if (w === 'cook' && words[i - 1] && words[i - 1].toLowerCase() === 'new') continue;
+                    if (w === 'light' && words[i - 1] && words[i - 1].toLowerCase() === 'porch') continue;
+                    if (w === 'play' && words[i - 1] && ['often', 'always', 'usually'].includes(words[i - 1].toLowerCase())) { verbIdx = i; break; }
+
+                    verbIdx = i;
+                    break;
+                }
+            }
+            if (verbIdx === -1) verbIdx = 1;
+
+            let subj = words.slice(0, verbIdx).join(' ');
+            let verb = words[verbIdx];
+            let rest = words.slice(verbIdx + 1).join(' ');
+
+            let adverbs = ['really', 'usually', 'often', 'always', 'sometimes', 'never', 'also', 'just', 'already', 'suddenly'];
+            let adv = '';
+            let subjWords = subj.split(' ');
+            if (subjWords.length > 0 && adverbs.includes(subjWords[subjWords.length - 1].toLowerCase())) {
+                adv = subjWords.pop() + ' ';
+                subj = subjWords.join(' ');
+            }
+
+            let subjLower = subj.toLowerCase();
+            if (subjLower === "i'm" || subjLower === "i am") return { subj: "I", adv: adv, verb: "am", rest: rest, isNeg: false };
+            if (subjLower === "he's") return { subj: "He", adv: adv, verb: "is", rest: rest, isNeg: false };
+            if (subjLower === "she's") return { subj: "She", adv: adv, verb: "is", rest: rest, isNeg: false };
+            if (subjLower === "it's") return { subj: "It", adv: adv, verb: "is", rest: rest, isNeg: false };
+            if (subjLower === "they're") return { subj: "They", adv: adv, verb: "are", rest: rest, isNeg: false };
+            if (subjLower === "we're") return { subj: "We", adv: adv, verb: "are", rest: rest, isNeg: false };
+            if (subjLower === "you're") return { subj: "You", adv: adv, verb: "are", rest: rest, isNeg: false };
+            if (subjLower === "there's") return { subj: "There", adv: adv, verb: "is", rest: rest, isNeg: false };
+
+            return { subj: subj.trim(), adv: adv, verb: verb, rest: rest, isNeg: false };
+        }
+
+        function isImperative(sen) {
+            let s = sen.trim();
+            if (s.includes('?')) return null;
+            if (/^Let's /i.test(s)) return "We";
+            if (/^Please /i.test(s)) return "You";
+            if (/^Don't /i.test(s)) return "You";
+            if (/^Never /i.test(s)) return "You";
+            if (/^Always /i.test(s)) return "You";
+
+            const baseVerbs = ["Turn", "Close", "Watch", "Keep", "Look", "Be", "Stay", "Open", "Wash", "Stop", "Go", "Come", "Do", "Make", "Take", "Have", "Listen", "Read", "Write", "Speak", "Tell", "Say", "Bring", "Use", "Ask"];
+            let firstWord = s.split(' ')[0].replace(/[^a-zA-Z]/g, '');
+            if (baseVerbs.includes(firstWord)) return "You";
+
+            return null;
+        }
+
+        function toggleSubjectPlurality(subject) {
+            const s = subject.trim();
+            const lower = s.toLowerCase();
+            const map = {
+                'i': 'We', 'we': 'I',
+                'he': 'They', 'she': 'They', 'it': 'They', 'they': 'He',
+                'this': 'These', 'that': 'Those', 'these': 'This', 'those': 'That',
+                'my bedroom': 'Our bedrooms', 'our bedrooms': 'My bedroom',
+                'the blanket': 'The blankets', 'the blankets': 'The blanket',
+                'the bowl': 'The bowls', 'the bowls': 'The bowl',
+                'my brother': 'My brothers', 'my brothers': 'My brother',
+                'a baby': 'Babies', 'babies': 'A baby',
+                'a boy': 'Boys', 'boys': 'A boy',
+                'a man': 'Men', 'men': 'A man',
+                'children': 'A child', 'a child': 'Children',
+                'the house': 'The houses', 'the houses': 'The house',
+                'an earthquake': 'Earthquakes', 'earthquakes': 'An earthquake',
+                'a hurricane': 'Hurricanes', 'hurricanes': 'A hurricane',
+                'a large ship': 'Large ships',
+                'the driver': 'The drivers',
+                'the train': 'The trains',
+                'a sailboat': 'Sailboats',
+                'the old man': 'The old men',
+                'the movie': 'The movies'
+            };
+
+            if (map[lower]) return map[lower];
+
+            if (lower.endsWith('s') && !['always', 'this', 'is', 'has', 'was', 'bus', 'glass', 'cross', 'yes'].includes(lower)) {
+                let singular = s.slice(0, -1);
+                if (lower.endsWith('ies')) singular = s.slice(0, -3) + 'y';
+                else if (lower.endsWith('es')) singular = s.slice(0, -2);
+
+                if (!lower.startsWith('the') && !lower.startsWith('my') && !lower.startsWith('your') && !lower.startsWith('his') && !lower.startsWith('her') && !lower.startsWith('our') && !lower.startsWith('their')) {
+                    return "A " + singular.charAt(0).toLowerCase() + singular.slice(1);
+                }
+                return singular;
+            } else {
+                let plural = s + 's';
+                if (lower.endsWith('y')) plural = s.slice(0, -1) + 'ies';
+                else if (lower.endsWith('s') || lower.endsWith('x') || lower.endsWith('sh') || lower.endsWith('ch')) plural = s + 'es';
+
+                if (lower.startsWith('a ')) return "Some " + plural.slice(2);
+                else if (lower.startsWith('an ')) return "Some " + plural.slice(3);
+
+                return plural;
+            }
+        }
+
+        function transformSentencePrompt(originalSen) {
+            if (originalSen.includes('?')) {
+                let firstWord = originalSen.trim().split(' ')[0].toLowerCase();
+                if (['is', 'are', 'was', 'were', 'do', 'does', 'did', 'can', 'will'].includes(firstWord)) {
+                    return "[주어를 단수<->복수로 바꾸어 평서문으로 바꾸세요]";
+                }
+                return "[의문문입니다. 원문을 그대로 다시 적으세요]";
+            }
+
+            let isNeg = /\b(not|don't|doesn't|didn't|isn't|aren't|wasn't|weren't|won't|can't|cannot)\b/i.test(originalSen);
+            let impSubject = isImperative(originalSen);
+
+            if (isNeg) {
+                return Math.random() > 0.5 ? "[긍정문으로 바꾸세요]" : "[긍정 의문문으로 바꾸세요]";
+            } else {
+                if (impSubject) return Math.random() > 0.5 ? `[주어(${impSubject})를 넣어 부정문으로 바꾸세요]` : `[주어(${impSubject})를 넣어 의문문으로 바꾸세요]`;
+                return Math.random() > 0.5 ? "[부정문으로 바꾸세요]" : "[의문문으로 바꾸세요]";
+            }
+        }
+
+        function getTransformedAnswer(sen, prompt) {
+            let s = replaceProperNouns(sen.trim()).replace(/[.?!]$/, '');
+            let finalStr = "";
+
+            if (prompt.includes("원문을 그대로 다시 적으세요")) return sen;
+
+            if (prompt.includes("평서문")) {
+                let words = s.split(' ');
+                let firstWord = words[0].toLowerCase();
+                let subject = "";
+                let mainVerb = "";
+                let rest = "";
+
+                if (['is', 'are', 'am', 'was', 'were', 'can', 'will', 'should', 'could', 'would', 'must'].includes(firstWord)) {
+                    subject = words[1];
+                    mainVerb = firstWord;
+                    rest = words.slice(2).join(' ');
+                } else if (['do', 'does', 'did'].includes(firstWord)) {
+                    subject = words[1];
+                    let v = words[2] || '';
+                    if (firstWord === 'does') mainVerb = verbForms[v] && verbForms[v].presSingular ? verbForms[v].presSingular : v + (v.endsWith('y') ? 'ies' : 's');
+                    else if (firstWord === 'did') mainVerb = verbForms[v] && verbForms[v].past ? verbForms[v].past : v + (v.endsWith('e') ? 'd' : 'ed');
+                    else mainVerb = v;
+                    rest = words.slice(3).join(' ');
+                } else {
+                    finalStr = s + ".";
+                }
+
+                if (!finalStr) {
+                    let newSubject = toggleSubjectPlurality(subject);
+                    let newVerb = mainVerb;
+                    let newSubLower = newSubject.toLowerCase();
+                    let isPlural = ['we', 'they', 'these', 'those', 'men', 'children', 'boys', 'babies', 'earthquakes', 'hurricanes', 'tornadoes', 'aircrafts', 'sailboats'].includes(newSubLower) || (newSubLower.endsWith('s') && newSubLower !== 'always' && newSubLower !== 'this' && newSubLower !== 'is');
+
+                    if (firstWord === 'is' && isPlural) newVerb = 'are';
+                    else if (firstWord === 'are' && !isPlural) newVerb = 'is';
+                    else if (firstWord === 'was' && isPlural) newVerb = 'were';
+                    else if (firstWord === 'were' && !isPlural) newVerb = 'was';
+                    else if (firstWord === 'does' && isPlural) newVerb = words[2];
+                    else if (firstWord === 'do' && !isPlural) {
+                        let bv = words[2];
+                        newVerb = verbForms[bv] && verbForms[bv].presSingular ? verbForms[bv].presSingular : bv + 's';
+                    }
+
+                    finalStr = `${newSubject.charAt(0).toUpperCase() + newSubject.slice(1)} ${newVerb} ${rest}.`.replace(/\s+/g, ' ');
+                }
+            }
+            else {
+                let impSubject = isImperative(sen);
+
+                if (impSubject) {
+                    let sClean = s;
+                    if (/^Please /i.test(sClean)) sClean = sClean.substring(7);
+                    if (/^Let's /i.test(sClean)) sClean = sClean.substring(6);
+                    if (/^Don't /i.test(sClean)) sClean = sClean.substring(6);
+                    sClean = sClean.trim();
+                    sClean = sClean.charAt(0).toLowerCase() + sClean.slice(1);
+
+                    if (prompt.includes("부정문")) {
+                        if (impSubject === 'We') finalStr = `We don't ${sClean}.`;
+                        else finalStr = `You don't ${sClean}.`;
+                    } else {
+                        if (impSubject === 'We') finalStr = `Do we ${sClean}?`;
+                        else finalStr = `Do you ${sClean}?`;
+                    }
+                }
+                else {
+                    let parts = splitSubjVerb(s);
+                    let subj = parts.subj;
+                    let adv = parts.adv;
+                    let v = parts.verb ? parts.verb.toLowerCase() : '';
+                    let rest = parts.rest;
+
+                    if (parts.isNeg || /\b(not|don't|doesn't|didn't|isn't|aren't|wasn't|weren't|won't|can't)\b/i.test(s)) {
+                        let negMatch = s.match(/^(.*?)\b(don't|doesn't|didn't|cannot|can't|won't|isn't|aren't|wasn't|weren't|shouldn't|wouldn't|couldn't|mustn't)\b(.*)$/i);
+                        if (negMatch) {
+                            subj = negMatch[1].trim();
+                            let aux = negMatch[2].toLowerCase();
+                            rest = negMatch[3].trim();
+
+                            if (prompt.includes("긍정문") && !prompt.includes("의문문")) {
+                                if (['isn\'t', 'aren\'t', 'wasn\'t', 'weren\'t'].includes(aux)) finalStr = `${subj} ${aux.replace("n't", "")} ${rest}.`.replace(/\s+/g, ' ');
+                                else if (aux === 'won\'t') finalStr = `${subj} will ${rest}.`.replace(/\s+/g, ' ');
+                                else if (aux === 'can\'t' || aux === 'cannot') finalStr = `${subj} can ${rest}.`.replace(/\s+/g, ' ');
+                                else if (aux === "don't") finalStr = `${subj} ${rest}.`.replace(/\s+/g, ' ');
+                                else if (aux === "doesn't") {
+                                    let restWords = rest.split(' ');
+                                    let base = restWords[0];
+                                    let transV = verbForms[base] && verbForms[base].presSingular ? verbForms[base].presSingular : base + 's';
+                                    finalStr = `${subj} ${transV} ${restWords.slice(1).join(' ')}.`.replace(/\s+/g, ' ');
+                                }
+                                else if (aux === "didn't") {
+                                    let restWords = rest.split(' ');
+                                    let base = restWords[0];
+                                    let transV = verbForms[base] && verbForms[base].past ? verbForms[base].past : base + 'ed';
+                                    finalStr = `${subj} ${transV} ${restWords.slice(1).join(' ')}.`.replace(/\s+/g, ' ');
+                                }
+                            } else if (prompt.includes("의문문")) {
+                                if (['isn\'t', 'aren\'t', 'wasn\'t', 'weren\'t'].includes(aux)) finalStr = `${aux.replace("n't", "").charAt(0).toUpperCase() + aux.replace("n't", "").slice(1)} ${subj.toLowerCase()} ${rest}?`.replace(/\s+/g, ' ');
+                                else if (aux === 'won\'t') finalStr = `Will ${subj.toLowerCase()} ${rest}?`.replace(/\s+/g, ' ');
+                                else if (aux === 'can\'t' || aux === 'cannot') finalStr = `Can ${subj.toLowerCase()} ${rest}?`.replace(/\s+/g, ' ');
+                                else if (aux === "don't") finalStr = `Do ${subj.toLowerCase()} ${rest}?`.replace(/\s+/g, ' ');
+                                else if (aux === "doesn't") finalStr = `Does ${subj.toLowerCase()} ${rest}?`.replace(/\s+/g, ' ');
+                                else if (aux === "didn't") finalStr = `Did ${subj.toLowerCase()} ${rest}?`.replace(/\s+/g, ' ');
+                            }
+                        } else {
+                            s = s.replace(/\bnot\b/i, '').trim();
+                            let p2 = splitSubjVerb(s);
+                            if (prompt.includes("긍정문") && !prompt.includes("의문문")) finalStr = `${p2.subj} ${p2.adv}${p2.verb} ${p2.rest}.`.replace(/\s+/g, ' ');
+                            else if (prompt.includes("의문문")) finalStr = `${p2.verb.charAt(0).toUpperCase() + p2.verb.slice(1)} ${p2.subj.toLowerCase()} ${p2.adv}${p2.rest}?`.replace(/\s+/g, ' ');
+                        }
+                    }
+                    else {
+                        if (['is', 'am', 'are', 'was', 'were', 'can', 'will', 'could', 'should', 'would', 'must'].includes(v)) {
+                            if (prompt.includes("부정문")) finalStr = `${subj} ${v} not ${adv}${rest}.`.replace(/\s+/g, ' ');
+                            else finalStr = `${v.charAt(0).toUpperCase() + v.slice(1)} ${subj.toLowerCase()} ${adv}${rest}?`.replace(/\s+/g, ' ');
+                        } else {
+                            let baseVerb = verbForms[v] ? verbForms[v].base : (v.endsWith('ies') ? v.slice(0, -3) + 'y' : (v.endsWith('es') && !v.endsWith('ss') ? v.slice(0, -2) : (v.endsWith('s') && !v.endsWith('ss') ? v.slice(0, -1) : v)));
+                            if (v.endsWith('ed') && !verbForms[v]) baseVerb = v.slice(0, -2);
+                            if (v === 'lived') baseVerb = 'live';
+                            if (v === 'stopped') baseVerb = 'stop';
+                            if (v === 'dropped') baseVerb = 'drop';
+                            if (v === 'arrived') baseVerb = 'arrive';
+                            if (v === 'closed') baseVerb = 'close';
+                            if (v === 'parked') baseVerb = 'park';
+
+                            let aux = 'do';
+                            let negAux = "don't";
+                            if (v.endsWith('s') && v !== 'always') { aux = 'does'; negAux = "doesn't"; }
+                            else if (v.endsWith('ed') || (verbForms[v] && verbForms[v].past === v && v !== 'read')) { aux = 'did'; negAux = "didn't"; }
+
+                            if (prompt.includes("부정문")) finalStr = `${subj} ${negAux} ${adv}${baseVerb} ${rest}.`.replace(/\s+/g, ' ');
+                            else finalStr = `${aux.charAt(0).toUpperCase() + aux.slice(1)} ${subj.toLowerCase()} ${adv}${baseVerb} ${rest}?`.replace(/\s+/g, ' ');
+                        }
+                    }
+                }
+            }
+
+            if (!finalStr) finalStr = sen;
+
+            finalStr = finalStr.replace(/\bi\b/g, 'I');
+            finalStr = finalStr.charAt(0).toUpperCase() + finalStr.slice(1);
+
+            return finalStr;
+        }
+
+        function getOriginalTense(sen) {
+            let s = sen.toLowerCase();
+            if (/\bwill\b/.test(s) || /\bwon't\b/.test(s)) return '미래';
+            if (/\b(was|were|did|didn't|had|went|came|saw|took|made|got|could|blew|felt|fell|flew|caught|lived|dropped|parked|threw)\b/.test(s)) return '과거';
+            if (/\w+ed\b/.test(s) && !/\b(need|bed|red|speed)\b/.test(s)) return '과거';
+            return '현재';
+        }
+
+        function getTenseAnswer(sen, targetTense) {
+            if (sen.includes('?')) return sen;
+
+            let s = replaceProperNouns(sen.trim()).replace(/[.?!]$/, '');
+            let impSubject = isImperative(sen);
+            let subj, adv, v, rest;
+            let finalStr = "";
+
+            if (impSubject) {
+                let sClean = s;
+                if (/^Please /i.test(sClean)) sClean = sClean.substring(7);
+                if (/^Let's /i.test(sClean)) sClean = sClean.substring(6);
+                if (/^Don't /i.test(sClean)) sClean = sClean.substring(6);
+                sClean = sClean.trim();
+                sClean = sClean.charAt(0).toLowerCase() + sClean.slice(1);
+
+                let w = sClean.split(' ');
+                subj = impSubject;
+                adv = "";
+                v = w[0].toLowerCase();
+                rest = w.slice(1).join(' ');
+            } else {
+                let parts = splitSubjVerb(s);
+                subj = parts.subj;
+                adv = parts.adv;
+                v = parts.verb ? parts.verb.toLowerCase() : '';
+                rest = parts.rest;
+            }
+
+            if (!v) return sen;
+
+            let isPluralSubj = ['we', 'they', 'you', 'these', 'those', 'men', 'children', 'boys', 'babies', 'earthquakes', 'hurricanes', 'tornadoes', 'aircrafts', 'sailboats'].includes(subj.toLowerCase()) || (subj.toLowerCase().endsWith('s') && subj.toLowerCase() !== 'this' && subj.toLowerCase() !== 'always');
+            let isI = subj.toLowerCase() === 'i';
+            let is3rdSingular = !isI && !isPluralSubj;
+
+            let baseVerb = verbForms[v] ? verbForms[v].base : v;
+            if (v.endsWith('s') && !verbForms[v]) baseVerb = v.endsWith('ies') ? v.slice(0, -3) + 'y' : v.slice(0, -1);
+            if (v.endsWith('ed') && !verbForms[v]) { baseVerb = v.slice(0, -2); if (v === 'lived') baseVerb = 'live'; if (v === 'arrived') baseVerb = 'arrive'; if (v === 'closed') baseVerb = 'close'; if (v === 'parked') baseVerb = 'park'; }
+
+            let isProgressive = false;
+
+            if (v === 'will' || v === 'can' || v === 'must' || v === 'should') {
+                let restWords = rest.split(' ');
+                baseVerb = restWords[0];
+                rest = restWords.slice(1).join(' ');
+            }
+            if (['is', 'am', 'are', 'was', 'were'].includes(v)) {
+                let rWords = rest.split(' ');
+                if (rWords[0] && rWords[0].endsWith('ing') && !['morning', 'evening', 'something', 'nothing'].includes(rWords[0])) {
+                    isProgressive = true;
+                    baseVerb = rWords[0].slice(0, -3);
+                    if (baseVerb === 'mak') baseVerb = 'make';
+                    if (baseVerb === 'tak') baseVerb = 'take';
+                    if (baseVerb === 'com') baseVerb = 'come';
+                    if (baseVerb === 'liv') baseVerb = 'live';
+                    if (baseVerb === 'runn') baseVerb = 'run';
+                    if (baseVerb === 'swimm') baseVerb = 'swim';
+                    rest = rWords.slice(1).join(' ');
+                }
+            }
+
+            let newVerb = "";
+
+            if (targetTense === '미래') {
+                if (isProgressive) newVerb = `will be ${baseVerb}ing`;
+                else if (baseVerb === 'be') newVerb = 'will be';
+                else newVerb = `will ${baseVerb}`;
+            } else if (targetTense === '과거') {
+                if (isProgressive) newVerb = (isPluralSubj || subj.toLowerCase() === 'you') ? `were ${baseVerb}ing` : `was ${baseVerb}ing`;
+                else if (baseVerb === 'be') newVerb = (isPluralSubj || subj.toLowerCase() === 'you') ? 'were' : 'was';
+                else newVerb = verbForms[baseVerb] && verbForms[baseVerb].past ? verbForms[baseVerb].past : baseVerb + (baseVerb.endsWith('e') ? 'd' : 'ed');
+            } else if (targetTense === '현재') {
+                if (isProgressive) {
+                    let b = isI ? 'am' : ((isPluralSubj || subj.toLowerCase() === 'you') ? 'are' : 'is');
+                    newVerb = `${b} ${baseVerb}ing`;
+                }
+                else if (baseVerb === 'be') newVerb = isI ? 'am' : ((isPluralSubj || subj.toLowerCase() === 'you') ? 'are' : 'is');
+                else newVerb = is3rdSingular ? (verbForms[baseVerb] && verbForms[baseVerb].presSingular ? verbForms[baseVerb].presSingular : baseVerb + 's') : baseVerb;
+            }
+
+            finalStr = `${subj} ${adv}${newVerb} ${rest}`.trim().replace(/\s+/g, ' ') + ".";
+
+            finalStr = finalStr.replace(/\bi\b/g, 'I');
+            finalStr = finalStr.charAt(0).toUpperCase() + finalStr.slice(1);
+
+            return finalStr;
+        }
+
+        function buildCrossword(words) {
+            const size = 40;
+            let grid = Array(size).fill(null).map(() => Array(size).fill(null));
+            let placements = [];
+            let count = 1;
+
+            function canPlace(word, r, c, dir) {
+                if (dir === 0) {
+                    if (c < 0 || c + word.length > size || r < 0 || r >= size) return false;
+                    if (c > 0 && grid[r][c - 1] !== null) return false;
+                    if (c + word.length < size && grid[r][c + word.length] !== null) return false;
+
+                    for (let i = 0; i < word.length; i++) {
+                        let cell = grid[r][c + i];
+                        if (cell !== null && cell !== word[i]) return false;
+                        if (cell === null) {
+                            if (r > 0 && grid[r - 1][c + i] !== null) return false;
+                            if (r < size - 1 && grid[r + 1][c + i] !== null) return false;
+                        }
+                    }
+                } else {
+                    if (r < 0 || r + word.length > size || c < 0 || c >= size) return false;
+                    if (r > 0 && grid[r - 1][c] !== null) return false;
+                    if (r + word.length < size && grid[r + word.length][c] !== null) return false;
+
+                    for (let i = 0; i < word.length; i++) {
+                        let cell = grid[r + i][c];
+                        if (cell !== null && cell !== word[i]) return false;
+                        if (cell === null) {
+                            if (c > 0 && grid[r + i][c - 1] !== null) return false;
+                            if (c < size - 1 && grid[r + i][c + 1] !== null) return false;
+                        }
+                    }
+                }
+                return true;
+            }
+
+            function placeWord(wordObj, word, r, c, dir) {
+                for (let i = 0; i < word.length; i++) {
+                    if (dir === 0) grid[r][c + i] = word[i];
+                    else grid[r + i][c] = word[i];
+                }
+                let existing = placements.find(p => p.r === r && p.c === c);
+                let num = existing ? existing.num : count++;
+                placements.push({ ...wordObj, cleanEn: word, r, c, dir, num });
+            }
+
+            let pool = [...words].filter(w => w.en.replace(/[^a-zA-Z]/g, '').length >= 3);
+            pool = pool.sort(() => Math.random() - 0.5).slice(0, 20);
+            pool.sort((a, b) => b.en.replace(/[^a-zA-Z]/g, '').length - a.en.replace(/[^a-zA-Z]/g, '').length);
+
+            if (pool.length === 0) return { grid: [], placements: [] };
+
+            let first = pool.shift();
+            let fw = first.en.replace(/[^a-zA-Z]/g, '').toUpperCase();
+            placeWord(first, fw, Math.floor(size / 2), Math.floor((size - fw.length) / 2), 0);
+
+            let unplaced = [...pool];
+            let maxAttempts = 3;
+
+            while (maxAttempts > 0 && unplaced.length > 0) {
+                let nextUnplaced = [];
+                for (let wordObj of unplaced) {
+                    let word = wordObj.en.replace(/[^a-zA-Z]/g, '').toUpperCase();
+                    let bestPlacement = null;
+                    let maxIntersections = -1;
+
+                    for (let p of placements) {
+                        for (let i = 0; i < word.length; i++) {
+                            for (let j = 0; j < p.cleanEn.length; j++) {
+                                if (word[i] === p.cleanEn[j]) {
+                                    let newR = p.dir === 0 ? p.r - i : p.r + j - i;
+                                    let newC = p.dir === 0 ? p.c + j - i : p.c - i;
+                                    let newDir = p.dir === 0 ? 1 : 0;
+
+                                    if (canPlace(word, newR, newC, newDir)) {
+                                        let intersections = 0;
+                                        for (let k = 0; k < word.length; k++) {
+                                            let checkR = newDir === 0 ? newR : newR + k;
+                                            let checkC = newDir === 0 ? newC + k : newC;
+                                            if (grid[checkR][checkC] !== null) intersections++;
+                                        }
+
+                                        if (intersections > maxIntersections) {
+                                            maxIntersections = intersections;
+                                            bestPlacement = { r: newR, c: newC, dir: newDir };
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (bestPlacement) {
+                        placeWord(wordObj, word, bestPlacement.r, bestPlacement.c, bestPlacement.dir);
+                    } else {
+                        nextUnplaced.push(wordObj);
+                    }
+                }
+
+                unplaced = nextUnplaced.sort(() => Math.random() - 0.5);
+                maxAttempts--;
+            }
+
+            let minR = size, maxR = 0, minC = size, maxC = 0;
+            let hasPlaced = false;
+            for (let r = 0; r < size; r++) {
+                for (let c = 0; c < size; c++) {
+                    if (grid[r][c] !== null) {
+                        hasPlaced = true;
+                        if (r < minR) minR = r;
+                        if (r > maxR) maxR = r;
+                        if (c < minC) minC = c;
+                        if (c > maxC) maxC = c;
+                    }
+                }
+            }
+
+            if (!hasPlaced) return { grid: [], placements: [] };
+
+            let trimmedGrid = [];
+            for (let r = minR; r <= maxR; r++) {
+                trimmedGrid.push(grid[r].slice(minC, maxC + 1));
+            }
+
+            let trimmedPlacements = placements.map(p => ({
+                ...p,
+                r: p.r - minR,
+                c: p.c - minC
+            }));
+
+            return { grid: trimmedGrid, placements: trimmedPlacements };
+        }
+
+        function renderCrosswordHtml(cwData, isAnswerMode) {
+            let grid = cwData.grid;
+            let placements = cwData.placements;
+
+            if (!grid || grid.length === 0) return "<p class='text-center text-gray-500 py-10'>퍼즐 생성에 실패했습니다. 다른 챕터를 선택해주세요.</p>";
+
+            let tableHtml = '<table class="border-collapse mx-auto mb-6 bg-white shadow-sm" style="table-layout: fixed;">';
+            let cellSize = grid[0].length > 15 ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-8 h-8 sm:w-9 sm:h-9';
+            let fontSize = grid[0].length > 15 ? 'text-sm' : 'text-base';
+
+            for (let r = 0; r < grid.length; r++) {
+                tableHtml += '<tr>';
+                for (let c = 0; c < grid[r].length; c++) {
+                    if (grid[r][c] === null) {
+                        tableHtml += `<td class="${cellSize}"></td>`;
+                    } else {
+                        let p = placements.find(x => x.r === r && x.c === c);
+                        let numHtml = p ? `<span class="absolute top-0.5 left-0.5 text-[8px] sm:text-[9px] font-bold text-gray-500 leading-none">${p.num}</span>` : '';
+                        let charHtml = isAnswerMode ? `<span class="text-red-600 font-bold ${fontSize}">${grid[r][c]}</span>` : '';
+                        tableHtml += `<td class="${cellSize} border border-gray-400 relative text-center align-middle p-0">${numHtml}${charHtml}</td>`;
+                    }
+                }
+                tableHtml += '</tr>';
+            }
+            tableHtml += '</table>';
+
+            let across = placements.filter(p => p.dir === 0).sort((a, b) => a.num - b.num);
+            let down = placements.filter(p => p.dir === 1).sort((a, b) => a.num - b.num);
+
+            let cluesHtml = `<div class="grid grid-cols-2 gap-6 text-[12px] sm:text-[13px]"><div class="col-span-1">
+                <h3 class="font-bold text-blue-700 mb-2 border-b border-blue-200 pb-1">Across (가로)</h3><ul class="space-y-1 text-gray-700">`;
+            across.forEach(p => { cluesHtml += `<li class="break-keep"><span class="font-bold mr-1 text-gray-500">${p.num}.</span> ${p.ko}</li>`; });
+            cluesHtml += `</ul></div><div class="col-span-1">
+                <h3 class="font-bold text-blue-700 mb-2 border-b border-blue-200 pb-1">Down (세로)</h3><ul class="space-y-1 text-gray-700">`;
+            down.forEach(p => { cluesHtml += `<li class="break-keep"><span class="font-bold mr-1 text-gray-500">${p.num}.</span> ${p.ko}</li>`; });
+            cluesHtml += `</ul></div></div>`;
+
+            return tableHtml + cluesHtml;
+        }
+
+        function makeErrorEnglishSentenceText(item, chWords) {
+            let originalEn = item.senEn;
+            let targetEn = item.en;
+
+            let bestFake = "";
+            let maxScore = -999;
+
+            for (let w of chWords) {
+                if (w.en.toLowerCase() === targetEn.toLowerCase()) continue;
+
+                let score = 0;
+                if (w.en[0].toLowerCase() === targetEn[0].toLowerCase()) score += 5;
+                if (w.en[w.en.length - 1].toLowerCase() === targetEn[targetEn.length - 1].toLowerCase()) score += 3;
+                score -= Math.abs(w.en.length - targetEn.length);
+                score += Math.random() * 2;
+
+                if (score > maxScore) {
+                    maxScore = score;
+                    bestFake = w.en;
+                }
+            }
+
+            let fakeEn = bestFake;
+            let errorSen = originalEn;
+            let answerText = "";
+
+            let regex = new RegExp("\\b" + targetEn.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "(s|es|d|ed|ing)?\\b", "i");
+            let match = originalEn.match(regex);
+
+            if (match) {
+                errorSen = originalEn.replace(match[0], fakeEn);
+                answerText = `${fakeEn} -> ${match[0]}`;
+            } else {
+                let base = targetEn.length > 4 ? targetEn.substring(0, 4) : targetEn;
+                let regexBase = new RegExp("\\b" + base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + "\\w*", "i");
+                let matchBase = originalEn.match(regexBase);
+                if (matchBase) {
+                    errorSen = originalEn.replace(matchBase[0], fakeEn);
+                    answerText = `${fakeEn} -> ${matchBase[0]}`;
+                } else {
+                    let words = originalEn.split(' ');
+                    let maxIdx = words.length > 2 ? 2 : (words.length > 1 ? 1 : 0);
+                    let originalWord = words[maxIdx].replace(/[.?!,]/g, '');
+                    errorSen = originalEn.replace(originalWord, fakeEn);
+                    answerText = `${fakeEn} -> ${originalWord}`;
+                }
+            }
+
+            return { errorSen, answerText, correctKo: item.senKo };
+        }
+
+        let currentLogoUrl = "";
+        let currentView = 'textbook';
+        let currentSession = 1;
+        let isAnswerMode = false;
+
+        function getTodayString() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function updateDocumentTitle(ch) {
+            const dateStr = getTodayString();
+            const chapterTitle = ch.title;
+            const sessionStr = `${currentSession}차시`;
+            let viewStr = "";
+
+            switch (currentView) {
+                case 'textbook': viewStr = "교재"; break;
+                case 'vocalist': viewStr = "단어문장"; break;
+                case 'hw1': viewStr = "1차숙제"; break;
+                case 'hw2': viewStr = "2차숙제"; break;
+                case 'hw3': viewStr = "3차숙제"; break;
+            }
+
+            if (isAnswerMode && currentView.startsWith('hw')) {
+                viewStr += "_답지";
+            }
+
+            document.title = `${dateStr}_${chapterTitle}_${sessionStr}_${viewStr}`;
+        }
+
+        function changeSession(session) {
+            currentSession = session;
+
+            // Update session button styles
+            for (let i = 1; i <= 3; i++) {
+                const btn = document.getElementById(`sess-${i}`);
+                if (i === session) {
+                    btn.classList.add('active');
+                    btn.classList.remove('text-gray-500');
+                } else {
+                    btn.classList.remove('active');
+                    btn.classList.add('text-gray-500');
+                }
+            }
+
+            const activeBtn = document.querySelector('.chapter-btn.active');
+            if (activeBtn) {
+                const chId = parseInt(activeBtn.id.replace('btn-', ''));
+                renderChapter(chId);
+            }
+        }
+
+        function init() {
+            padDataTo42();
+            renderMenu();
+            renderChapter(1);
+            setupCsvUploader();
+            setupLogoUploader();
+        }
+
+        function changeView(view) {
+            currentView = view;
+            isAnswerMode = false;
+
+            const tabs = ['textbook', 'vocalist', 'hw1', 'hw2', 'hw3'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if (t === view) {
+                    el.classList.add('active', 'text-blue-600');
+                    el.classList.remove('text-gray-600');
+                } else {
+                    el.classList.remove('active', 'text-blue-600');
+                    el.classList.add('text-gray-600');
+                }
+            });
+
+            const answerBtn = document.getElementById('tab-answer');
+            if (view.startsWith('hw')) {
+                answerBtn.classList.remove('hidden');
+                answerBtn.classList.remove('active', 'text-red-600');
+                answerBtn.classList.add('text-red-500');
+            } else {
+                answerBtn.classList.add('hidden');
+            }
+
+            const activeBtn = document.querySelector('.chapter-btn.active');
+            if (activeBtn) {
+                const chId = parseInt(activeBtn.id.replace('btn-', ''));
+                renderChapter(chId);
+            }
+        }
+
+        function toggleAnswer() {
+            isAnswerMode = !isAnswerMode;
+            const answerBtn = document.getElementById('tab-answer');
+            if (isAnswerMode) {
+                answerBtn.classList.add('active', 'text-red-600');
+                answerBtn.classList.remove('text-red-500');
+            } else {
+                answerBtn.classList.remove('active', 'text-red-600');
+                answerBtn.classList.add('text-red-500');
+            }
+
+            const activeBtn = document.querySelector('.chapter-btn.active');
+            if (activeBtn) {
+                const chId = parseInt(activeBtn.id.replace('btn-', ''));
+                renderChapter(chId);
+            }
+        }
+
+        function renderMenu() {
+            const container = document.getElementById('menu-container');
+            container.innerHTML = db.map(ch => `
+                <div class="chapter-btn neumo-btn mx-5 my-1.5 p-3 cursor-pointer flex flex-col justify-center" id="btn-${ch.id}" onclick="renderChapter(${ch.id})">
+                    <div class="font-bold text-[14px]">Chapter 0${ch.id}</div>
+                    <div class="text-[11px] mt-0.5 opacity-80"><i class="fas ${ch.icon} w-4"></i> ${ch.title}</div>
+                </div>
+            `).join('');
+        }
+
+        function generatePageHtml(chId, session, view, answerMode) {
+            const ch = db.find(c => c.id === chId);
+            if (!ch.cached) {
+                ch.crosswordData = buildCrossword(ch.words);
+                ch.errorData = ch.words.map(w => makeErrorEnglishSentenceText(w, ch.words));
+                ch.scrambleData = ch.words.map(w => ({ word: scrambleWord(w.en), sen: scrambleSentence(w.senEn) }));
+                ch.transData = ch.words.map(w => {
+                    let p = transformSentencePrompt(w.senEn);
+                    return { prompt: p, ans: getTransformedAnswer(w.senEn, p) };
+                });
+                ch.tenseData = ch.words.map(w => {
+                    let origTense = getOriginalTense(w.senEn);
+                    let target1 = '', target2 = '';
+                    if (origTense === '과거') { target1 = '현재'; target2 = '미래'; }
+                    else if (origTense === '미래') { target1 = '현재'; target2 = '과거'; }
+                    else { target1 = '과거'; target2 = '미래'; }
+                    return { target1, target2, origTense };
+                });
+                ch.cached = true;
+            }
+
+            const sStart = (session - 1) * 14;
+            const sEnd = session * 14;
+            const sessionWords = ch.words.slice(sStart, sEnd);
+            const sessionErrorData = ch.errorData.slice(sStart, sEnd);
+            const sessionScrambleData = ch.scrambleData.slice(sStart, sEnd);
+            const sessionTransData = ch.transData.slice(sStart, sEnd);
+            const sessionTenseData = ch.tenseData.slice(sStart, sEnd);
+            const sessionCrossword = buildCrossword(sessionWords);
+            const rpStart = (session - 1) * 7;
+            const rpEnd = session * 7;
+            const sessionRpDialogue = ch.roleplay && ch.roleplay.dialogue ? ch.roleplay.dialogue.slice(rpStart, rpEnd) : [];
+
+            const isHomework = view.startsWith('hw');
+            const isTextbook = view === 'textbook';
+            const isVocalist = view === 'vocalist';
+
+            let typeTag = '';
+            let tagColor = 'text-blue-600';
+            if (isVocalist) { typeTag = '[단어장]'; tagColor = 'text-indigo-600'; }
+            else if (isTextbook) { typeTag = '[교재]'; tagColor = 'text-blue-600'; }
+            else if (isHomework) { typeTag = '[숙제]'; tagColor = 'text-green-600'; }
+
+            const logoHtml = currentLogoUrl ? `<img src="${currentLogoUrl}" alt="로고" class="max-h-12 max-w-[150px] object-contain mix-blend-multiply mr-4">` : '';
+            const headerHtml = `
+                <header class="border-b-4 border-blue-600 pb-4 mb-6 relative z-10 flex justify-between items-end">
+                    <div class="flex items-center">
+                        ${logoHtml}
+                        <div>
+                            <span class="${tagColor} font-bold tracking-wider uppercase text-sm">${typeTag} 주니어통번역사 [${session}차시]</span>
+                            <h1 class="text-3xl font-black mt-1 text-gray-800">Chapter 0${ch.id}. ${ch.title} ${answerMode ? '<span class="text-red-600 text-xl">[Answer Key]</span>' : ''}</h1>
+                            ${!isHomework ? `<p class="text-gray-500 mt-1 text-sm">${ch.subtitle}</p>` : ''}
+                        </div>
+                    </div>
+                    ${isHomework ? `
+                    <div class="pb-2 text-right">
+                        <div class="text-lg font-bold text-gray-800 inline-block mr-2">Name : </div>
+                        <div class="border-b-2 border-gray-600 inline-block w-40"></div>
+                    </div>
+                    ` : ''}
+                </header>
+            `;
+
+            let pageHtml = '';
+            if (view === 'textbook') {
+                let wordsHtml = '<div class="grid grid-cols-2 gap-4">';
+                sessionWords.forEach(word => {
+                    wordsHtml += `<div class="avoid-break word-card bg-gray-50 border border-gray-200 rounded-lg p-3 text-center shadow-sm flex flex-col justify-center"><div class="text-lg font-bold text-blue-800">${word.en}</div><div class="text-base font-medium text-gray-700 mt-0.5">${word.ko}</div><div class="text-xs text-gray-600 mt-1 leading-snug break-keep">${word.def}</div></div>`;
+                });
+                wordsHtml += '</div>';
+                pageHtml += `<div class="print-page-break">${headerHtml}<section class="relative z-10"><h2 class="text-xl font-bold text-gray-800 mb-4 section-title"><i class="fas fa-book-open text-blue-500 mr-2"></i>Step 1. 단어 학습 (Words)</h2>${wordsHtml}</section></div>`;
+                let transHtml = '';
+                sessionWords.forEach((word, index) => {
+                    transHtml += `<div class="avoid-break print-item mb-4"><p class="font-medium text-base"><span class="text-purple-600 font-bold mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senEn}</p><div class="writing-line"></div></div>`;
+                });
+                pageHtml += `<div class="print-page-break pt-6">${headerHtml}<section class="relative z-10"><h2 class="text-xl font-bold text-gray-800 mb-4 section-title"><i class="fas fa-language text-purple-500 mr-2"></i>Step 2. 직독직해 (Eng to Kor)</h2><div class="grid grid-cols-1 gap-1">${transHtml}</div></section></div>`;
+                let writeHtml = '';
+                sessionWords.forEach((word, index) => {
+                    writeHtml += `<div class="avoid-break print-item mb-4"><p class="font-medium text-base text-gray-800"><span class="text-red-600 font-bold mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senKo} <span class="text-xs text-gray-400 font-normal ml-1">(${word.en})</span></p><div class="writing-line"></div></div>`;
+                });
+                pageHtml += `<div class="print-page-break pt-6">${headerHtml}<section class="relative z-10"><h2 class="text-xl font-bold text-gray-800 mb-4 section-title"><i class="fas fa-pen-nib text-red-500 mr-2"></i>Step 3. 영작 훈련 (Kor to Eng)</h2><div class="grid grid-cols-1 gap-1">${writeHtml}</div></section></div>`;
+                let roleplayHtml = '';
+                if (sessionRpDialogue.length > 0) {
+                    roleplayHtml = sessionRpDialogue.map(d => {
+                        const formattedText = d.text.replace(/\[(.*?)\]/g, (match, word) => { if (answerMode) return `<span class="inline-block min-w-[5rem] px-2 border-b border-red-500 text-center text-[11pt] text-red-600 font-bold mx-1 pb-0.5">${word}</span>`; return `<span class="inline-block min-w-[5rem] px-2 border-b border-gray-500 text-center text-[11pt] text-gray-400 font-normal mx-1 pb-0.5"></span>`; });
+                        return `<div class="roleplay-item mb-4 last:mb-0 avoid-break"><div class="roleplay-line font-medium text-gray-800 leading-relaxed mb-0.5"><span class="font-black ${d.speaker === 'A' ? 'text-blue-600' : 'text-green-600'} mr-2 text-[11pt]">${d.speaker}:</span> "${formattedText}"</div><div class="roleplay-ko text-xs text-gray-500 italic ml-10 border-l-2 border-gray-200 pl-3">(${d.ko || ''})</div></div>`;
+                    }).join('');
+                }
+                pageHtml += `<div class="print-page-break pt-6">${headerHtml}<section class="roleplay-section bg-yellow-50 p-6 rounded-2xl border-2 border-yellow-200 relative z-10 shadow-sm"><div class="flex items-center justify-between mb-4"><h2 class="text-xl font-black text-gray-800 flex items-center"><i class="fas fa-comments text-yellow-600 mr-3 text-2xl"></i>Step 4. 실전 대화 응용 (Role-play)</h2><span class="bg-yellow-200 text-yellow-800 text-[8pt] font-bold px-3 py-1 rounded-full uppercase tracking-widest">Conversation</span></div><p class="text-xs font-bold text-gray-600 mb-6 pb-2 border-b border-yellow-200"><i class="fas fa-info-circle mr-2"></i>${ch.roleplay ? ch.roleplay.intro : '주어진 상황에 맞춰 빈칸을 채우고 대화를 완성하세요.'}</p><div class="roleplay-inner-box bg-white p-6 rounded-xl shadow-inner border border-yellow-100">${roleplayHtml}</div></section></div>`;
+            } else if (view === 'vocalist') {
+                let trs = sessionWords.map((word, i) => `<tr class="border-b border-gray-200 hover:bg-gray-50 avoid-break"><td class="p-2 text-center text-gray-500 border-r border-gray-200 w-10 text-[9pt]">${i + 1}</td><td class="p-2 font-bold text-blue-800 border-r border-gray-200 w-[18%] text-[10pt]">${word.en}</td><td class="p-2 text-gray-700 border-r border-gray-200 w-[30%] text-[8pt] leading-tight">${word.def}</td><td class="p-2 pl-3"><div class="text-gray-800 font-medium text-[9pt] leading-tight">${word.senEn}</div><div class="text-gray-500 text-[8pt] mt-0.5 leading-tight">${word.senKo}</div></td></tr>`).join('');
+                pageHtml += `<div class="print-page-break">${headerHtml}<div class="text-center mb-6 relative z-10 avoid-break"><h2 class="text-xl font-bold text-gray-800 bg-gray-100 inline-block py-2 px-8 rounded-full border border-gray-300">📝 Word & Sentence List</h2></div><div class="relative z-10"><table class="w-full text-sm border-t-2 border-b-2 border-gray-800 bg-white shadow-sm"><thead><tr class="bg-gray-100 border-b border-gray-400 text-left"><th class="p-2 text-center border-r border-gray-300 text-gray-600 w-10 text-[9pt]">No.</th><th class="p-2 border-r border-gray-300 text-gray-600 w-[18%] text-[9pt]">Word (단어)</th><th class="p-2 border-r border-gray-300 text-gray-600 w-[30%] text-[9pt]">Definition (영영풀이)</th><th class="p-2 pl-3 text-gray-600 text-[9pt]">Sentence & Interpretation (문장과 해석)</th></tr></thead><tbody>${trs}</tbody></table></div></div>`;
+            } else if (view.startsWith('hw')) {
+                let wordTestLeft = ''; let wordTestRight = ''; let senTestLeft = ''; let senTestRight = ''; let wordScrLeft = ''; let wordScrRight = ''; let senUnscrLeft = ''; let senUnscrRight = ''; let senTransLeft = ''; let senTransRight = ''; let defMatchLeft = ''; let defMatchRight = ''; let senTenseLeft = ''; let senTenseRight = ''; let errLeft = ''; let errRight = '';
+                for (let i = 0; i < sessionWords.length; i++) {
+                    let ansKo = answerMode ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[11pt] whitespace-nowrap tracking-tighter">${sessionWords[i].ko}</span>` : '';
+                    let ansEn = answerMode ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[11pt] whitespace-nowrap tracking-tighter">${sessionWords[i].en}</span>` : '';
+                    let rowKo = `<tr class="homework-row avoid-break"><td class="w-8 text-gray-500 font-medium text-[10pt]">${i + 1}.</td><td class="font-bold text-gray-800 text-[11pt] pr-2 whitespace-nowrap tracking-tight">${sessionWords[i].en}</td><td class="w-full border-b border-gray-400 relative p-1">${ansKo}</td></tr>`;
+                    let rowEn = `<tr class="homework-row avoid-break"><td class="w-8 text-gray-500 font-medium text-[10pt]">${i + 1}.</td><td class="text-gray-800 text-[10pt] pr-2 whitespace-nowrap tracking-tight">${sessionWords[i].ko}</td><td class="w-full border-b border-gray-400 relative p-1">${ansEn}</td></tr>`;
+                    if (i < 7) wordTestLeft += rowKo; else wordTestRight += rowEn;
+                    let ansSenKo = answerMode ? `<span class="absolute bottom-0.5 left-1 text-red-600 font-bold text-[10pt] whitespace-nowrap tracking-tighter">${sessionWords[i].senKo}</span>` : '';
+                    let ansSenEn = answerMode ? `<span class="absolute bottom-0.5 left-1 text-red-600 font-bold text-[10pt] whitespace-nowrap tracking-tighter">${sessionWords[i].senEn}</span>` : '';
+                    if (i < 7) senTestLeft += `<div class="avoid-break relative mb-2"><p class="font-medium text-[10pt] leading-snug"><span class="text-blue-600 font-bold mr-1">Q${i + 1}.</span> ${sessionWords[i].senEn}</p><div class="homework-line relative">${ansSenKo}</div></div>`;
+                    else senTestRight += `<div class="avoid-break relative mb-2"><p class="font-medium text-[10pt] leading-snug"><span class="text-red-600 font-bold mr-1">Q${i + 1}.</span> ${sessionWords[i].senKo}</p><div class="homework-line relative">${ansSenEn}</div></div>`;
+                    let scrData = sessionScrambleData[i];
+                    let rowScr = `<tr class="homework-row avoid-break"><td class="w-8 text-gray-500 font-medium text-[10pt]">${i + 1}.</td><td class="w-5/12 pr-2"><div class="font-bold text-blue-700 text-[10pt] tracking-wider uppercase">${scrData.word}</div><div class="text-[9pt] text-gray-500 leading-none mt-1">${sessionWords[i].ko}</div></td><td class="w-1/2 border-b border-gray-400 relative">${ansEn}</td></tr>`;
+                    if (i < 7) wordScrLeft += rowScr; else wordScrRight += rowScr;
+                    let ansUnscr = answerMode ? `<span class="absolute bottom-0.5 left-1 text-red-600 font-bold text-[10pt] whitespace-nowrap tracking-tighter">${sessionWords[i].senEn}</span>` : '';
+                    let itemUnscr = `<div class="avoid-break mb-3 relative"><div class="font-medium text-[10pt] text-blue-700 leading-snug"><span class="text-gray-500 mr-1">${i + 1}.</span> ${scrData.sen}</div><div class="text-[9pt] text-gray-500 leading-none mt-1">${sessionWords[i].senKo}</div><div class="homework-line mt-1 relative">${ansUnscr}</div></div>`;
+                    if (i < 7) senUnscrLeft += itemUnscr; else senUnscrRight += itemUnscr;
+                    let tData = sessionTransData[i];
+                    let ansTrans = answerMode ? `<span class="absolute bottom-0.5 left-1 text-red-600 font-bold text-[10pt] whitespace-nowrap tracking-tighter">${tData.ans}</span>` : '';
+                    let itemTrans = `<div class="avoid-break mb-3 relative"><div class="font-medium text-[10pt] text-gray-800 leading-snug"><span class="text-gray-500 mr-1">${i + 1}.</span> ${sessionWords[i].senEn}</div><div class="text-[10pt] text-blue-600 font-bold mt-1">${tData.prompt}</div><div class="homework-line mt-1 relative">${ansTrans}</div></div>`;
+                    if (i < 7) senTransLeft += itemTrans; else senTransRight += itemTrans;
+                    let rowDef = `<tr class="homework-row avoid-break"><td class="w-6 text-gray-500 font-medium text-[10pt]">${i + 1}.</td><td class="w-8/12 text-gray-800 text-[9pt] leading-tight pr-2 break-keep">${sessionWords[i].def}</td><td class="w-3/12 border-b border-gray-400 relative">${ansEn}</td></tr>`;
+                    if (i < 7) defMatchLeft += rowDef; else defMatchRight += rowDef;
+                    let originSen = sessionWords[i].senEn; let impSubject = isImperative(originSen); let hintHtml = impSubject ? `<span class="text-[9pt] text-red-500 ml-1 font-bold">(*주어 ${impSubject} 추가)</span>` : ''; let tenseInfo = sessionTenseData[i]; let target1Answer = getTenseAnswer(originSen, tenseInfo.target1); let target2Answer = getTenseAnswer(originSen, tenseInfo.target2); let ansT1Html = answerMode ? `<span class="absolute bottom-0 left-1 text-red-600 font-bold text-[9pt] whitespace-nowrap tracking-tighter">${target1Answer}</span>` : ''; let ansT2Html = answerMode ? `<span class="absolute bottom-0 left-1 text-red-600 font-bold text-[9pt] whitespace-nowrap tracking-tighter">${target2Answer}</span>` : '';
+                    let itemTense = `<div class="avoid-break mb-3 relative"><div class="font-medium text-[10pt] text-gray-800 leading-snug tracking-tight"><span class="text-gray-500 mr-1">${i + 1}.</span> ${originSen} ${hintHtml} <span class="text-gray-400 text-[8pt]">(현재 시제: ${tenseInfo.origTense})</span></div><div class="flex items-center mt-1 relative"><span class="text-[9pt] text-purple-600 font-bold w-10">[${tenseInfo.target1}]</span><div class="flex-1 border-b border-gray-400 ml-1 h-4 relative">${ansT1Html}</div></div><div class="flex items-center mt-1 relative"><span class="text-[9pt] text-purple-600 font-bold w-10">[${tenseInfo.target2}]</span><div class="flex-1 border-b border-gray-400 ml-1 h-4 relative">${ansT2Html}</div></div></div>`;
+                    if (i < 7) senTenseLeft += itemTense; else senTenseRight += itemTense;
+                    let err = sessionErrorData[i]; let ansErrHtml = answerMode ? `<span class="absolute bottom-0 left-1 text-red-600 font-bold text-[10pt] whitespace-nowrap tracking-tighter">${err.answerText}</span>` : '';
+                    let itemErr = `<div class="avoid-break mb-5 relative"><p class="font-bold text-[11pt] text-gray-900 leading-snug mb-0.5"><span class="text-blue-600 mr-1">Q${i + 1}.</span> ${err.errorSen}</p><p class="text-[9pt] text-gray-500 mb-1 ml-6">(${err.correctKo})</p><div class="flex items-center mt-1 ml-6 relative"><span class="text-[10pt] text-gray-500 font-bold w-10">수정:</span><div class="flex-1 border-b border-gray-400 ml-1 h-4 relative">${ansErrHtml}</div></div></div>`;
+                    if (i < 7) errLeft += itemErr; else errRight += itemErr;
+                }
+                // Grouping Homework Parts to save space and organize logically
+                pageHtml += `
+                    <div class="print-page-break">${headerHtml}
+                        <section class="avoid-break mb-8"><div class="flex items-center gap-3 mb-4 bg-gray-100 p-2 rounded-lg border border-gray-200"><span class="bg-blue-600 text-white font-bold py-1 px-3 rounded text-xs">Part 1</span><h2 class="text-lg font-bold text-gray-800">단어 뜻/영작 숙제 (Meaning / Word)</h2></div><div class="grid grid-cols-2 gap-6"><div class="col-span-1"><p class="text-xs text-gray-500 mb-2 font-bold">* 영단어를 보고 <span class="text-red-500">우리말 뜻</span>을 적으세요.</p><table class="w-full text-left">${wordTestLeft}</table></div><div class="col-span-1"><p class="text-xs text-gray-500 mb-2 font-bold">* 우리말을 보고 <span class="text-red-500">영어 단어</span>를 적으세요.</p><table class="w-full text-left">${wordTestRight}</table></div></div></section>
+                        <section class="avoid-break pt-4 border-t-2 border-dashed border-gray-200"><div class="flex items-center gap-3 mb-4 bg-gray-100 p-2 rounded-lg border border-gray-200"><span class="bg-blue-600 text-white font-bold py-1 px-3 rounded text-xs">Part 2</span><h2 class="text-lg font-bold text-gray-800">문장 해석/영작 숙제 (Translation / Writing)</h2></div><div class="grid grid-cols-2 gap-6"><div class="col-span-1"><p class="text-xs text-gray-500 mb-2 font-bold">* 문장을 <span class="text-red-500">우리말로 해석</span>하세요.</p>${senTestLeft}</div><div class="col-span-1"><p class="text-xs text-gray-500 mb-2 font-bold">* 우리말을 <span class="text-red-500">영어로 영작</span>하세요.</p>${senTestRight}</div></div></section>
+                    </div>
+                    <div class="print-page-break pt-4">${headerHtml}
+                        <section class="avoid-break"><div class="flex items-center gap-3 mb-4 bg-gray-100 p-2 rounded-lg border border-gray-200"><span class="bg-blue-600 text-white font-bold py-1 px-3 rounded text-xs">Part 3</span><h2 class="text-lg font-bold text-gray-800">단어 퍼즐 (Crossword)</h2></div><p class="text-xs text-gray-500 mb-4 font-bold text-center">* 한국어 뜻(힌트)을 보고 가로/세로 퍼즐을 <span class="text-red-500">영단어로 완성</span>하세요.</p>${renderCrosswordHtml(sessionCrossword, answerMode)}</section>
+                    </div>
+                    <div class="print-page-break pt-4">${headerHtml}
+                        <section class="avoid-break mb-8"><div class="flex items-center gap-3 mb-4 bg-green-100 p-2 rounded-lg border border-green-200"><span class="bg-green-600 text-white font-bold py-1 px-3 rounded text-xs">Part 4</span><h2 class="text-lg font-bold text-gray-800">단어/문장 배열 숙제 (Unscramble)</h2></div><h3 class="font-bold text-gray-700 mb-2 ml-2 text-sm">1. Word Unscramble</h3><div class="grid grid-cols-2 gap-6 mb-6"><div class="col-span-1"><table class="w-full text-left">${wordScrLeft}</table></div><div class="col-span-1"><table class="w-full text-left">${wordScrRight}</table></div></div><h3 class="font-bold text-gray-700 mb-2 ml-2 text-sm">2. Sentence Unscramble</h3><div class="grid grid-cols-2 gap-6"><div class="col-span-1">${senUnscrLeft}</div><div class="col-span-1">${senUnscrRight}</div></div></section>
+                        <section class="avoid-break pt-4 border-t-2 border-dashed border-gray-200"><div class="flex items-center gap-3 mb-4 bg-green-100 p-2 rounded-lg border border-green-200"><span class="bg-green-600 text-white font-bold py-1 px-3 rounded text-xs">Part 5</span><h2 class="text-lg font-bold text-gray-800">문장 변형 숙제 (Transformation)</h2></div><p class="text-xs text-gray-500 mb-4 font-bold text-center">* 주어진 예문을 파란색 지시에 따라 <span class="text-red-500">부정문/의문문/평서문으로 바꾸어 영작</span>하세요.</p><div class="grid grid-cols-2 gap-6">${senTransLeft}${senTransRight}</div></section>
+                    </div>
+                    <div class="print-page-break pt-4">${headerHtml}
+                        <section class="avoid-break mb-6"><div class="flex items-center gap-3 mb-4 bg-purple-100 p-2 rounded-lg border border-purple-200"><span class="bg-purple-600 text-white font-bold py-1 px-3 rounded text-xs">Part 6</span><h2 class="text-lg font-bold text-gray-800">영영풀이 숙제 (Definition Match)</h2></div><p class="text-xs text-gray-500 mb-2 font-bold text-center">* 영영풀이(Definition)를 읽고, 알맞은 <span class="text-red-500">영어 단어</span>를 적으세요.</p><div class="grid grid-cols-2 gap-6"><div class="col-span-1"><table class="w-full text-left">${defMatchLeft}</table></div><div class="col-span-1"><table class="w-full text-left">${defMatchRight}</table></div></div></section>
+                        <section class="avoid-break mb-6 pt-4 border-t-2 border-dashed border-gray-200"><div class="flex items-center gap-3 mb-4 bg-purple-100 p-2 rounded-lg border border-purple-200"><span class="bg-purple-600 text-white font-bold py-1 px-3 rounded text-xs">Part 7</span><h2 class="text-lg font-bold text-gray-800">시제 변형 숙제 (Tense Change)</h2></div><p class="text-xs text-gray-500 mb-2 font-bold text-center">* 주어진 영어 문장의 시제를 파악하고, 보라색 지시에 따라 <span class="text-purple-600">나머지 두 시제</span>로 각각 바꾸어 영작하세요.</p><div class="grid grid-cols-2 gap-6">${senTenseLeft}${senTenseRight}</div></section>
+                        <section class="avoid-break pt-4 border-t-2 border-dashed border-gray-200"><div class="flex items-center gap-3 mb-4 bg-purple-100 p-2 rounded-lg border border-purple-200"><span class="bg-purple-600 text-white font-bold py-1 px-3 rounded text-xs">Part 8</span><h2 class="text-lg font-bold text-gray-800">오류 수정 숙제 (Error Correction)</h2></div><p class="text-xs text-gray-500 mb-4 font-bold text-center">* 아래의 한국어 뜻을 참고하여, 위 영어 문장에서 <span class="text-red-500">틀린 단어를 찾아 올바르게 수정</span>하세요.</p><div class="grid grid-cols-2 gap-6">${errLeft}${errRight}</div></section>
+                    </div>`;
+            }
+            return pageHtml;
+        }
+
+        function renderChapter(id) {
+            document.querySelectorAll('.chapter-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`btn-${id}`).classList.add('active');
+            const ch = db.find(c => c.id === id);
+            updateDocumentTitle(ch);
+            document.getElementById('page-container').innerHTML = generatePageHtml(id, currentSession, currentView, isAnswerMode);
+        }
+
+        function printChapterAll() {
+            const activeBtn = document.querySelector('.chapter-btn.active');
+            if (!activeBtn) { alert("먼저 챕터를 선택해주세요."); return; }
+            const chId = parseInt(activeBtn.id.replace('btn-', ''));
+            let allHtml = "";
+            for (let s = 1; s <= 3; s++) {
+                allHtml += generatePageHtml(chId, s, 'vocalist', isAnswerMode);
+                allHtml += generatePageHtml(chId, s, 'textbook', isAnswerMode);
+                allHtml += generatePageHtml(chId, s, 'hw' + s, isAnswerMode);
+            }
+            const originalContent = document.getElementById('page-container').innerHTML;
+            document.getElementById('page-container').innerHTML = allHtml;
+            setTimeout(() => {
+                window.print();
+                document.getElementById('page-container').innerHTML = originalContent;
+            }, 500);
+        }
+
+        function setupLogoUploader() {
+            document.getElementById('logo-upload').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    currentLogoUrl = e.target.result;
+                    const activeBtn = document.querySelector('.chapter-btn.active');
+                    if (activeBtn) {
+                        const chId = parseInt(activeBtn.id.replace('btn-', ''));
+                        renderChapter(chId);
+                    }
+                };
+                reader.readAsDataURL(file);
+                e.target.value = '';
+            });
+        }
+
+        function setupCsvUploader() {
+            document.getElementById('csv-upload').addEventListener('change', function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const text = e.target.result;
+                    const parsedWords = parseCSV(text);
+
+                    if (parsedWords.length > 0) {
+                        const activeBtn = document.querySelector('.chapter-btn.active');
+                        const chId = parseInt(activeBtn.id.replace('btn-', ''));
+                        const ch = db.find(c => c.id === chId);
+
+                        ch.words = parsedWords;
+                        ch.cached = false;
+                        renderChapter(chId);
+                        alert(`성공적으로 ${parsedWords.length}개의 단어와 문장을 불러왔습니다!`);
+                    } else {
+                        alert("CSV 파일에서 데이터를 찾을 수 없거나 형식이 맞지 않습니다.");
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value = '';
+            });
+        }
+
+        function parseCSV(text) {
+            const rows = text.split('\n');
+            const result = [];
+            const re = /,(?=(?:(?:[^"]*"){2})*[^"]*$)/;
+
+            for (let i = 0; i < rows.length; i++) {
+                if (!rows[i].trim()) continue;
+
+                const cols = rows[i].split(re).map(x => x.replace(/^"|"$/g, '').trim());
+
+                if (cols[0] && !isNaN(parseInt(cols[0]))) {
+                    if (cols.length >= 5) {
+                        result.push({
+                            en: cols[1],
+                            def: cols[2],
+                            senEn: cols[3],
+                            senKo: cols[4]
+                        });
+                    }
+                }
+            }
+            return result;
+        }
+
+        init();
+    </script>
+</body>
+
+</html>
