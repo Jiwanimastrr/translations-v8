@@ -251,18 +251,6 @@
             border-radius: 8px;
             border: 1px solid var(--gray-200);
         }
-
-        .watermark-text {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 100pt;
-            font-weight: 900;
-            color: rgba(0,0,0,0.03);
-            pointer-events: none;
-            z-index: 0;
-            white-space: nowrap;
-        }
     </style>
 </head>
 
@@ -1573,7 +1561,6 @@
                 wordsHtml += '</div>';
                 pageHtml += `
                     <div class="a4-page print-page-break">
-                        <div class="watermark-text en-font">Level 8</div>
                         ${headerHtml}
                         <div class="section-header mt-1 mb-3">
                             <span class="section-number en-font">01</span>
