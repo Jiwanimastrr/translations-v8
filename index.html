@@ -268,14 +268,17 @@
             
             /* 긴 줄 낭비 방지용 2단 레이아웃(다단) 적용 */
             .print-columns-2 {
-                column-count: 2 !important;
-                column-gap: 8mm !important;
+                display: grid !important; /* column-count 대신 가장 확실한 grid 배치 사용 */
+                grid-template-columns: repeat(2, 1fr) !important;
+                gap: 5px 8mm !important; /* 상하 5px, 좌우 8mm 간격 */
                 width: 100% !important;
-                display: block !important;
+                align-items: start !important;
             }
             .print-columns-2 > .avoid-break {
-                break-inside: avoid-column !important;
+                break-inside: avoid !important;
                 page-break-inside: avoid !important;
+                margin: 0 !important; /* grid gap이 마진을 대신함 */
+                width: 100% !important;
             }
             
             /* 단어 리스트 표 테이블 구조 강제 픽스 (Background, Edge) */
