@@ -185,6 +185,12 @@
                 box-shadow: none !important;
                 text-shadow: none !important;
                 font-family: 'Pretendard', 'Noto Sans KR', 'Malgun Gothic', sans-serif !important;
+                
+                /* 가로 잘림 방지: 모든 요소 규격 강제 */
+                box-sizing: border-box !important;
+                max-width: 100% !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
             }
 
             @page {
@@ -204,11 +210,12 @@
                 
                 /* 화면 디자인 그대로 캡처하듯 렌더링 */
                 zoom: 1 !important;
+                transform-origin: top left !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
                 
-                orphans: 4 !important;
-                widows: 4 !important;
+                orphans: 0 !important;
+                widows: 0 !important;
             }
 
             /* 2. Hide Unnecessary UI Elements */
@@ -271,12 +278,14 @@
                 break-inside: avoid !important;
                 -webkit-column-break-inside: avoid !important;
                 
-                /* display block 강제로 덮어씌워서 table, flex 깨지는 현상 제거 */
+                /* 레이아웃 붕괴 방지: 화면 그대로의 구조 유지 */
+                display: block !important;
                 width: 100% !important;
-                overflow: hidden !important; 
+                max-width: 100% !important;
+                overflow: visible !important; 
                 position: relative !important;
                 
-                margin-top: 1px !important;    /* 극한의 마진 압축으로 꼬리물기 완벽 차단 */
+                margin-top: 1px !important;    
                 margin-bottom: 3px !important;
                 padding: 0 !important;
                 
