@@ -180,7 +180,7 @@
 
             @page {
                 size: A4;
-                margin: 10mm !important; /* 브라우저 마진 10mm 강제 고정 */
+                margin: 0px !important; /* 브라우저 기본 헤더(날짜/URL) 및 푸터 날림 */
             }
 
             html, body {
@@ -228,7 +228,7 @@
                 height: auto !important;
                 min-height: auto !important;
                 margin: 0px !important;
-                padding: 0px !important; 
+                padding: 12mm 10mm !important; /* 브라우저 마진 0을 대비한 안전 구역(Safe Area) 확보 */
                 box-sizing: border-box !important;
                 border: none !important;
                 background: transparent !important;
@@ -278,6 +278,21 @@
                 break-inside: avoid !important;
                 page-break-inside: avoid !important;
                 margin: 0 !important; /* grid gap이 마진을 대신함 */
+                width: 100% !important;
+            }
+
+            /* 극한의 밀집도를 위한 3단 레이아웃 적용 */
+            .print-columns-3 {
+                display: grid !important; 
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 5px 6mm !important; 
+                width: 100% !important;
+                align-items: start !important;
+            }
+            .print-columns-3 > .avoid-break {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                margin: 0 !important; 
                 width: 100% !important;
             }
             
@@ -1863,12 +1878,13 @@
                             </div>
                         </div>`;
 
-                    // Part 8. Error Correction
+                    // Part 8. Error Correction (Now Part 7)
                     let err = sessionErrorData[i]; 
                     let ansErrHtml = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${err.answerText}</span>` : '';
                     errHtml += `
                         <div class="avoid-break mt-5 mb-6">
-                            <p class="font-bold text-[12pt] text-gray-900 mb-3 en-font"><span class="text-red-600 mr-2">Q${i + 1}.</span> ${err.errorSen}</p>
+                            <p class="font-bold text-[11pt] text-gray-900 mb-1.5 en-font"><span class="text-red-600 mr-2">Q${i + 1}.</span> ${err.errorSen}</p>
+                            <p class="text-[9.5pt] text-gray-500 ko-font mb-3 ml-6 italic">(${err.correctKo})</p>
                             <div class="ml-6 flex items-end gap-3 w-full">
                                 <span class="text-[9pt] bg-red-600 text-white font-bold px-3 py-1 rounded shadow-sm ko-font tracking-tight mb-1 hidden sm:inline-block">Correction</span>
                                 <div class="flex-1 writing-line w-full">${ansErrHtml}</div>
@@ -1900,9 +1916,11 @@
                             <span class="section-title-text ko-font">Part 3. 단어 및 문장 배열 숙제 (Unscramble)</span>
                         </div>
                         <h3 class="font-bold text-gray-500 mt-4 mb-3 text-[11pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-1 w-max rounded-sm shadow-sm"><i class="fas fa-list-ul mr-2 text-[9pt]"></i> 01. Word Unscramble</h3>
-                        <div class="px-3 mb-6 print-columns-2">${wordScrHtml}</div>
-                        <h3 class="font-bold text-gray-500 mt-6 mb-3 text-[11pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-1 w-max rounded-sm shadow-sm"><i class="fas fa-list-ol mr-2 text-[9pt]"></i> 02. Sentence Unscramble</h3>
-                        <div class="px-3 pb-2">${senUnscrHtml}</div>
+                        <div class="px-3 mb-6 print-columns-3">${wordScrHtml}</div>
+                        <div class="print-page-break w-full avoid-break">
+                            <h3 class="font-bold text-gray-500 mt-6 mb-3 text-[11pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-1 w-max rounded-sm shadow-sm"><i class="fas fa-list-ol mr-2 text-[9pt]"></i> 02. Sentence Unscramble</h3>
+                            <div class="px-3 pb-2 w-full">${senUnscrHtml}</div>
+                        </div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
