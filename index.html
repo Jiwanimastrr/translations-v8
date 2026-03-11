@@ -9,343 +9,259 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+        :root {
+            --primary-blue: #1e40af;
+            --accent-purple: #7c3aed;
+            --accent-red: #dc2626;
+            --accent-green: #059669;
+            --gray-900: #111827;
+            --gray-700: #374151;
+            --gray-500: #6b7280;
+            --gray-200: #e5e7eb;
+            --gray-100: #f0f2f5;
+            --print-margin: 10mm;
+        }
 
         body {
-            font-family: 'Noto Sans KR', sans-serif;
-            background-color: #f3f4f6;
-            /* Neumorphism base color */
-            color: #333;
+            font-family: 'Pretendard', 'Noto Sans KR', sans-serif;
+            background-color: #f0f2f5;
+            color: var(--gray-900);
             margin: 0;
             padding: 0;
             display: flex;
             height: 100vh;
             overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            letter-spacing: -0.02em;
         }
 
         /* -------------------------------------
-           Neumorphism UI
+           UI Components (Web View)
         -------------------------------------- */
         .sidebar {
             width: 320px;
-            background-color: #f3f4f6;
+            background: #ffffff;
+            border-right: 1px solid var(--gray-200);
             display: flex;
             flex-direction: column;
             overflow-y: auto;
-            z-index: 10;
-            box-shadow: 8px 0 20px rgba(0, 0, 0, 0.04);
+            z-index: 50;
         }
 
-        .sidebar::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .sidebar::-webkit-scrollbar-track {
-            background: #f3f4f6;
-        }
-
-        .sidebar::-webkit-scrollbar-thumb {
-            background: #d1d5db;
-            border-radius: 4px;
-        }
-
-        .sidebar::-webkit-scrollbar-thumb:hover {
-            background: #9ca3af;
-        }
-
-        /* Neumorphic Button */
-        .neumo-btn {
-            background-color: #f3f4f6;
-            border-radius: 12px;
-            box-shadow: 6px 6px 12px #d1d5db, -6px -6px 12px #ffffff;
-            transition: all 0.2s ease;
-            user-select: none;
-        }
-
-        .neumo-btn:hover {
-            box-shadow: 3px 3px 6px #d1d5db, -3px -3px 6px #ffffff;
-            transform: translateY(1px);
-        }
-
-        .neumo-btn.active {
-            box-shadow: inset 4px 4px 8px #d1d5db, inset -4px -4px 8px #ffffff;
-        }
-
-        /* Neumorphic Button (For answer key special styling) */
-        .neumo-btn-answer.active {
-            box-shadow: inset 4px 4px 8px #d1d5db, inset -4px -4px 8px #ffffff;
-        }
-
-        /* Neumorphic Panel (for upload sections) */
-        .neumo-panel {
-            background-color: #f3f4f6;
-            border-radius: 16px;
-            box-shadow: inset 6px 6px 12px #d1d5db, inset -6px -6px 12px #ffffff;
-            padding: 1rem;
-            margin: 0.75rem 1.25rem;
-        }
-
-        /* Main Content Area */
         .main-content {
             flex: 1;
             overflow-y: auto;
-            padding: 2rem;
-            position: relative;
+            padding: 3rem 2rem;
+            background-color: #f0f2f5;
+            scroll-behavior: smooth;
         }
 
-        .a4-page {
-            width: 210mm;
-            min-height: 297mm;
-            margin: 0 auto;
-            background: white;
+        .neumo-btn {
+            background: #ffffff;
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .neumo-btn:hover {
+            transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            padding: 40px 50px;
-            position: relative;
-            border-radius: 8px;
+            border-color: var(--primary-blue);
         }
 
-        .writing-line {
-            border-bottom: 1px dashed #cbd5e1;
-            height: 28px;
-            width: 100%;
-            margin-top: 8px;
-            margin-bottom: 16px;
-        }
-
-        .homework-line {
-            border-bottom: 1px solid #94a3b8;
-            height: 24px;
-            width: 100%;
-            margin-top: 4px;
-        }
-
-        .section-title {
-            position: relative;
-            display: inline-block;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background-color: #3b82f6;
-            border-radius: 2px;
-            opacity: 0.3;
-        }
-
-        .watermark {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            opacity: 0.06;
-            z-index: 0;
-            pointer-events: none;
-            width: 450px;
-            max-width: 80%;
-            object-fit: contain;
+        .neumo-btn.active {
+            background: var(--primary-blue);
+            color: white !important;
+            border-color: var(--primary-blue);
         }
 
         /* -------------------------------------
-           A4 Print Settings (인쇄 최적화 - 정밀 분할)
+           Professional A4 Page Construction
+        -------------------------------------- */
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto 30mm auto;
+            background: white;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            padding: var(--print-margin);
+            position: relative;
+            box-sizing: border-box;
+            color: black;
+            font-size: 9.5pt;
+            line-height: 1.4;
+        }
+
+        /* Essential Typography */
+        .en-font { font-family: 'Pretendard', sans-serif; letter-spacing: -0.02em; }
+        .ko-font { font-family: 'Noto Sans KR', sans-serif; letter-spacing: -0.03em; }
+
+        /* Section Titles - Publisher Style */
+        .section-header {
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid var(--gray-900);
+            padding-bottom: 4px;
+            margin-bottom: 12px;
+            margin-top: 20px;
+        }
+
+        .section-number {
+            background: var(--gray-900);
+            color: white;
+            padding: 3px 10px;
+            font-weight: 900;
+            font-size: 11pt;
+            margin-right: 10px;
+            border-radius: 3px;
+        }
+
+        .section-title-text {
+            font-size: 12pt;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+        }
+
+        /* Professional Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 8px;
+        }
+
+        .logo-box { display: flex; align-items: center; gap: 10px; }
+        .info-box { text-align: right; font-size: 8pt; color: var(--gray-700); }
+        .info-box strong { font-size: 9.5pt; color: black; display: block; margin-bottom: 2px; }
+
+        /* Writing Lines - Precise Dotted/Solid */
+        .writing-line {
+            min-height: 28px;
+            margin-top: 2px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding-bottom: 2px;
+            padding-left: 2px;
+        }
+
+        .writing-line::after {
+            content: '';
+            position: absolute;
+            left: 0; bottom: -2px;
+            width: 100%; height: 1px;
+            border-bottom: 1px dashed var(--gray-200);
+        }
+
+        /* Crossword / Table Refinement */
+        table { border-collapse: collapse; border: 2px solid var(--gray-900); }
+        th, td { border: 1px solid var(--gray-900); }
+
+        /* -------------------------------------
+           Strict Print Controls
         -------------------------------------- */
         @media print {
             @page {
                 size: A4;
-                margin: 0mm;
-            }
-
-            body {
-                background-color: white;
-                display: block;
-                height: auto;
-                overflow: visible;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
                 margin: 0;
             }
 
-            .sidebar,
-            .print-btn-container,
-            .view-tabs,
-            .session-tabs {
+            body {
+                background: white;
+                height: auto;
+                overflow: visible !important;
+                display: block;
+            }
+
+            .sidebar, .view-tabs, .session-tabs {
                 display: none !important;
             }
 
             .main-content {
                 padding: 0 !important;
                 margin: 0 !important;
-                overflow: visible;
+                background: white !important;
+                overflow: visible !important;
+                height: auto !important;
             }
 
             .a4-page {
-                margin: 0 !important;
-                box-shadow: none !important;
-                padding: 10mm 10mm !important;
                 width: 100% !important;
-                max-width: 100% !important;
-                background: transparent !important;
-                border-radius: 0 !important;
-                box-sizing: border-box !important;
+                height: auto !important;
+                min-height: auto !important;
+                margin: 0 !important;
+                padding: var(--print-margin) !important;
+                box-shadow: none !important;
+                page-break-after: always !important;
+                page-break-inside: auto !important;
                 position: relative;
-                overflow: hidden;
+                overflow: visible !important;
             }
 
             .print-page-break {
                 page-break-before: always !important;
-                break-before: page !important;
-                clear: both;
             }
 
-            /* First page shouldn't have a break before it */
-            #page-container>.print-page-break:first-child,
-            .print-page-break:first-of-type {
-                page-break-before: auto !important;
-                break-before: auto !important;
-                padding-top: 0 !important;
-            }
+            /* Typography Scaling for Print */
+            h1 { font-size: 16pt !important; line-height: 1.1; }
+            h2 { font-size: 13pt !important; line-height: 1.2; }
+            p, div, span { font-size: 9.5pt !important; line-height: 1.4; }
+            
+            .text-red-600 { color: #dc2626 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .bg-blue-50 { background-color: #eff6ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .bg-yellow-50 { background-color: #fefce8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-            .page-break-before {
-                page-break-before: always !important;
-                break-before: page !important;
-            }
-
+            /* Fixes overlapping elements inside flex/grid during print */
             .avoid-break {
-                page-break-inside: avoid !important;
                 break-inside: avoid !important;
+                page-break-inside: avoid !important;
+                -webkit-column-break-inside: avoid !important;
+                /* If elements overlap, transforming normally helps Chrome print engine */
+                transform: translateZ(0);
             }
+        }
 
-            table {
-                page-break-inside: auto;
-                break-inside: auto;
-                border-collapse: collapse;
-                width: 100% !important;
-                table-layout: fixed;
-            }
+        /* Specific Component Styles */
+        .word-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15mm;
+        }
 
-            tr {
-                page-break-inside: avoid;
-                break-inside: avoid;
-            }
+        .word-entry {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 10px;
+        }
 
-            .word-card {
-                padding: 1rem 0.6rem !important;
-                border: 1px solid #ddd !important;
-                border-radius: 10px !important;
-                margin-bottom: 0.5rem !important;
-                min-height: 80px !important;
-            }
+        .word-entry-en { font-size: 18pt; font-weight: 900; color: var(--primary-blue); margin-bottom: 2px; }
+        .word-entry-ko { font-size: 14pt; font-weight: 500; color: var(--gray-700); }
 
-            .writing-line {
-                margin-top: 10px !important;
-                margin-bottom: 20px !important;
-                height: 25px !important;
-                border-bottom: 1.5px solid #aaa !important;
-            }
+        .roleplay-box {
+            padding: 20px;
+            background-color: var(--gray-100);
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+        }
 
-            .print-item {
-                margin-bottom: 2rem !important;
-            }
-
-            .homework-row {
-                margin-bottom: 1.5rem !important;
-            }
-
-            .homework-line {
-                margin-top: 8px !important;
-                margin-bottom: 25px !important;
-                height: 25px !important;
-                border-bottom: 1.5px solid #aaa !important;
-            }
-
-            .roleplay-line {
-                margin-bottom: 1rem !important;
-                line-height: 1.6 !important;
-                font-size: 14pt !important;
-            }
-
-            .roleplay-section {
-                padding: 1.5rem !important;
-                border-radius: 12px !important;
-            }
-
-            .roleplay-inner-box {
-                padding: 1.5rem !important;
-                border-radius: 8px !important;
-            }
-
-            .section-title {
-                margin-bottom: 1.5rem !important;
-                margin-top: 1.5rem !important;
-                font-size: 18pt !important;
-                padding-bottom: 0.5rem !important;
-                border-bottom: 2px solid #eee !important;
-            }
-
-            .grid {
-                gap: 1.5rem !important;
-            }
-
-            .answer-text {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                display: inline-block;
-                max-width: 100%;
-                color: #dc2626 !important;
-            }
-
-            /* Typography scaling for print - SPACIOUS & READABLE */
-            h1 {
-                font-size: 22pt !important;
-                font-weight: 900 !important;
-                margin: 0 0 1rem 0 !important;
-            }
-
-            h2 {
-                font-size: 18pt !important;
-                font-weight: 800 !important;
-                margin-bottom: 1rem !important;
-            }
-
-            h3 {
-                font-size: 15pt !important;
-                font-weight: 700 !important;
-            }
-
-            p,
-            div,
-            td,
-            span,
-            strong {
-                font-size: 14pt !important;
-                line-height: 1.8 !important;
-            }
-
-            .text-xs {
-                font-size: 12pt !important;
-                color: #555 !important;
-            }
-
-            .text-sm {
-                font-size: 13pt !important;
-            }
-
-            header {
-                margin-bottom: 1.5rem !important;
-                padding-bottom: 1rem !important;
-                border-bottom: 3px solid #3b82f6 !important;
-            }
-
-            header h1 {
-                margin-top: 5px !important;
-            }
-
-            header img {
-                max-height: 1.2cm !important;
-            }
+        .watermark-text {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 100pt;
+            font-weight: 900;
+            color: rgba(0,0,0,0.03);
+            pointer-events: none;
+            z-index: 0;
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -1363,11 +1279,11 @@
             let grid = cwData.grid;
             let placements = cwData.placements;
 
-            if (!grid || grid.length === 0) return "<p class='text-center text-gray-500 py-10'>퍼즐 생성에 실패했습니다. 다른 챕터를 선택해주세요.</p>";
+            if (!grid || grid.length === 0) return "<p class='text-center text-gray-500 py-10 ko-font'>퍼즐 생성에 실패했습니다. 단어 개수를 확인해주세요.</p>";
 
-            let tableHtml = '<table class="border-collapse mx-auto mb-6 bg-white shadow-sm" style="table-layout: fixed;">';
-            let cellSize = grid[0].length > 15 ? 'w-6 h-6 sm:w-7 sm:h-7' : 'w-8 h-8 sm:w-9 sm:h-9';
-            let fontSize = grid[0].length > 15 ? 'text-sm' : 'text-base';
+            let tableHtml = '<div class="flex justify-center mb-10"><table class="border-collapse bg-white shadow-sm crossword-table" style="table-layout: fixed;">';
+            let cellSize = grid[0].length > 15 ? 'w-7 h-7 sm:w-8 sm:h-8' : 'w-10 h-10 sm:w-11 sm:h-11';
+            let fontSize = grid[0].length > 15 ? 'text-[12pt]' : 'text-[15pt]';
 
             for (let r = 0; r < grid.length; r++) {
                 tableHtml += '<tr>';
@@ -1376,24 +1292,33 @@
                         tableHtml += `<td class="${cellSize}"></td>`;
                     } else {
                         let p = placements.find(x => x.r === r && x.c === c);
-                        let numHtml = p ? `<span class="absolute top-0.5 left-0.5 text-[8px] sm:text-[9px] font-bold text-gray-500 leading-none">${p.num}</span>` : '';
-                        let charHtml = isAnswerMode ? `<span class="text-red-600 font-bold ${fontSize}">${grid[r][c]}</span>` : '';
-                        tableHtml += `<td class="${cellSize} border border-gray-400 relative text-center align-middle p-0">${numHtml}${charHtml}</td>`;
+                        let numHtml = p ? `<span class="absolute top-0.5 left-0.5 text-[9px] font-bold text-gray-500 en-font leading-none">${p.num}</span>` : '';
+                        let charHtml = isAnswerMode ? `<span class="text-red-600 font-extrabold ${fontSize} en-font uppercase">${grid[r][c]}</span>` : '';
+                        tableHtml += `<td class="${cellSize} border-[1.5px] border-gray-800 relative text-center align-middle p-0 bg-white">${numHtml}${charHtml}</td>`;
                     }
                 }
                 tableHtml += '</tr>';
             }
-            tableHtml += '</table>';
+            tableHtml += '</table></div>';
 
             let across = placements.filter(p => p.dir === 0).sort((a, b) => a.num - b.num);
             let down = placements.filter(p => p.dir === 1).sort((a, b) => a.num - b.num);
 
-            let cluesHtml = `<div class="grid grid-cols-2 gap-6 text-[12px] sm:text-[13px]"><div class="col-span-1">
-                <h3 class="font-bold text-blue-700 mb-2 border-b border-blue-200 pb-1">Across (가로)</h3><ul class="space-y-1 text-gray-700">`;
-            across.forEach(p => { cluesHtml += `<li class="break-keep"><span class="font-bold mr-1 text-gray-500">${p.num}.</span> ${p.ko}</li>`; });
-            cluesHtml += `</ul></div><div class="col-span-1">
-                <h3 class="font-bold text-blue-700 mb-2 border-b border-blue-200 pb-1">Down (세로)</h3><ul class="space-y-1 text-gray-700">`;
-            down.forEach(p => { cluesHtml += `<li class="break-keep"><span class="font-bold mr-1 text-gray-500">${p.num}.</span> ${p.ko}</li>`; });
+            let cluesHtml = `
+            <div class="grid grid-cols-2 gap-x-16 gap-y-8 text-[13pt] px-4">
+                <div class="col-span-1">
+                    <h3 class="font-black text-gray-900 mb-4 border-b-2 border-gray-900 pb-2 en-font uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-arrow-right text-blue-700"></i> Across <span class="text-[12pt] text-gray-500 ko-font font-bold ml-2">(가로)</span>
+                    </h3>
+                    <ul class="space-y-3 text-gray-800 ko-font">`;
+            across.forEach(p => { cluesHtml += `<li class="break-keep leading-snug"><span class="font-black mr-2 text-blue-700 en-font">${p.num}.</span> ${p.ko}</li>`; });
+            cluesHtml += `</ul></div>
+                <div class="col-span-1">
+                    <h3 class="font-black text-gray-900 mb-4 border-b-2 border-gray-900 pb-2 en-font uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-arrow-down text-blue-700"></i> Down <span class="text-[12pt] text-gray-500 ko-font font-bold ml-2">(세로)</span>
+                    </h3>
+                    <ul class="space-y-3 text-gray-800 ko-font">`;
+            down.forEach(p => { cluesHtml += `<li class="break-keep leading-snug"><span class="font-black mr-2 text-blue-700 en-font">${p.num}.</span> ${p.ko}</li>`; });
             cluesHtml += `</ul></div></div>`;
 
             return tableHtml + cluesHtml;
@@ -1612,153 +1537,342 @@
             const isVocalist = view === 'vocalist';
 
             let typeTag = '';
-            let tagColor = 'text-blue-600';
-            if (isVocalist) { typeTag = '[단어장]'; tagColor = 'text-indigo-600'; }
-            else if (isTextbook) { typeTag = '[교재]'; tagColor = 'text-blue-600'; }
-            else if (isHomework) { typeTag = '[숙제]'; tagColor = 'text-green-600'; }
+            let tagColor = 'text-blue-800';
+            if (isVocalist) { typeTag = 'VOCABULARY'; tagColor = 'text-indigo-800'; }
+            else if (isTextbook) { typeTag = 'TEXTBOOK'; tagColor = 'text-blue-800'; }
+            else if (isHomework) { typeTag = 'HOMEWORK'; tagColor = 'text-green-800'; }
 
-            const logoHtml = currentLogoUrl ? `<img src="${currentLogoUrl}" alt="로고" class="max-h-10 max-w-[120px] object-contain mix-blend-multiply mr-4">` : '';
+            const logoHtml = currentLogoUrl ? `<img src="${currentLogoUrl}" alt="로고" class="max-h-8 max-w-[120px] object-contain mix-blend-multiply mr-4">` : '';
             const headerHtml = `
-                <header class="border-b-2 border-blue-600 pb-1 mb-3 relative z-10 flex justify-between items-end avoid-break h-[50px]">
-                    <div class="flex items-center">
+                <div class="page-header avoid-break ko-font">
+                    <div class="logo-box">
                         ${logoHtml}
                         <div>
-                            <span class="${tagColor} font-bold tracking-wider uppercase text-[7.5pt]">${typeTag} 주니어통번역사 [${session}차시]</span>
-                            <h1 class="text-xl font-black mt-0.5 text-gray-800 leading-none">Chapter 0${ch.id}. ${ch.title} ${answerMode ? '<span class="text-red-600 text-sm ml-2">[Answer Key]</span>' : ''}</h1>
+                            <span class="${tagColor} font-black tracking-widest text-[8pt] en-font">${typeTag}</span>
+                            <h1 class="text-xl font-black mt-0.5 text-gray-900 leading-none">Chapter 0${ch.id}. ${ch.title} ${answerMode ? '<span class="text-red-600 text-[11pt] ml-3 font-bold">[Answer Key]</span>' : ''}</h1>
                         </div>
                     </div>
-                    ${isHomework ? `
-                    <div class="pb-1 text-right">
-                        <div class="text-[9pt] font-bold text-gray-800 inline-block mr-2">Name : </div>
-                        <div class="border-b border-gray-600 inline-block w-32"></div>
+                    <div class="info-box en-font">
+                        <strong>Junior Level 8 - Session ${session}</strong>
+                        Date: ________ / Name: ________________
                     </div>
-                    ` : ''}
-                </header>
+                </div>
             `;
 
             let pageHtml = '';
             if (view === 'textbook') {
-                let wordsHtml = '<div class="grid grid-cols-1 gap-4">';
+                // Step 1. Words
+                let wordsHtml = '<div class="grid grid-cols-2 gap-x-8 gap-y-3 mt-4">';
                 sessionWords.forEach(word => {
-                    wordsHtml += `<div class="avoid-break word-card bg-gray-50 border border-gray-200 rounded p-4 text-center flex flex-col justify-center min-h-[80px]"><div class="text-[18pt] font-extrabold text-blue-800 leading-tight mb-2">${word.en}</div><div class="text-[15pt] font-medium text-gray-700">${word.ko}</div></div>`;
+                    wordsHtml += `
+                        <div class="word-entry avoid-break !pb-1">
+                            <div class="word-entry-en en-font !text-[12pt] mb-0">${word.en}</div>
+                            <div class="word-entry-ko ko-font !text-[10pt]">${word.ko}</div>
+                        </div>`;
                 });
                 wordsHtml += '</div>';
-                pageHtml += `<div class="print-page-break">${headerHtml}<section class="relative z-10"><h2 class="section-title text-gray-800"><i class="fas fa-book-open text-blue-500 mr-2"></i>Step 1. 단어 학습 (Words)</h2>${wordsHtml}</section></div>`;
+                pageHtml += `
+                    <div class="a4-page print-page-break">
+                        <div class="watermark-text en-font">Level 8</div>
+                        ${headerHtml}
+                        <div class="section-header mt-1 mb-3">
+                            <span class="section-number en-font">01</span>
+                            <span class="section-title-text ko-font">Step 1. 단어 학습 (Words)</span>
+                        </div>
+                        ${wordsHtml}
+                    </div>`;
 
+                // Step 2. English to Korean
                 let transHtml = '';
                 sessionWords.forEach((word, index) => {
-                    const ansText = answerMode ? `<div class="text-red-500 font-bold text-[13pt] mt-1 ml-8 animate-fadeIn">${word.senKo}</div>` : `<div class="text-gray-400 font-medium text-[11pt] italic mt-1 ml-8">(${word.senKo})</div>`;
-                    transHtml += `<div class="avoid-break print-item mt-6 mb-8"><p class="font-bold text-[14pt] mb-1"><span class="text-purple-600 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senEn}</p>${ansText}<div class="writing-line mt-4"></div></div>`;
+                    const ansText = answerMode ? `<div class="text-red-600 font-bold text-[11pt] mt-1 mb-0 ko-font">${word.senKo}</div>` : '';
+                    transHtml += `
+                        <div class="avoid-break mt-3 mb-4">
+                            <p class="font-bold text-[11pt] mb-1 en-font leading-snug"><span class="text-blue-700 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senEn}</p>
+                            ${ansText}
+                            <div class="writing-line !mb-2"></div>
+                        </div>`;
                 });
-                pageHtml += `<div class="print-page-break">${headerHtml}<section class="relative z-10"><h2 class="section-title text-gray-800"><i class="fas fa-language text-purple-500 mr-2"></i>Step 2. 직독직해 (Eng to Kor)</h2><div class="grid grid-cols-1">${transHtml}</div></section></div>`;
+                pageHtml += `
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
+                        <div class="section-header">
+                            <span class="section-number en-font">02</span>
+                            <span class="section-title-text ko-font">Step 2. 직독직해 (Eng to Kor)</span>
+                        </div>
+                        <div class="mt-2 text-sm">${transHtml}</div>
+                    </div>`;
 
+                // Step 3. Korean to English
                 let writeHtml = '';
                 sessionWords.forEach((word, index) => {
-                    const ansText = answerMode ? `<div class="text-red-500 font-bold text-[13pt] mt-1 ml-8 animate-fadeIn">${word.senEn}</div>` : `<div class="text-gray-400 font-medium text-[11pt] italic mt-1 ml-8">(${word.senEn})</div>`;
-                    writeHtml += `<div class="avoid-break print-item mt-6 mb-8"><p class="font-bold text-[14pt] text-gray-800 mb-1"><span class="text-red-600 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senKo} <span class="text-[12pt] text-gray-400 font-normal ml-2">(${word.en})</span></p>${ansText}<div class="writing-line mt-4"></div></div>`;
+                    const ansText = answerMode ? `<div class="text-red-600 font-bold text-[11pt] mt-1 mb-0 en-font">${word.senEn}</div>` : '';
+                    writeHtml += `
+                        <div class="avoid-break mt-3 mb-4">
+                            <p class="font-bold text-[11pt] mb-1 ko-font leading-snug"><span class="text-red-600 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senKo} <span class="text-[9.5pt] text-gray-400 font-normal ml-2 en-font">(${word.en})</span></p>
+                            ${ansText}
+                            <div class="writing-line !mb-2"></div>
+                        </div>`;
                 });
-                pageHtml += `<div class="print-page-break">${headerHtml}<section class="relative z-10"><h2 class="section-title text-gray-800"><i class="fas fa-pen-nib text-red-500 mr-2"></i>Step 3. 영작 훈련 (Kor to Eng)</h2><div class="grid grid-cols-1">${writeHtml}</div></section></div>`;
+                pageHtml += `
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
+                        <div class="section-header">
+                            <span class="section-number en-font">03</span>
+                            <span class="section-title-text ko-font">Step 3. 영작 훈련 (Kor to Eng)</span>
+                        </div>
+                        <div class="mt-2 text-sm">${writeHtml}</div>
+                    </div>`;
 
+                // Step 4. Role-play
                 let roleplayHtml = '';
                 if (sessionRpDialogue.length > 0) {
                     roleplayHtml = sessionRpDialogue.map(d => {
-                        const formattedText = d.text.replace(/\[(.*?)\]/g, (match, word) => { if (answerMode) return `<span class="inline-block min-w-[5rem] px-3 border-b-2 border-red-500 text-center text-[15pt] text-red-600 font-bold mx-2">${word}</span>`; return `<span class="inline-block min-w-[5rem] px-3 border-b-2 border-gray-500 text-center text-[15pt] text-gray-400 font-normal mx-2"></span>`; });
-                        return `<div class="roleplay-item mb-8 avoid-break"><div class="roleplay-line font-bold text-gray-800 mb-3"><span class="font-black ${d.speaker === 'A' ? 'text-blue-600' : 'text-green-600'} mr-3 text-[16pt]">${d.speaker}:</span> "${formattedText}"</div><div class="roleplay-ko text-[13pt] text-gray-500 italic ml-10 border-l-2 border-gray-300 pl-4 mt-2">(${d.ko || ''})</div></div>`;
+                        const formattedText = d.text.replace(/\[(.*?)\]/g, (match, word) => { 
+                            if (answerMode) return `<span class="inline-block px-1 border-b-[1.5px] border-red-500 text-red-600 font-black mx-1">${word}</span>`; 
+                            return `<span class="inline-block min-w-[4rem] px-1 border-b-[1.5px] border-gray-400 mx-1"></span>`; 
+                        });
+                        return `
+                            <div class="mb-5 avoid-break flex gap-3">
+                                <div class="font-black text-lg ${d.speaker === 'A' ? 'text-blue-700' : 'text-green-700'} en-font w-8">${d.speaker}:</div>
+                                <div class="flex-1">
+                                    <div class="text-[12pt] font-bold text-gray-900 en-font leading-relaxed mb-0.5">"${formattedText}"</div>
+                                    <div class="text-[10pt] text-gray-500 italic ko-font border-l-2 border-gray-200 pl-3 mt-1">(${d.ko || ''})</div>
+                                </div>
+                            </div>`;
                     }).join('');
                 }
-                pageHtml += `<div class="print-page-break">${headerHtml}<section class="roleplay-section bg-yellow-50 relative z-10 shadow-sm mt-8 border-2 border-yellow-200"><div class="flex items-center justify-between mb-4"><h2 class="section-title text-gray-800 flex items-center border-none !mb-0 !pb-0"><i class="fas fa-comments text-yellow-600 mr-3"></i>Step 4. 실전 대화 응용 (Role-play)</h2></div><div class="roleplay-inner-box bg-white border border-yellow-100 shadow-inner">${roleplayHtml}</div></section></div>`;
+                pageHtml += `
+                    <div class="a4-page print-page-break bg-yellow-50/20">
+                        ${headerHtml}
+                        <div class="section-header">
+                            <span class="section-number en-font">04</span>
+                            <span class="section-title-text ko-font">Step 4. 실전 대화 응용 (Role-play)</span>
+                        </div>
+                        <div class="roleplay-box bg-white mt-4 shadow-sm p-6 border-[1.5px] border-gray-100">
+                            ${roleplayHtml}
+                        </div>
+                    </div>`;
             } else if (view === 'vocalist') {
-                let trs = sessionWords.map((word, i) => `<tr class="border-b border-gray-200 avoid-break h-[36px]"><td class="p-1 text-center text-gray-500 border-r border-gray-200 w-10 text-[7.5pt]">${i + 1}</td><td class="p-1 font-bold text-blue-800 border-r border-gray-200 w-[18%] text-[8.5pt]">${word.en}</td><td class="p-1 text-gray-700 border-r border-gray-200 w-[30%] text-[7.5pt] leading-tight break-keep">${word.def}</td><td class="p-1 pl-2"><div class="text-gray-800 font-medium text-[8pt] leading-tight">${word.senEn}</div><div class="text-gray-500 text-[7.5pt] mt-0.5 leading-tight">${word.senKo}</div></td></tr>`).join('');
-                pageHtml += `<div class="print-page-break">${headerHtml}<div class="text-center mb-3 relative z-10 avoid-break"><h2 class="text-sm font-bold text-gray-800 bg-gray-100 inline-block py-0.5 px-6 rounded-full border border-gray-300">📝 Word & Sentence List</h2></div><div class="relative z-10"><table class="w-full border-t-2 border-b-2 border-gray-800 bg-white shadow-sm table-layout-fixed"><thead><tr class="bg-gray-100 border-b border-gray-400 text-left"><th class="p-1 text-center border-r border-gray-300 text-gray-600 w-10 text-[7.5pt]">No.</th><th class="p-1 border-r border-gray-300 text-gray-600 w-[18%] text-[7.5pt]">Word</th><th class="p-1 border-r border-gray-300 text-gray-600 w-[30%] text-[7.5pt]">Definition</th><th class="p-1 pl-2 text-gray-600 text-[7.5pt]">Sentence & Translation</th></tr></thead><tbody>${trs}</tbody></table></div></div>`;
+                let trs = sessionWords.map((word, i) => `
+                    <tr class="border-b border-gray-200 avoid-break">
+                        <td class="p-1.5 text-center text-gray-500 font-bold en-font w-10 text-[9pt]">${i + 1}</td>
+                        <td class="p-1.5 font-black text-blue-800 text-[10pt] en-font w-[20%] border-l border-gray-100">${word.en}</td>
+                        <td class="p-1.5 text-gray-700 text-[9pt] ko-font w-[25%] border-l border-gray-100 leading-tight">${word.def}</td>
+                        <td class="p-1.5 border-l border-gray-100">
+                            <div class="text-gray-900 font-bold text-[9.5pt] en-font leading-snug">${word.senEn}</div>
+                            <div class="text-gray-500 text-[8.5pt] ko-font mt-0.5">${word.senKo}</div>
+                        </td>
+                    </tr>`).join('');
+                pageHtml += `
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
+                        <div class="section-header">
+                            <span class="section-number en-font">LS</span>
+                            <span class="section-title-text ko-font">Vocabulary Vocabulary & Example Sentences</span>
+                        </div>
+                        <table class="w-full mt-6 bg-white overflow-hidden rounded-lg shadow-sm">
+                            <thead class="bg-gray-900 text-white">
+                                <tr class="en-font text-[10pt] uppercase tracking-tighter">
+                                    <th class="p-3 text-center w-12">No.</th>
+                                    <th class="p-3 text-left w-[20%]">Word</th>
+                                    <th class="p-3 text-left w-[25%]">Definition</th>
+                                    <th class="p-3 text-left">Example Sentences & Translation</th>
+                                </tr>
+                            </thead>
+                            <tbody>${trs}</tbody>
+                        </table>
+                    </div>`;
             } else if (view.startsWith('hw')) {
                 let wordTestHtml = ''; let senTestHtml = ''; let wordScrHtml = ''; let senUnscrHtml = ''; let senTransHtml = ''; let defMatchHtml = ''; let senTenseHtml = ''; let errHtml = '';
+                
                 for (let i = 0; i < sessionWords.length; i++) {
-                    let ansKo = answerMode ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[13pt]">${sessionWords[i].ko}</span>` : '';
-                    let ansEn = answerMode ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[13pt]">${sessionWords[i].en}</span>` : '';
-                    let rowHtml = `<div class="homework-row avoid-break mt-6 mb-8"><div class="flex flex-col gap-3 w-full"><div class="font-bold text-gray-800 text-[14pt]"><span class="text-blue-600 mr-2">${i + 1}.</span>${sessionWords[i].en}</div><div class="w-full border-b-[2px] border-gray-400 relative h-[30px] p-0">${ansKo}</div><div class="font-bold text-gray-800 text-[14pt] mt-4"><span class="text-green-600 mr-2">${i + 1}.</span>${sessionWords[i].ko}</div><div class="w-full border-b-[2px] border-gray-400 relative h-[30px] p-0">${ansEn}</div></div></div>`;
-                    wordTestHtml += rowHtml;
-
-                    let ansSenKo = answerMode ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[12pt]">${sessionWords[i].senKo}</span>` : '';
-                    let ansSenEn = answerMode ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[12pt]">${sessionWords[i].senEn}</span>` : '';
-                    let senHtml = `<div class="avoid-break relative mb-8 mt-6"><p class="font-bold text-[13pt] text-gray-800 mb-3"><span class="text-blue-600 mr-2">Q${i + 1}.</span> ${sessionWords[i].senEn}</p><div class="homework-line relative">${ansSenKo}</div><p class="font-bold text-[13pt] text-gray-800 mt-6 mb-3"><span class="text-red-600 mr-2">Q${i + 1}.</span> ${sessionWords[i].senKo}</p><div class="homework-line relative">${ansSenEn}</div></div>`;
-                    senTestHtml += senHtml;
-
-                    let scrData = sessionScrambleData[i];
-                    let wordScr = `<div class="avoid-break relative mb-8 mt-6"><div class="font-black text-blue-700 text-[14pt] mb-2 uppercase tracking-wide"><span class="text-gray-500 mr-3">${i + 1}.</span>${scrData.word}</div><div class="text-[12pt] text-gray-500 ml-8 mb-3">${sessionWords[i].ko}</div><div class="homework-line relative ml-8">${ansEn}</div></div>`;
-                    wordScrHtml += wordScr;
-
-                    let ansUnscr = answerMode ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[12pt]">${sessionWords[i].senEn}</span>` : '';
-                    let unscr = `<div class="avoid-break mb-8 mt-6 relative"><div class="font-bold text-[13pt] text-blue-700 leading-relaxed mb-2"><span class="text-gray-500 mr-2">Q${i + 1}.</span> ${scrData.sen}</div><div class="text-[12pt] text-gray-500 ml-8 mb-3">${sessionWords[i].senKo}</div><div class="homework-line ml-8 relative">${ansUnscr}</div></div>`;
-                    senUnscrHtml += unscr;
-
-                    let tData = sessionTransData[i];
-                    let ansTrans = answerMode ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[12pt]">${tData.ans}</span>` : '';
-                    let trans = `<div class="avoid-break mb-8 mt-6 relative"><div class="font-bold text-[13pt] text-gray-800 mb-2"><span class="text-gray-500 mr-2">Q${i + 1}.</span> ${sessionWords[i].senEn}</div><div class="text-[13pt] text-blue-600 font-black ml-8 mb-3 bg-blue-50 inline-block p-1 px-3 rounded">▶ ${tData.prompt}</div><div class="homework-line ml-8 relative">${ansTrans}</div></div>`;
-                    senTransHtml += trans;
-
-                    let defRow = `<div class="avoid-break mb-8 mt-6 relative"><div class="flex gap-4 items-start"><span class="text-gray-500 font-bold text-[13pt]">${i + 1}.</span><div class="text-gray-800 text-[13pt] leading-relaxed flex-1 bg-gray-50 p-3 rounded-lg border border-gray-200">${sessionWords[i].def}</div></div><div class="homework-line ml-8 mt-4 relative">${ansEn}</div></div>`;
-                    defMatchHtml += defRow;
-
-                    let originSen = sessionWords[i].senEn; let tenseInfo = sessionTenseData[i]; let target1Answer = getTenseAnswer(originSen, tenseInfo.target1); let target2Answer = getTenseAnswer(originSen, tenseInfo.target2); let ansT1Html = answerMode ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[12pt]">${target1Answer}</span>` : ''; let ansT2Html = answerMode ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[12pt]">${target2Answer}</span>` : '';
-                    let tense = `<div class="avoid-break mb-10 mt-6 relative"><div class="font-bold text-[13pt] text-gray-800 mb-4"><span class="text-gray-500 mr-2">Q${i + 1}.</span> ${originSen}</div><div class="flex items-center mb-4 ml-8 relative"><span class="text-[12pt] text-white bg-purple-600 rounded px-3 py-1 font-bold w-24 text-center mr-4">${tenseInfo.target1}</span><div class="flex-1 border-b-2 border-gray-400 h-8 relative">${ansT1Html}</div></div><div class="flex items-center ml-8 relative"><span class="text-[12pt] text-white bg-purple-600 rounded px-3 py-1 font-bold w-24 text-center mr-4">${tenseInfo.target2}</span><div class="flex-1 border-b-2 border-gray-400 h-8 relative">${ansT2Html}</div></div></div>`;
-                    senTenseHtml += tense;
-
-                    let err = sessionErrorData[i]; let ansErrHtml = answerMode ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[12pt]">${err.answerText}</span>` : '';
-                    let errorItem = `<div class="avoid-break mb-10 mt-6 relative"><p class="font-bold text-[14pt] text-gray-900 mb-2"><span class="text-blue-600 mr-2">Q${i + 1}.</span> ${err.errorSen}</p><div class="flex items-center mt-6 ml-8 relative"><span class="text-[13pt] text-white bg-red-500 font-bold px-4 py-1 rounded mr-4 shadow-sm">올바른 문장:</span><div class="flex-1 border-b-2 border-gray-400 h-8 relative">${ansErrHtml}</div></div></div>`;
-                    errHtml += errorItem;
-                }
-
-                // Extremely spacious 1-column layout for Homework
-                pageHtml += `
-                    <div class="print-page-break">${headerHtml}
-                        <section class="avoid-break mb-12"><h2 class="section-title">Part 1. 단어 암기와 영작 (Word Practice)</h2><div class="grid grid-cols-1 w-full">${wordTestHtml}</div></section>
-                    </div>
-                    <div class="print-page-break">${headerHtml}
-                        <section class="avoid-break mb-12"><h2 class="section-title">Part 2. 문장 해석과 영작 (Sentence Practice)</h2><div class="grid grid-cols-1 w-full">${senTestHtml}</div></section>
-                    </div>
-                    <div class="print-page-break">${headerHtml}
-                        <section class="avoid-break mb-12"><h2 class="section-title">Part 3. 단어 퍼즐 (Crossword)</h2>${renderCrosswordHtml(sessionCrossword, answerMode)}</section>
-                    </div>
-                    <div class="print-page-break">${headerHtml}
-                        <section class="avoid-break mb-12"><h2 class="section-title">Part 4. 단어 및 문장 배열 숙제 (Unscramble)</h2><h3 class="font-bold text-gray-700 ml-2 mt-6 mb-4 text-[14pt]">1. Word Unscramble</h3><div class="grid grid-cols-1 w-full">${wordScrHtml}</div><h3 class="font-bold text-gray-700 ml-2 mt-10 mb-4 text-[14pt]">2. Sentence Unscramble</h3><div class="grid grid-cols-1 w-full">${senUnscrHtml}</div></section>
-                    </div>
-                    <div class="print-page-break">${headerHtml}
-                        <section class="avoid-break mb-12"><h2 class="section-title">Part 5. 문장 변형 숙제 (Transformation)</h2><div class="grid grid-cols-1 w-full">${senTransHtml}</div></section>
-                    </div>
-                    <div class="print-page-break">${headerHtml}
-                        <section class="avoid-break mb-12"><h2 class="section-title">Part 6. 영영풀이 숙제 (Definition Match)</h2><div class="grid grid-cols-1 w-full">${defMatchHtml}</div></section>
-                    </div>
-                    <div class="print-page-break">${headerHtml}
-                        <section class="avoid-break mb-12"><h2 class="section-title">Part 7. 시제 변형 숙제 (Tense Change)</h2><div class="grid grid-cols-1 w-full">${senTenseHtml}</div></section>
-                    </div>
-                    <div class="print-page-break">${headerHtml}
-                        <section class="avoid-break mb-12"><h2 class="section-title">Part 8. 오류 수정 숙제 (Error Correction)</h2><div class="grid grid-cols-1 w-full">${errHtml}</div></section>
-                    </div>
-                    <div class="print-page-break">${headerHtml}
-                        <section class="avoid-break mb-12">
-                            <div class="flex items-center justify-between">
-                                <h2 class="section-title"><i class="fas fa-microphone-alt text-blue-600 mr-2"></i>Part 9. 받아쓰기 숙제 (Dictation Practice)</h2>
-                                <div class="flex items-center gap-2 border-[1.5px] border-dashed border-blue-400 p-1.5 rounded bg-blue-50 shadow-sm print-color-adjust-exact">
-                                    <div class="text-right leading-tight min-w-[max-content]">
-                                        <div class="text-[10pt] font-black text-blue-700">받아쓰기 음원</div>
-                                        <div class="text-[7.5pt] text-gray-600 font-bold mt-0.5">스마트폰 스캔 ▶</div>
-                                    </div>
-                                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="Dictation QR" class="w-12 h-12 border border-blue-200">
+                    let ansKo = answerMode ? `<span class="text-red-600 font-bold text-[11pt] ko-font w-full break-words leading-tight">${sessionWords[i].ko}</span>` : '';
+                    let ansEn = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${sessionWords[i].en}</span>` : '';
+                    
+                    // Part 1. Word Practice
+                    wordTestHtml += `
+                        <div class="avoid-break mt-3 mb-4">
+                            <div class="grid grid-cols-2 gap-8">
+                                <div class="flex flex-col">
+                                    <div class="font-bold text-gray-900 text-[11pt] en-font mb-1.5"><span class="text-blue-700 mr-2">${i + 1}.</span>${sessionWords[i].en}</div>
+                                    <div class="flex-1 writing-line w-full">${ansKo}</div>
+                                </div>
+                                <div class="flex flex-col">
+                                    <div class="font-bold text-gray-900 text-[11pt] ko-font mb-1.5"><span class="text-green-700 mr-2">${i + 1}.</span>${sessionWords[i].ko}</div>
+                                    <div class="flex-1 writing-line w-full">${ansEn}</div>
                                 </div>
                             </div>
-                            <div class="grid grid-cols-1 gap-6 mt-6">
-                                ${Array.from({ length: 14 }).map((_, i) => `
-                                    <div class="avoid-break mb-4">
-                                        <div class="flex items-center gap-3 mb-2">
-                                            <span class="font-black text-[14pt] text-blue-600">Q${String(i + 1).padStart(2, '0')}.</span>
-                                            <div class="flex-1 border-b-2 border-gray-400 h-10 relative">
-                                                ${answerMode && sessionWords[i] ? `<span class="absolute bottom-1 left-2 text-red-600 font-bold text-[12pt]">${sessionWords[i].senEn}</span>` : ''}
-                                            </div>
+                        </div>`;
+
+                    // Part 2. Sentence Practice
+                    let ansSenEn = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
+                    senTestHtml += `
+                        <div class="avoid-break mt-4 mb-5">
+                            <p class="font-bold text-[11pt] text-gray-900 mb-1.5 ko-font leading-snug"><span class="text-blue-700 mr-2 en-font">Q${String(i + 1).padStart(2, '0')}.</span> ${sessionWords[i].senKo} <span class="text-[9.5pt] text-gray-400 font-normal ml-2 en-font">(${sessionWords[i].en})</span></p>
+                            <div class="writing-line mt-3 w-full">${ansSenEn}</div>
+                        </div>`;
+
+                    // Part 4-1. Word Scrambles
+                    let scrData = sessionScrambleData[i];
+                    wordScrHtml += `
+                        <div class="avoid-break mt-3 mb-4 flex items-end gap-4">
+                            <div class="flex-1">
+                                <div class="font-black text-blue-800 text-[11pt] en-font mb-1 tracking-wider uppercase"><span class="text-gray-400 mr-2 font-normal">${i + 1}.</span>${scrData.word}</div>
+                                <div class="text-[9.5pt] text-gray-500 ko-font ml-6 italic mb-1">(${sessionWords[i].ko})</div>
+                            </div>
+                            <div class="w-1/2 writing-line">${ansEn}</div>
+                        </div>`;
+
+                    // Part 4-2. Sentence Unscrambles
+                    let ansUnscr = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
+                    senUnscrHtml += `
+                        <div class="avoid-break mt-4 mb-5">
+                            <div class="font-bold text-[11pt] text-blue-900 en-font leading-snug mb-1.5"><span class="text-gray-400 mr-2 font-normal">Q${i + 1}.</span> ${scrData.sen}</div>
+                            <div class="text-[9.5pt] text-gray-500 ko-font ml-6 mb-1.5">(${sessionWords[i].senKo})</div>
+                            <div class="writing-line ml-6 w-full">${ansUnscr}</div>
+                        </div>`;
+
+                    // Part 5. Transformation
+                    let tData = sessionTransData[i];
+                    let ansTrans = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${tData.ans}</span>` : '';
+                    senTransHtml += `
+                        <div class="avoid-break mt-4 mb-5 flex flex-col">
+                            <div class="font-bold text-[11pt] text-gray-900 en-font mb-1.5"><span class="text-gray-400 mr-2 font-normal">Q${i + 1}.</span> ${sessionWords[i].senEn}</div>
+                            <div class="bg-blue-50 text-blue-800 font-bold ml-6 mb-2 px-3 py-1 border-l-2 border-blue-600 ko-font text-[9.5pt] inline-block self-start">▶ ${tData.prompt}</div>
+                            <div class="writing-line ml-6 w-auto">${ansTrans}</div>
+                        </div>`;
+
+                    // Part 6. Definition Match
+                    defMatchHtml += `
+                        <div class="avoid-break mt-4 mb-5 flex items-start gap-4">
+                            <span class="text-gray-400 font-bold text-[11pt] en-font w-6 text-right">${i + 1}.</span>
+                            <div class="flex-1 flex flex-col">
+                                <div class="text-gray-800 text-[9.5pt] ko-font leading-snug bg-gray-50 p-3 rounded-md border-[1.5px] border-gray-100 font-medium">${sessionWords[i].def}</div>
+                                <div class="writing-line mt-2 w-full">${ansEn}</div>
+                            </div>
+                        </div>`;
+
+                    // Part 7. Tense Change
+                    let originSen = sessionWords[i].senEn; 
+                    let tenseInfo = sessionTenseData[i]; 
+                    let target1Answer = getTenseAnswer(originSen, tenseInfo.target1); 
+                    let target2Answer = getTenseAnswer(originSen, tenseInfo.target2); 
+                    let ansT1Html = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${target1Answer}</span>` : ''; 
+                    let ansT2Html = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${target2Answer}</span>` : '';
+                    senTenseHtml += `
+                        <div class="avoid-break mt-5 mb-6">
+                            <div class="font-bold text-[11pt] text-gray-900 en-font mb-3"><span class="text-gray-400 mr-2 font-normal">Q${i + 1}.</span> ${originSen}</div>
+                            <div class="ml-6 flex flex-col gap-3">
+                                <div class="flex items-end gap-3 w-full">
+                                    <span class="text-[9pt] bg-purple-700 text-white font-bold px-3 py-1 rounded en-font w-20 text-center shadow-sm mb-1">${tenseInfo.target1}</span>
+                                    <div class="flex-1 writing-line w-full">${ansT1Html}</div>
+                                </div>
+                                <div class="flex items-end gap-3 w-full">
+                                    <span class="text-[9pt] bg-purple-700 text-white font-bold px-3 py-1 rounded en-font w-20 text-center shadow-sm mb-1">${tenseInfo.target2}</span>
+                                    <div class="flex-1 writing-line w-full">${ansT2Html}</div>
+                                </div>
+                            </div>
+                        </div>`;
+
+                    // Part 8. Error Correction
+                    let err = sessionErrorData[i]; 
+                    let ansErrHtml = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${err.answerText}</span>` : '';
+                    errHtml += `
+                        <div class="avoid-break mt-5 mb-6">
+                            <p class="font-bold text-[12pt] text-gray-900 mb-3 en-font"><span class="text-red-600 mr-2">Q${i + 1}.</span> ${err.errorSen}</p>
+                            <div class="ml-6 flex items-end gap-3 w-full">
+                                <span class="text-[9pt] bg-red-600 text-white font-bold px-3 py-1 rounded shadow-sm ko-font tracking-tight mb-1 hidden sm:inline-block">Correction</span>
+                                <div class="flex-1 writing-line w-full">${ansErrHtml}</div>
+                            </div>
+                        </div>`;
+                }
+
+                pageHtml += `
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
+                        <div class="section-header">
+                            <span class="section-number en-font">01</span>
+                            <span class="section-title-text ko-font">Part 1. 단어 암기와 영작 (Word Practice)</span>
+                        </div>
+                        <div class="px-2">${wordTestHtml}</div>
+                    </div>
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
+                        <div class="section-header">
+                            <span class="section-number en-font">02</span>
+                            <span class="section-title-text ko-font">Part 2. 문장 해석과 영작 (Sentence Practice)</span>
+                        </div>
+                        <div class="px-2 mb-8">${senTestHtml}</div>
+                        <div class="section-header">
+                            <span class="section-number en-font">03</span>
+                            <span class="section-title-text ko-font">Part 3. 단어 퍼즐 (Crossword)</span>
+                        </div>
+                        <div class="mt-4 flex justify-center scale-[0.9] origin-top">${renderCrosswordHtml(sessionCrossword, answerMode)}</div>
+                    </div>
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
+                        <div class="section-header">
+                            <span class="section-number en-font">04</span>
+                            <span class="section-title-text ko-font">Part 4. 단어 및 문장 배열 숙제 (Unscramble)</span>
+                        </div>
+                        <h3 class="font-bold text-gray-500 mt-4 mb-3 text-[11pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-1 w-max rounded-sm shadow-sm"><i class="fas fa-list-ul mr-2 text-[9pt]"></i> 01. Word Unscramble</h3>
+                        <div class="px-3 mb-8">${wordScrHtml}</div>
+                        <h3 class="font-bold text-gray-500 mt-6 mb-3 text-[11pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-1 w-max rounded-sm shadow-sm"><i class="fas fa-list-ol mr-2 text-[9pt]"></i> 02. Sentence Unscramble</h3>
+                        <div class="px-3">${senUnscrHtml}</div>
+                    </div>
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
+                        <div class="section-header">
+                            <span class="section-number en-font">05</span>
+                            <span class="section-title-text ko-font">Part 5. 문장 변형 숙제 (Transformation)</span>
+                        </div>
+                        <div class="px-2 mb-8">${senTransHtml}</div>
+                        <div class="section-header">
+                            <span class="section-number en-font">06</span>
+                            <span class="section-title-text ko-font">Part 6. 영영풀이 숙제 (Definition Match)</span>
+                        </div>
+                        <div class="px-2 mt-4">${defMatchHtml}</div>
+                    </div>
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
+                        <div class="section-header">
+                            <span class="section-number en-font">07</span>
+                            <span class="section-title-text ko-font">Part 7. 시제 변형 숙제 (Tense Change)</span>
+                        </div>
+                        <div class="px-2 mt-2 mb-8">${senTenseHtml}</div>
+                        <div class="section-header">
+                            <span class="section-number en-font">08</span>
+                            <span class="section-title-text ko-font">Part 8. 오류 수정 숙제 (Error Correction)</span>
+                        </div>
+                        <div class="px-2 mt-2">${errHtml}</div>
+                    </div>
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
+                        <div class="section-header">
+                            <span class="section-number en-font">09</span>
+                            <span class="section-title-text ko-font">Part 9. 받아쓰기 숙제 (Dictation Practice)</span>
+                        </div>
+                        <div class="mt-4 mb-6 flex items-center justify-between bg-blue-50/50 p-5 rounded-lg border-[1.5px] border-blue-100 border-dashed">
+                            <div>
+                                <h4 class="text-xl font-black text-blue-900 en-font mb-1.5"><i class="fas fa-headphones-alt mr-2 text-blue-600"></i>QR Dictation Audio</h4>
+                                <p class="text-gray-600 ko-font text-[10pt]">스마트폰으로 스캔하여 받아쓰기를 시작하세요.</p>
+                            </div>
+                            <div class="bg-white p-2 rounded shadow-sm border border-blue-200">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="QR" class="w-16 h-16">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-6 px-3">
+                            ${Array.from({ length: 14 }).map((_, i) => `
+                                <div class="avoid-break w-full">
+                                    <div class="flex items-end gap-4 w-full">
+                                        <span class="font-black text-[14pt] text-blue-800 en-font w-8 mb-1">Q${String(i + 1).padStart(2, '0')}</span>
+                                        <div class="flex-1 writing-line w-full">
+                                            ${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words">${sessionWords[i].senEn}</span>` : ''}
                                         </div>
                                     </div>
-                                `).join('')}
-                            </div>
-                        </section>
+                                </div>`).join('')}
+                        </div>
                     </div>`;
             }
             return pageHtml;
