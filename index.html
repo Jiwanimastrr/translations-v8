@@ -242,12 +242,8 @@
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
                 -webkit-column-break-inside: avoid !important;
-                display: block !important;
-                width: 100% !important;
-                overflow: hidden !important; 
-                position: relative !important;
-                margin-top: 10px !important;
-                margin-bottom: 10px !important;
+                /* Removes display block/width/overflow overrides to preserve flex/grid layouts from screen */
+                transform: translateZ(0); /* Chrome break-inside flex bug fix mechanism */
             }
 
             h1, h2, h3, h4, h5, h6, .section-header { 
@@ -260,11 +256,6 @@
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
             }
-
-            /* 6. Enforce Typography Hierarchy */
-            h1 { font-size: 16pt !important; line-height: 1.2 !important; }
-            h2 { font-size: 13pt !important; line-height: 1.2 !important; }
-            p, div, span { font-size: 10.5pt !important; line-height: 1.4 !important; }
             
             /* 7. Specific Colors override */
             .text-red-600 { color: #dc2626 !important; }
