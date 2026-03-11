@@ -177,167 +177,106 @@
            Strict Print Controls (A4 Optimized)
         -------------------------------------- */
         @media print {
-            /* 1. Global Reset for Print */
+            /* 1. Global Reset & Design Preservation - 화면 디자인 100% 박제 */
             * {
                 -webkit-print-color-adjust: exact !important;
-                color-adjust: exact !important;
                 print-color-adjust: exact !important;
-                box-shadow: none !important;
-                text-shadow: none !important;
-                font-family: 'Pretendard', 'Noto Sans KR', 'Malgun Gothic', sans-serif !important;
-                
-                /* 가로 잘림 방지: 모든 요소 규격 강제 */
+                color-adjust: exact !important;
                 box-sizing: border-box !important;
                 max-width: 100% !important;
-                word-wrap: break-word !important;
+                word-break: keep-all !important; /* 요청 사항: 단어 단위 줄바꿈 */
                 overflow-wrap: break-word !important;
+                text-rendering: optimizeLegibility !important;
+                -webkit-font-smoothing: antialiased !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
             }
 
             @page {
                 size: A4;
-                margin: 0px !important; /* 브라우저 기본 헤더(날짜/URL) 및 푸터 날림 */
+                margin: 0 !important; /* 브라우저 기본 헤더/푸터(날짜, URL 등) 완벽 제거 */
             }
 
             html, body {
-                width: 210mm !important; /* A4 가로폭 강제 고정 */
+                width: 210mm !important; /* A4 가로 규격 절대 고정 */
                 height: auto !important;
                 margin: 0 !important;
                 padding: 0 !important;
-                background: #fff !important;
+                background: #ffffff !important;
                 overflow: visible !important;
-                font-size: 9.5pt !important;
-                line-height: 1.3 !important;
+                display: block !important;
                 
-                /* 화면 디자인 그대로 캡처하듯 렌더링 */
+                /* 화면 디자인 비율 그대로 종이에 이식 */
                 zoom: 1 !important;
                 transform-origin: top left !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                
-                orphans: 0 !important;
-                widows: 0 !important;
             }
 
-            /* 2. Hide Unnecessary UI Elements */
-            .sidebar, .view-tabs, .session-tabs, .no-print, [onclick], header, button, .flex-col.fixed, #menu-container {
+            /* 2. UI 요소 제거 (인쇄 불필요 항목) */
+            .sidebar, .view-tabs, .session-tabs, .no-print, button, [onclick], header, #menu-container {
                 display: none !important;
                 visibility: hidden !important;
                 width: 0 !important;
                 height: 0 !important;
-                position: absolute !important;
-                z-index: -9999 !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                position: absolute !important;
             }
 
-            /* 3. Main Content Area Override */
+            /* 3. 메인 영역 - A4 가로폭에 강제 고정 */
             .main-content {
-                width: 210mm !important; /* 화면 가로폭 강제 고정 */
+                width: 210mm !important;
                 max-width: 210mm !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                display: block !important;
                 background: transparent !important;
                 overflow: visible !important;
-                display: block !important;
                 position: static !important;
             }
 
-            /* 4. A4 Page Container Constraints & Force Block for Layout Stability */
+            /* 4. A4 페이지 컨테이너 - 박제 및 쪼개짐 방지 */
             .a4-page {
-                width: 210mm !important; /* A4 규격 절대 고정 */
+                width: 210mm !important;
                 max-width: 210mm !important;
-                height: 297mm !important; /* 고해상도 품질 유지를 위해 높이도 가급적 규격화 */
                 min-height: 297mm !important;
-                margin: 0px !important;
-                padding: 12mm 10mm !important; 
+                margin: 0 !important;
+                padding: 15mm 12mm !important; /* 브라우저 마진 0을 대체하는 충분한 안전 여백 */
                 box-sizing: border-box !important;
-                border: none !important;
                 background: #ffffff !important;
-                page-break-after: always !important;
-                page-break-inside: avoid !important;
-                overflow: hidden !important;
                 display: block !important;
                 position: relative !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                overflow: hidden !important;
                 
-                /* 레이아웃 디자인 요소 강제 보존 */
+                /* 디자인 보존 */
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
-            .print-page-break {
-                break-before: page !important;
-                page-break-before: always !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                border: 0 !important;
-            }
-
-            /* 5. Prevent Element Splitting & Restore Screen Layout Structure */
-            .avoid-break {
+            /* 5. 가로/세로 잘림 및 쪼개짐 철통 방어 */
+            .avoid-break, tr, td, th, section, .section-header, h1, h2, h3, .neumo-panel, .word-set, .question-block {
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-                -webkit-column-break-inside: avoid !important;
-                
-                /* 레이아웃 붕괴 방지: 화면 그대로의 구조 유지 */
-                display: block !important;
-                width: 100% !important;
                 max-width: 100% !important;
                 overflow: visible !important; 
                 position: relative !important;
-                
-                margin-top: 1px !important;    
-                margin-bottom: 3px !important;
-                padding: 0 !important;
-                
-                /* 크롬 페이지 쪼개짐 버그 방어용 트릭 복구 */
                 transform: translateZ(0); 
-            }
-            
-            /* 긴 줄 낭비 방지용 2단 레이아웃(다단) 적용 */
-            .print-columns-2 {
-                display: grid !important; /* column-count 대신 가장 확실한 grid 배치 사용 */
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 5px 8mm !important; /* 상하 5px, 좌우 8mm 간격 */
-                width: 100% !important;
-                align-items: start !important;
-            }
-            .print-columns-2 > .avoid-break {
-                break-inside: avoid !important;
-                page-break-inside: avoid !important;
-                margin: 0 !important; /* grid gap이 마진을 대신함 */
-                width: 100% !important;
+                
+                margin-top: 2px !important;
+                margin-bottom: 5px !important;
             }
 
-            /* 극한의 밀집도를 위한 3단 레이아웃 적용 */
-            .print-columns-3 {
-                display: grid !important; 
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 5px 6mm !important; 
-                width: 100% !important;
-                align-items: start !important;
-            }
-            .print-columns-3 > .avoid-break {
-                break-inside: avoid !important;
-                page-break-inside: avoid !important;
-                margin: 0 !important; 
-                width: 100% !important;
-            }
-            
-            /* 단어 리스트 표 테이블 구조 강제 픽스 (Background, Edge) */
+            /* 표 구조 및 가독성 유지 */
             table {
                 width: 100% !important;
                 display: table !important;
                 border-collapse: collapse !important;
+                table-layout: auto !important;
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
-            
-            tr {
-                display: table-row !important;
-                page-break-inside: avoid !important;
-                break-inside: avoid !important;
-            }
-            
+            tr { display: table-row !important; page-break-inside: avoid !important; break-inside: avoid !important; }
             th, td {
                 display: table-cell !important;
                 word-break: keep-all !important; /* 긴 문장이 칸 넘김 방지 */
