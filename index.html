@@ -165,67 +165,109 @@
         th, td { border: 1px solid var(--gray-900); }
 
         /* -------------------------------------
-           Strict Print Controls
+           Strict Print Controls (A4 Optimized)
         -------------------------------------- */
         @media print {
+            /* 1. Global Reset for Print */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+
             @page {
                 size: A4;
-                margin: 15mm 10mm; /* 페이지 자체에 확실한 상하좌우 여백 부여 */
+                margin: 15mm !important;
             }
 
-            body {
-                background: white;
-                height: auto;
-                overflow: visible !important;
-                display: block;
-            }
-
-            .sidebar, .view-tabs, .session-tabs {
-                display: none !important;
-            }
-
-            .main-content {
-                padding: 0 !important;
-                margin: 0 !important;
-                background: white !important;
-                overflow: visible !important;
+            html, body {
+                width: 100% !important;
                 height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important;
+                overflow: visible !important;
+                font-size: 10pt !important;
             }
 
+            /* 2. Hide Unnecessary UI Elements */
+            .sidebar, .view-tabs, .session-tabs, .no-print, [onclick], header, button, .flex-col.fixed, #menu-container {
+                display: none !important;
+                visibility: hidden !important;
+                width: 0 !important;
+                height: 0 !important;
+                position: absolute !important;
+                z-index: -9999 !important;
+            }
+
+            /* 3. Main Content Area Override */
+            .main-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: transparent !important;
+                overflow: visible !important;
+                display: block !important;
+                position: static !important;
+            }
+
+            /* 4. A4 Page Container Constraints */
             .a4-page {
                 width: 100% !important;
+                max-width: 100% !important;
                 height: auto !important;
                 min-height: auto !important;
                 margin: 0 !important;
-                padding: 0 !important; /* @page margin으로 위임 */
-                box-shadow: none !important;
+                padding: 0 !important;
+                border: none !important;
+                background: transparent !important;
                 page-break-after: always !important;
                 page-break-inside: auto !important;
-                position: relative;
                 overflow: visible !important;
+                display: block !important;
+                position: static !important;
             }
 
             .print-page-break {
                 page-break-before: always !important;
             }
 
-            /* Typography Scaling for Print */
-            h1 { font-size: 16pt !important; line-height: 1.1; }
-            h2 { font-size: 13pt !important; line-height: 1.2; }
-            p, div, span { font-size: 9.5pt !important; line-height: 1.4; }
-            
-            .text-red-600 { color: #dc2626 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .bg-blue-50 { background-color: #eff6ff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .bg-yellow-50 { background-color: #fefce8 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-            /* Fixes overlapping elements inside flex/grid during print */
+            /* 5. Prevent Element Splitting / Overlapping */
             .avoid-break {
                 page-break-inside: avoid !important;
-                break-inside: avoid-page !important;
+                break-inside: avoid !important;
                 -webkit-column-break-inside: avoid !important;
-                display: inline-block !important; /* Inline-block is the most reliable way to force Chrome to respect break-inside */
+                display: block !important;
                 width: 100% !important;
+                overflow: hidden !important; 
+                position: relative !important;
+                margin-top: 10px !important;
+                margin-bottom: 10px !important;
             }
+
+            h1, h2, h3, h4, h5, h6, .section-header { 
+                page-break-after: avoid !important; 
+                break-after: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            table, img, svg {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            /* 6. Enforce Typography Hierarchy */
+            h1 { font-size: 16pt !important; line-height: 1.2 !important; }
+            h2 { font-size: 13pt !important; line-height: 1.2 !important; }
+            p, div, span { font-size: 10.5pt !important; line-height: 1.4 !important; }
+            
+            /* 7. Specific Colors override */
+            .text-red-600 { color: #dc2626 !important; }
+            .bg-blue-50 { background-color: #eff6ff !important; }
+            .bg-yellow-50 { background-color: #fefce8 !important; }
         }
 
         /* Specific Component Styles */
