@@ -179,7 +179,7 @@
 
             @page {
                 size: A4;
-                margin: 15mm !important;
+                margin: 0px !important; /* 브라우저 기본 헤더(날짜/URL) 및 푸터 숨김 */
             }
 
             html, body {
@@ -220,11 +220,12 @@
                 max-width: 100% !important;
                 height: auto !important;
                 min-height: auto !important;
-                margin: 0 !important;
-                padding: 0 !important;
+                margin: 0px !important;
+                padding: 15mm 10mm !important; /* 브라우저 마진 대신 CSS로 물리적 여백 생성 */
+                box-sizing: border-box !important;
                 border: none !important;
                 background: transparent !important;
-                page-break-after: always !important;
+                page-break-after: auto !important;
                 page-break-inside: auto !important;
                 overflow: visible !important;
                 display: block !important;
@@ -232,6 +233,7 @@
             }
 
             .print-page-break {
+                break-before: page !important;
                 page-break-before: always !important;
             }
 
@@ -1824,7 +1826,7 @@
                             <span class="section-number en-font">01</span>
                             <span class="section-title-text ko-font">Part 1. 단어 암기와 영작 (Word Practice)</span>
                         </div>
-                        <div class="px-2">${wordTestHtml}</div>
+                        <div class="px-2 pb-2">${wordTestHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
@@ -1832,12 +1834,15 @@
                             <span class="section-number en-font">02</span>
                             <span class="section-title-text ko-font">Part 2. 문장 해석과 영작 (Sentence Practice)</span>
                         </div>
-                        <div class="px-2 mb-8">${senTestHtml}</div>
+                        <div class="px-2 pb-2">${senTestHtml}</div>
+                    </div>
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">03</span>
                             <span class="section-title-text ko-font">Part 3. 단어 퍼즐 (Crossword)</span>
                         </div>
-                        <div class="mt-4 flex justify-center scale-[0.9] origin-top">${renderCrosswordHtml(sessionCrossword, answerMode)}</div>
+                        <div class="mt-4 pb-2 flex justify-center scale-[0.9] origin-top">${renderCrosswordHtml(sessionCrossword, answerMode)}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
@@ -1846,9 +1851,9 @@
                             <span class="section-title-text ko-font">Part 4. 단어 및 문장 배열 숙제 (Unscramble)</span>
                         </div>
                         <h3 class="font-bold text-gray-500 mt-4 mb-3 text-[11pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-1 w-max rounded-sm shadow-sm"><i class="fas fa-list-ul mr-2 text-[9pt]"></i> 01. Word Unscramble</h3>
-                        <div class="px-3 mb-8">${wordScrHtml}</div>
+                        <div class="px-3 mb-6">${wordScrHtml}</div>
                         <h3 class="font-bold text-gray-500 mt-6 mb-3 text-[11pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-1 w-max rounded-sm shadow-sm"><i class="fas fa-list-ol mr-2 text-[9pt]"></i> 02. Sentence Unscramble</h3>
-                        <div class="px-3">${senUnscrHtml}</div>
+                        <div class="px-3 pb-2">${senUnscrHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
@@ -1856,12 +1861,15 @@
                             <span class="section-number en-font">05</span>
                             <span class="section-title-text ko-font">Part 5. 문장 변형 숙제 (Transformation)</span>
                         </div>
-                        <div class="px-2 mb-8">${senTransHtml}</div>
+                        <div class="px-2 pb-2">${senTransHtml}</div>
+                    </div>
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">06</span>
                             <span class="section-title-text ko-font">Part 6. 영영풀이 숙제 (Definition Match)</span>
                         </div>
-                        <div class="px-2 mt-4">${defMatchHtml}</div>
+                        <div class="px-2 mt-4 pb-2">${defMatchHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
@@ -1869,12 +1877,15 @@
                             <span class="section-number en-font">07</span>
                             <span class="section-title-text ko-font">Part 7. 시제 변형 숙제 (Tense Change)</span>
                         </div>
-                        <div class="px-2 mt-2 mb-8">${senTenseHtml}</div>
+                        <div class="px-2 mt-2 pb-2">${senTenseHtml}</div>
+                    </div>
+                    <div class="a4-page print-page-break">
+                        ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">08</span>
                             <span class="section-title-text ko-font">Part 8. 오류 수정 숙제 (Error Correction)</span>
                         </div>
-                        <div class="px-2 mt-2">${errHtml}</div>
+                        <div class="px-2 mt-2 pb-2">${errHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
@@ -1891,7 +1902,7 @@
                                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="QR" class="w-16 h-16">
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 gap-6 px-3">
+                        <div class="grid grid-cols-1 gap-6 px-3 pb-2">
                             ${Array.from({ length: 14 }).map((_, i) => `
                                 <div class="avoid-break w-full">
                                     <div class="flex items-end gap-4 w-full">
