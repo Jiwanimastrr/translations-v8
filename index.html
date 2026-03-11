@@ -79,6 +79,15 @@
             border-color: var(--primary-blue);
         }
 
+        .neumo-panel {
+            background: #ffffff;
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin: 0.5rem 1.25rem 1.25rem 1.25rem; /* mx-5 (1.25rem) 적용 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
         /* -------------------------------------
            Professional A4 Page Construction
         -------------------------------------- */
@@ -404,24 +413,22 @@
         <div class="mt-auto">
             <!-- Logo Upload Section -->
             <div class="neumo-panel">
-                <h3 class="text-[13px] font-bold text-gray-700 mb-1"><i class="fas fa-image mr-2 text-blue-400"></i>학원
-                    로고 설정</h3>
+                <h3 class="text-[13px] font-bold text-gray-700 mb-1"><i class="fas fa-image mr-2 text-blue-400"></i>학원 로고 설정</h3>
                 <p class="text-[9px] text-gray-500 mb-2.5 leading-tight">로고 이미지를 업로드하면 교재 상단에 적용됩니다.</p>
                 <input type="file" id="logo-upload" accept="image/*" class="hidden">
                 <label for="logo-upload"
-                    class="block w-full text-center neumo-btn text-xs font-bold py-2 px-4 cursor-pointer text-gray-600">
+                    class="block w-full text-center neumo-btn text-xs font-bold py-2 px-4 cursor-pointer text-gray-600 hover:bg-blue-50">
                     로고 이미지 선택
                 </label>
             </div>
 
             <!-- CSV Upload Section -->
-            <div class="neumo-panel mb-4 mt-0">
-                <h3 class="text-[13px] font-bold text-gray-700 mb-1"><i
-                        class="fas fa-file-csv mr-2 text-green-500"></i>데이터 불러오기</h3>
+            <div class="neumo-panel mb-6">
+                <h3 class="text-[13px] font-bold text-gray-700 mb-1"><i class="fas fa-file-csv mr-2 text-green-500"></i>데이터 불러오기</h3>
                 <p class="text-[9px] text-gray-500 mb-2.5 leading-tight">CSV 파일을 업로드하면 단어가 자동 적용됩니다.</p>
                 <input type="file" id="csv-upload" accept=".csv" class="hidden">
                 <label for="csv-upload"
-                    class="block w-full text-center neumo-btn text-xs font-bold py-2 px-4 cursor-pointer text-gray-600">
+                    class="block w-full text-center neumo-btn text-xs font-bold py-2 px-4 cursor-pointer text-gray-600 hover:bg-green-50">
                     CSV 파일 선택
                 </label>
             </div>
