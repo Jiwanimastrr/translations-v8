@@ -364,17 +364,9 @@
                 class="flex-1 py-3 px-2 font-bold text-sm neumo-btn text-gray-600 cursor-pointer">
                 <i class="fas fa-list-ul mr-1"></i>단어/문장
             </button>
-            <button id="tab-hw1" onclick="changeView('hw1')"
+            <button id="tab-hw" onclick="changeView('hw')"
                 class="flex-1 py-3 px-2 font-bold text-sm neumo-btn text-gray-600 cursor-pointer">
-                <i class="fas fa-pen-to-square mr-1"></i>1차 숙제
-            </button>
-            <button id="tab-hw2" onclick="changeView('hw2')"
-                class="flex-1 py-3 px-2 font-bold text-sm neumo-btn text-gray-600 cursor-pointer">
-                <i class="fas fa-puzzle-piece mr-1"></i>2차 숙제
-            </button>
-            <button id="tab-hw3" onclick="changeView('hw3')"
-                class="flex-1 py-3 px-2 font-bold text-sm neumo-btn text-gray-600 cursor-pointer">
-                <i class="fas fa-spell-check mr-1"></i>3차 숙제
+                <i class="fas fa-pen-to-square mr-1"></i>숙제
             </button>
             <!-- 답지 인쇄 토글 버튼 -->
             <button id="tab-answer" onclick="toggleAnswer()"
@@ -1429,9 +1421,7 @@
             switch (currentView) {
                 case 'textbook': viewStr = "교재"; break;
                 case 'vocalist': viewStr = "단어문장"; break;
-                case 'hw1': viewStr = "1차숙제"; break;
-                case 'hw2': viewStr = "2차숙제"; break;
-                case 'hw3': viewStr = "3차숙제"; break;
+                case 'hw': viewStr = "숙제"; break;
             }
 
             if (isAnswerMode && currentView.startsWith('hw')) {
@@ -1475,7 +1465,7 @@
             currentView = view;
             isAnswerMode = false;
 
-            const tabs = ['textbook', 'vocalist', 'hw1', 'hw2', 'hw3'];
+            const tabs = ['textbook', 'vocalist', 'hw'];
             tabs.forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
                 if (t === view) {
