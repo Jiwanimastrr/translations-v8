@@ -1351,39 +1351,45 @@
 
             if (!grid || grid.length === 0) return "<p class='text-center text-gray-500 py-10 ko-font'>퍼즐 생성에 실패했습니다. 단어 개수를 확인해주세요.</p>";
 
-            let tableHtml = '<div class="flex justify-center mb-10"><table class="border-collapse bg-white shadow-sm crossword-table" style="table-layout: fixed;">';
-            let cellSize = grid[0].length > 15 ? 'w-7 h-7 sm:w-8 sm:h-8' : 'w-10 h-10 sm:w-11 sm:h-11';
-            let fontSize = grid[0].length > 15 ? 'text-[12pt]' : 'text-[15pt]';
+            let cols = grid[0].length;
+            let rows = grid.length;
+            let size = cols > 15 ? 28 : 38; 
+            let fontSize = cols > 15 ? 14 : 18;
 
-            for (let r = 0; r < grid.length; r++) {
-                tableHtml += '<tr>';
-                for (let c = 0; c < grid[r].length; c++) {
+            let gridHtml = `
+            <div class="flex justify-center mb-10 w-full" style="page-break-inside: avoid !important; break-inside: avoid !important;">
+                <div style="display: grid; grid-template-columns: repeat(${cols}, ${size}px); grid-template-rows: repeat(${rows}, ${size}px); gap: 1.5px; padding: 2px; background-color: #374151; border: 2px solid #111827; box-sizing: content-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">`;
+
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
                     if (grid[r][c] === null) {
-                        tableHtml += `<td class="${cellSize}"></td>`;
+                        gridHtml += `<div style="width: ${size}px; height: ${size}px; background-color: #374151; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;"></div>`;
                     } else {
                         let p = placements.find(x => x.r === r && x.c === c);
-                        let numHtml = p ? `<span class="absolute top-0.5 left-0.5 text-[9px] font-bold text-gray-500 en-font leading-none">${p.num}</span>` : '';
-                        let charHtml = isAnswerMode ? `<span class="text-red-600 font-extrabold ${fontSize} en-font uppercase">${grid[r][c]}</span>` : '';
-                        tableHtml += `<td class="${cellSize} border-[1.5px] border-gray-800 relative text-center align-middle p-0 bg-white">${numHtml}${charHtml}</td>`;
+                        let numHtml = p ? `<span style="position: absolute; top: 2px; left: 3px; font-size: 9px; font-weight: 800; color: #4b5563; line-height: 1; font-family: sans-serif; z-index: 10;">${p.num}</span>` : '';
+                        let charHtml = isAnswerMode ? `<span style="color: #dc2626; font-weight: 900; font-size: ${fontSize}px; font-family: sans-serif; text-transform: uppercase;">${grid[r][c]}</span>` : '';
+                        gridHtml += `
+                        <div style="width: ${size}px; height: ${size}px; position: relative; display: flex; align-items: center; justify-content: center; background-color: #ffffff; box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                            ${numHtml}${charHtml}
+                        </div>`;
                     }
                 }
-                tableHtml += '</tr>';
             }
-            tableHtml += '</table></div>';
+            gridHtml += '</div></div>';
 
             let across = placements.filter(p => p.dir === 0).sort((a, b) => a.num - b.num);
             let down = placements.filter(p => p.dir === 1).sort((a, b) => a.num - b.num);
 
             let cluesHtml = `
-            <div class="grid grid-cols-2 gap-x-16 gap-y-8 text-[13pt] px-4">
-                <div class="col-span-1">
+            <div class="grid grid-cols-2 gap-x-16 gap-y-8 text-[13pt] px-4 w-full">
+                <div class="col-span-1 avoid-break" style="page-break-inside: avoid !important;">
                     <h3 class="font-black text-gray-900 mb-4 border-b-2 border-gray-900 pb-2 en-font uppercase tracking-wider flex items-center gap-2">
                         <i class="fas fa-arrow-right text-blue-700"></i> Across <span class="text-[12pt] text-gray-500 ko-font font-bold ml-2">(가로)</span>
                     </h3>
                     <ul class="space-y-3 text-gray-800 ko-font">`;
             across.forEach(p => { cluesHtml += `<li class="break-keep leading-snug"><span class="font-black mr-2 text-blue-700 en-font">${p.num}.</span> ${p.ko}</li>`; });
             cluesHtml += `</ul></div>
-                <div class="col-span-1">
+                <div class="col-span-1 avoid-break" style="page-break-inside: avoid !important;">
                     <h3 class="font-black text-gray-900 mb-4 border-b-2 border-gray-900 pb-2 en-font uppercase tracking-wider flex items-center gap-2">
                         <i class="fas fa-arrow-down text-blue-700"></i> Down <span class="text-[12pt] text-gray-500 ko-font font-bold ml-2">(세로)</span>
                     </h3>
@@ -1391,7 +1397,7 @@
             down.forEach(p => { cluesHtml += `<li class="break-keep leading-snug"><span class="font-black mr-2 text-blue-700 en-font">${p.num}.</span> ${p.ko}</li>`; });
             cluesHtml += `</ul></div></div>`;
 
-            return tableHtml + cluesHtml;
+            return gridHtml + cluesHtml;
         }
 
         function makeErrorEnglishSentenceText(item, chWords) {
