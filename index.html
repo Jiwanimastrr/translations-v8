@@ -181,7 +181,6 @@
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
-                color-adjust: exact !important;
                 box-sizing: border-box !important;
                 max-width: 100% !important;
                 word-break: keep-all !important; /* 요청 사항: 단어 단위 줄바꿈 */
@@ -1722,13 +1721,13 @@
                     </div>`;
             } else if (view === 'vocalist') {
                 let trs = sessionWords.map((word, i) => `
-                    <tr class="avoid-break" style="border-bottom: 1px solid #e5e7eb;">
-                        <td class="p-1.5 text-center text-gray-500 font-bold en-font w-10 text-[9pt]" style="width: 40px !important;">${i + 1}</td>
-                        <td class="p-1.5 font-black text-blue-800 text-[10pt] en-font w-[20%] border-l border-gray-100" style="width: 20% !important; border-left: 1px solid #f3f4f6;">${word.en}</td>
-                        <td class="p-1.5 text-gray-700 text-[9pt] ko-font w-[25%] border-l border-gray-100 leading-tight" style="width: 25% !important; border-left: 1px solid #f3f4f6;">${word.def}</td>
-                        <td class="p-1.5 border-l border-gray-100" style="width: auto; border-left: 1px solid #f3f4f6;">
-                            <div class="text-gray-900 font-bold text-[9.5pt] en-font leading-snug break-words">${word.senEn}</div>
-                            <div class="text-gray-500 text-[8.5pt] ko-font mt-0.5 break-words">${word.senKo}</div>
+                    <tr class="avoid-break" style="border-bottom: 1px solid #e5e7eb !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                        <td class="p-2 text-center text-gray-400 font-bold en-font" style="width: 45px !important; border: 1px solid #f3f4f6 !important;">${i + 1}</td>
+                        <td class="p-2 font-black text-blue-800 text-[10.5pt] en-font" style="width: 18% !important; border: 1px solid #f3f4f6 !important; background-color: #f8fafc !important;">${word.en}</td>
+                        <td class="p-2 text-gray-700 text-[9.5pt] ko-font leading-snug" style="width: 22% !important; border: 1px solid #f3f4f6 !important;">${word.def}</td>
+                        <td class="p-2" style="width: auto !important; border: 1px solid #f3f4f6 !important;">
+                            <div class="text-gray-900 font-bold text-[10pt] en-font leading-snug break-words mb-1">${word.senEn}</div>
+                            <div class="text-gray-500 text-[9pt] ko-font break-words italic">${word.senKo}</div>
                         </td>
                     </tr>`).join('');
                 pageHtml += `
@@ -1738,13 +1737,13 @@
                             <span class="section-number en-font">LS</span>
                             <span class="section-title-text ko-font">Vocabulary Vocabulary & Example Sentences</span>
                         </div>
-                        <table class="w-full mt-6 bg-white overflow-hidden rounded-lg shadow-sm" style="width: 100% !important; table-layout: fixed;">
-                            <thead class="bg-gray-900 text-white" style="background-color: #111827 !important; color: white !important;">
-                                <tr class="en-font text-[10pt] uppercase tracking-tighter">
-                                    <th class="p-3 text-center w-12" style="width: 40px !important;">No.</th>
-                                    <th class="p-3 text-left w-[20%]" style="width: 20% !important;">Word</th>
-                                    <th class="p-3 text-left w-[25%]" style="width: 25% !important;">Definition</th>
-                                    <th class="p-3 text-left" style="width: auto;">Example Sentences & Translation</th>
+                        <table class="w-full mt-6 bg-white overflow-hidden rounded-lg shadow-sm" style="width: 100% !important; table-layout: fixed; border-collapse: collapse !important; border: 1.5px solid #111827 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                            <thead class="bg-gray-900 text-white" style="background-color: #111827 !important; color: white !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                                <tr class="en-font text-[10pt] uppercase tracking-tighter" style="background-color: #111827 !important; -webkit-print-color-adjust: exact !important;">
+                                    <th class="p-3 text-center" style="width: 45px !important; border: 1px solid #111827 !important;">No.</th>
+                                    <th class="p-3 text-left" style="width: 18% !important; border: 1px solid #111827 !important;">Word</th>
+                                    <th class="p-3 text-left" style="width: 22% !important; border: 1px solid #111827 !important;">Definition</th>
+                                    <th class="p-3 text-left" style="width: auto !important; border: 1px solid #111827 !important;">Example Sentences & Translation</th>
                                 </tr>
                             </thead>
                             <tbody>${trs}</tbody>
@@ -1971,17 +1970,22 @@
             if (!activeBtn) { alert("먼저 챕터를 선택해주세요."); return; }
             const chId = parseInt(activeBtn.id.replace('btn-', ''));
             let allHtml = "";
+            
+            // 모든 차시(1~3차시)의 교재, 단어장, 숙제를 순차적으로 빌드
             for (let s = 1; s <= 3; s++) {
                 allHtml += generatePageHtml(chId, s, 'vocalist', isAnswerMode);
                 allHtml += generatePageHtml(chId, s, 'textbook', isAnswerMode);
                 allHtml += generatePageHtml(chId, s, 'hw' + s, isAnswerMode);
             }
+            
             const originalContent = document.getElementById('page-container').innerHTML;
             document.getElementById('page-container').innerHTML = allHtml.trim();
+            
+            // DOM 렌더링 및 리소스 로드 대기 후 인쇄 실행
             setTimeout(() => {
                 window.print();
                 document.getElementById('page-container').innerHTML = originalContent;
-            }, 500);
+            }, 1000);
         }
 
         function setupLogoUploader() {
