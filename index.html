@@ -1737,6 +1737,7 @@
                 for (let i = 0; i < sessionWords.length; i++) {
                     let ansKo = answerMode ? `<span class="text-red-600 font-bold text-[11pt] ko-font w-full break-words leading-tight">${sessionWords[i].ko}</span>` : '';
                     let ansEn = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${sessionWords[i].en}</span>` : '';
+                    let scrData = sessionScrambleData[i];
                     
                     // Part 1. Word Practice
                     wordTestHtml += `
@@ -1955,7 +1956,16 @@
             document.getElementById(`btn-${id}`).classList.add('active');
             const ch = db.find(c => c.id === id);
             updateDocumentTitle(ch);
-            document.getElementById('page-container').innerHTML = generatePageHtml(id, currentSession, currentView, isAnswerMode);
+            
+            if (currentView === 'hw') {
+                let allHwHtml = "";
+                for (let s = 1; s <= 3; s++) {
+                    allHwHtml += generatePageHtml(id, s, 'hw', isAnswerMode);
+                }
+                document.getElementById('page-container').innerHTML = allHwHtml.trim();
+            } else {
+                document.getElementById('page-container').innerHTML = generatePageHtml(id, currentSession, currentView, isAnswerMode);
+            }
         }
 
         function printChapterAll() {
