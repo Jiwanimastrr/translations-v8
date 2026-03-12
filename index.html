@@ -1930,22 +1930,22 @@
                             <span class="section-number !text-[11pt] en-font">07</span>
                             <span class="section-title-text !text-[12pt] ko-font">Part 7. 받아쓰기 숙제</span>
                         </div>
-                        <div class="mt-0 mb-3 flex items-center justify-between bg-blue-50/50 p-2 rounded-lg border-[1.5px] border-blue-100 border-dashed">
+                        <div class="mt-0 mb-4 flex items-center justify-between bg-blue-50/50 p-2.5 rounded-lg border-[1.5px] border-blue-100 border-dashed">
                             <div>
-                                <h4 class="text-[9.5pt] font-black text-blue-900 en-font mb-0"><i class="fas fa-headphones-alt mr-2 text-blue-600"></i>QR Dictation Audio (S${session})</h4>
-                                <p class="text-gray-600 ko-font text-[8pt]">스캔하여 오디오를 재생하세요.</p>
+                                <h4 class="text-[10pt] font-black text-blue-900 en-font mb-0"><i class="fas fa-headphones-alt mr-2 text-blue-600"></i>QR Dictation Audio (S${session})</h4>
+                                <p class="text-gray-600 ko-font text-[8.5pt]">스캔하여 오디오를 재생하세요.</p>
                             </div>
                             <div class="bg-white p-1 rounded shadow-sm border border-blue-200">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="QR" class="w-11 h-11">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=80x80&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="QR" class="w-14 h-14">
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-x-10 gap-y-0 px-3 pb-0">
+                        <div class="px-3" style="display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0 10mm !important;">
                             ${Array.from({ length: 14 }).map((_, i) => `
-                                <div class="avoid-break w-full homework-item !mt-0 !mb-0 border-b border-gray-100/50">
-                                    <div class="flex items-start gap-2 w-full py-2">
-                                        <span class="font-black text-[9pt] text-blue-800 en-font w-7 pt-0.5">Q${String(i + 1).padStart(2, '0')}</span>
-                                        <div class="flex-1 writing-line w-full min-h-[24px] !mt-0 !after:bottom-[-2px]">
-                                            ${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[8.5pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : ''}
+                                <div class="avoid-break w-full homework-item !mt-0 !mb-0 border-b border-gray-100">
+                                    <div class="flex items-start gap-2 w-full py-3">
+                                        <span class="font-black text-[9.5pt] text-blue-800 en-font w-7 pt-1">Q${String(i + 1).padStart(2, '0')}</span>
+                                        <div class="flex-1 writing-line w-full min-h-[32px] !mt-0">
+                                            ${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[9pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : ''}
                                         </div>
                                     </div>
                                 </div>`).join('')}
