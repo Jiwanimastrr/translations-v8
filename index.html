@@ -1795,27 +1795,29 @@
                         </div>`;
 
                     wordScrHtml += `
-                        <div class="avoid-break mt-0 mb-1 flex items-center gap-3 w-full border-b border-gray-50 pb-0.5" style="flex-wrap: nowrap !important; overflow: hidden !important;">
-                            <div class="flex-shrink-0" style="white-space: nowrap !important; flex-shrink: 0 !important;">
+                        <div class="avoid-break mt-1 mb-2 flex flex-col w-full border-b border-gray-100 pb-1.5">
+                            <div class="flex items-center gap-2 mb-1">
                                 <span class="text-gray-400 text-[8.5pt] mr-1">${i + 1}.</span>
-                                <span class="font-black text-blue-800 text-[10pt] en-font uppercase tracking-wider" style="white-space: nowrap !important;">${scrData.word}</span>
+                                <span class="font-black text-blue-800 text-[10pt] en-font uppercase tracking-wider">${scrData.word}</span>
+                                <span class="text-[8pt] text-gray-500 ko-font italic ml-auto">(${sessionWords[i].ko})</span>
                             </div>
-                            <div class="text-[8pt] text-gray-500 ko-font italic" style="white-space: nowrap !important; flex-shrink: 0 !important;">(${sessionWords[i].ko})</div>
-                            <div class="flex-1 border-b-[1.5px] border-gray-300 min-h-[18px] ml-1 relative">
-                                ${answerMode ? `<span class="text-red-600 font-bold text-[9.5pt] en-font absolute left-0 bottom-0" style="white-space: nowrap !important;">${sessionWords[i].en}</span>` : ''}
+                            <div class="writing-line w-full min-h-[22px] ml-4">
+                                ${answerMode ? `<span class="text-red-600 font-bold text-[9.5pt] en-font absolute left-0 bottom-0">${sessionWords[i].en}</span>` : ''}
                             </div>
                         </div>`;
 
                     // Part 3-2. Sentence Unscrambles
                     let ansUnscr = answerMode ? `<span class="text-red-600 font-bold text-[9.5pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
                     senUnscrHtml += `
-                        <div class="avoid-break mt-0 mb-1 flex items-center gap-2 w-full border-b border-gray-100 pb-0.5" style="flex-wrap: nowrap !important;">
-                            <div class="flex-shrink-0" style="white-space: nowrap !important;">
-                                <span class="text-gray-400 mr-1 font-normal text-[8pt]">Q${i + 1}.</span>
-                                <span class="font-bold text-[9pt] text-blue-900 en-font uppercase tracking-tighter">${scrData.sen}</span>
+                        <div class="avoid-break mt-1 mb-2 flex flex-col w-full border-b border-gray-100 pb-1.5">
+                            <div class="flex flex-col gap-1 mb-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-gray-400 mr-1 font-normal text-[8pt]">Q${i + 1}.</span>
+                                    <span class="font-bold text-[9.5pt] text-blue-900 en-font uppercase tracking-tighter">${scrData.sen}</span>
+                                </div>
+                                <div class="text-[8pt] text-gray-400 ko-font italic ml-7 leading-tight">${sessionWords[i].senKo}</div>
                             </div>
-                            <div class="text-[7.5pt] text-gray-500 ko-font italic flex-shrink-0" style="white-space: nowrap !important;">(${sessionWords[i].senKo})</div>
-                            <div class="flex-1 writing-line min-h-[28px] ml-1 relative">
+                            <div class="writing-line ml-7 w-auto min-h-[26px]">
                                 ${ansUnscr}
                             </div>
                         </div>`;
