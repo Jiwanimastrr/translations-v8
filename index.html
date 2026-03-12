@@ -1918,21 +1918,21 @@
                             <span class="section-number en-font">07</span>
                             <span class="section-title-text ko-font">Part 7. [Session ${session}] 받아쓰기 숙제</span>
                         </div>
-                        <div class="mt-1 mb-1 flex items-center justify-between bg-blue-50/50 p-2 rounded-lg border-[1.5px] border-blue-100 border-dashed">
+                        <div class="mt-0.5 mb-0.5 flex items-center justify-between bg-blue-50/50 p-1.5 rounded-lg border-[1.5px] border-blue-100 border-dashed">
                             <div>
-                                <h4 class="text-sm font-black text-blue-900 en-font mb-0"><i class="fas fa-headphones-alt mr-2 text-blue-600"></i>QR Dictation Audio (S${session})</h4>
-                                <p class="text-gray-600 ko-font text-[8pt]">스캔하여 오디오를 재생하세요.</p>
+                                <h4 class="text-[8.5pt] font-black text-blue-900 en-font mb-0"><i class="fas fa-headphones-alt mr-2 text-blue-600"></i>QR Dictation Audio (S${session})</h4>
+                                <p class="text-gray-600 ko-font text-[7.5pt]">스캔하여 오디오를 재생하세요.</p>
                             </div>
-                            <div class="bg-white p-1 rounded shadow-sm border border-blue-200">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="QR" class="w-8 h-8">
+                            <div class="bg-white p-0.5 rounded shadow-sm border border-blue-200">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="QR" class="w-7 h-7">
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 gap-0 px-3 pb-0.5">
+                        <div class="grid grid-cols-1 gap-0 px-3 pb-0">
                             ${Array.from({ length: 14 }).map((_, i) => `
-                                <div class="avoid-break w-full homework-item">
+                                <div class="avoid-break w-full homework-item !mt-0 !mb-0">
                                     <div class="flex items-end gap-3 w-full">
-                                        <span class="font-black text-[9pt] text-blue-800 en-font w-7 mb-0.5">Q${String(i + 1).padStart(2, '0')}</span>
-                                        <div class="flex-1 writing-line w-full min-h-[20px]">
+                                        <span class="font-black text-[9pt] text-blue-800 en-font w-7 mb-0">Q${String(i + 1).padStart(2, '0')}</span>
+                                        <div class="flex-1 writing-line w-full min-h-[16px]">
                                             ${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[8.5pt] en-font w-full break-words">${sessionWords[i].senEn}</span>` : ''}
                                         </div>
                                     </div>
