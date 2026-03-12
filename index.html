@@ -231,7 +231,7 @@
                 width: 210mm !important;
                 min-height: 296mm !important;
                 margin: 0 !important;
-                padding: 18mm 14mm !important; /* 웹 화면 여백 이식 */
+                padding: 15mm 12mm !important; /* 가용 면적 극대화 */
                 box-sizing: border-box !important;
                 background: #ffffff !important;
                 display: block !important;
@@ -261,14 +261,28 @@
             .print-columns-2 {
                 display: grid !important;
                 grid-template-columns: repeat(2, 1fr) !important;
-                gap: 5px 10mm !important;
+                gap: 5px 8mm !important;
                 width: 100% !important;
             }
             .print-columns-3 {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
-                gap: 5px 6mm !important;
+                gap: 5px 5mm !important;
                 width: 100% !important;
+            }
+
+            /* 한 페이지 14문항 최적화 스타일 */
+            .homework-item {
+                margin-top: 6px !important;
+                margin-bottom: 6px !important;
+            }
+            .writing-line {
+                min-height: 24px !important;
+                margin-top: 1px !important;
+            }
+            .section-header {
+                margin-top: 5px !important;
+                margin-bottom: 8px !important;
             }
 
             /* 5. 표/테두리 완벽 유지 */
@@ -397,18 +411,22 @@
         </div>
 
         <!-- Session Selection Tabs (Add this) -->
-        <div class="session-tabs flex justify-center gap-6 mb-8 w-full max-w-[210mm] mx-auto z-10 relative">
+        <div class="session-tabs flex justify-center gap-4 mb-8 w-full max-w-[210mm] mx-auto z-10 relative">
             <button id="sess-1" onclick="changeSession(1)"
-                class="w-32 py-2 px-4 font-bold text-sm neumo-btn active cursor-pointer">
+                class="flex-1 py-2 px-4 font-bold text-sm neumo-btn active cursor-pointer whitespace-nowrap">
                 <i class="fas fa-calendar-day mr-1"></i>1차시
             </button>
             <button id="sess-2" onclick="changeSession(2)"
-                class="w-32 py-2 px-4 font-bold text-sm neumo-btn text-gray-500 cursor-pointer">
+                class="flex-1 py-2 px-4 font-bold text-sm neumo-btn text-gray-500 cursor-pointer whitespace-nowrap">
                 <i class="fas fa-calendar-day mr-1"></i>2차시
             </button>
             <button id="sess-3" onclick="changeSession(3)"
-                class="w-32 py-2 px-4 font-bold text-sm neumo-btn text-gray-500 cursor-pointer">
+                class="flex-1 py-2 px-4 font-bold text-sm neumo-btn text-gray-500 cursor-pointer whitespace-nowrap">
                 <i class="fas fa-calendar-day mr-1"></i>3차시
+            </button>
+            <button id="sess-all" onclick="changeSession('all')"
+                class="flex-1 py-2 px-4 font-bold text-sm neumo-btn text-green-600 cursor-pointer whitespace-nowrap">
+                <i class="fas fa-layer-group mr-1"></i>전체보기
             </button>
         </div>
 
@@ -1460,18 +1478,20 @@
 
         function changeSession(session) {
             currentSession = session;
-
-            // Update session button styles
-            for (let i = 1; i <= 3; i++) {
-                const btn = document.getElementById(`sess-${i}`);
-                if (i === session) {
+            const sessions = [1, 2, 3, 'all'];
+            sessions.forEach(s => {
+                const btn = document.getElementById(`sess-${s}`);
+                if (!btn) return;
+                if (s === session) {
                     btn.classList.add('active');
-                    btn.classList.remove('text-gray-500');
+                    btn.classList.remove('text-gray-500', 'text-green-600');
+                    if (s === 'all') btn.classList.add('text-green-700');
                 } else {
-                    btn.classList.remove('active');
-                    btn.classList.add('text-gray-500');
+                    btn.classList.remove('active', 'text-green-700');
+                    if (s === 'all') btn.classList.add('text-green-600');
+                    else btn.classList.add('text-gray-500');
                 }
-            }
+            });
 
             const activeBtn = document.querySelector('.chapter-btn.active');
             if (activeBtn) {
@@ -1623,7 +1643,7 @@
                 pageHtml += `
                     <div class="a4-page print-page-break">
                         ${headerHtml}
-                        <div class="section-header mt-1 mb-3">
+                        <div class="section-header mt-0.5 mb-2">
                             <span class="section-number en-font">01</span>
                             <span class="section-title-text ko-font">Step 1. 단어 학습 (Words)</span>
                         </div>
@@ -1633,12 +1653,12 @@
                 // Step 2. English to Korean
                 let transHtml = '';
                 sessionWords.forEach((word, index) => {
-                    const ansText = answerMode ? `<div class="text-red-600 font-bold text-[11pt] mt-1 mb-0 ko-font">${word.senKo}</div>` : '';
+                    const ansText = answerMode ? `<div class="text-red-600 font-bold text-[10pt] mt-0.5 mb-0 ko-font leading-tight">${word.senKo}</div>` : '';
                     transHtml += `
-                        <div class="avoid-break mt-3 mb-4">
-                            <p class="font-bold text-[11pt] mb-1 en-font leading-snug"><span class="text-blue-700 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senEn}</p>
+                        <div class="avoid-break mt-1 mb-1.5">
+                            <p class="font-bold text-[10.5pt] mb-0.5 en-font leading-snug"><span class="text-blue-700 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senEn}</p>
                             ${ansText}
-                            <div class="writing-line !mb-2"></div>
+                            <div class="writing-line !mb-1"></div>
                         </div>`;
                 });
                 pageHtml += `
@@ -1654,12 +1674,12 @@
                 // Step 3. Korean to English
                 let writeHtml = '';
                 sessionWords.forEach((word, index) => {
-                    const ansText = answerMode ? `<div class="text-red-600 font-bold text-[11pt] mt-1 mb-0 en-font">${word.senEn}</div>` : '';
+                    const ansText = answerMode ? `<div class="text-red-600 font-bold text-[10pt] mt-0.5 mb-0 en-font leading-tight">${word.senEn}</div>` : '';
                     writeHtml += `
-                        <div class="avoid-break mt-3 mb-4">
-                            <p class="font-bold text-[11pt] mb-1 ko-font leading-snug"><span class="text-red-600 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senKo} <span class="text-[9.5pt] text-gray-400 font-normal ml-2 en-font">(${word.en})</span></p>
+                        <div class="avoid-break mt-1 mb-1.5">
+                            <p class="font-bold text-[10.5pt] mb-0.5 ko-font leading-snug"><span class="text-red-600 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senKo} <span class="text-[9pt] text-gray-400 font-normal ml-2 en-font">(${word.en})</span></p>
                             ${ansText}
-                            <div class="writing-line !mb-2"></div>
+                            <div class="writing-line !mb-1"></div>
                         </div>`;
                 });
                 pageHtml += `
@@ -1681,11 +1701,11 @@
                             return `<span class="inline-block min-w-[4rem] px-1 border-b-[1.5px] border-gray-400 mx-1"></span>`; 
                         });
                         return `
-                            <div class="mb-5 avoid-break flex gap-3">
-                                <div class="font-black text-lg ${d.speaker === 'A' ? 'text-blue-700' : 'text-green-700'} en-font w-8">${d.speaker}:</div>
+                            <div class="mb-3 avoid-break flex gap-3">
+                                <div class="font-black text-base ${d.speaker === 'A' ? 'text-blue-700' : 'text-green-700'} en-font w-8">${d.speaker}:</div>
                                 <div class="flex-1">
-                                    <div class="text-[12pt] font-bold text-gray-900 en-font leading-relaxed mb-0.5">"${formattedText}"</div>
-                                    <div class="text-[10pt] text-gray-500 italic ko-font border-l-2 border-gray-200 pl-3 mt-1">(${d.ko || ''})</div>
+                                    <div class="text-[11pt] font-bold text-gray-900 en-font leading-relaxed mb-0.5">"${formattedText}"</div>
+                                    <div class="text-[9pt] text-gray-500 italic ko-font border-l-2 border-gray-200 pl-3 mt-1">(${d.ko || ''})</div>
                                 </div>
                             </div>`;
                     }).join('');
@@ -1697,7 +1717,7 @@
                             <span class="section-number en-font">04</span>
                             <span class="section-title-text ko-font">Step 4. 실전 대화 응용 (Role-play)</span>
                         </div>
-                        <div class="roleplay-box bg-white mt-4 shadow-sm p-6 border-[1.5px] border-gray-100">
+                        <div class="roleplay-box bg-white mt-2 shadow-sm p-4 border-[1.5px] border-gray-100">
                             ${roleplayHtml}
                         </div>
                     </div>`;
@@ -1717,9 +1737,9 @@
                         ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">LS</span>
-                            <span class="section-title-text ko-font">Vocabulary Vocabulary & Example Sentences</span>
+                            <span class="section-title-text ko-font">Vocabulary List & Example Sentences</span>
                         </div>
-                        <table class="w-full mt-6 bg-white overflow-hidden rounded-lg shadow-sm" style="width: 100% !important; table-layout: fixed; border-collapse: collapse !important; border: 1.5px solid #111827 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
+                        <table class="w-full mt-2 bg-white overflow-hidden rounded-lg shadow-sm" style="width: 100% !important; table-layout: fixed; border-collapse: collapse !important; border: 1.5px solid #111827 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
                             <thead class="bg-gray-900 text-white" style="background-color: #111827 !important; color: white !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
                                 <tr class="en-font text-[10pt] uppercase tracking-tighter" style="background-color: #111827 !important; -webkit-print-color-adjust: exact !important;">
                                     <th class="p-3 text-center" style="width: 45px !important; border: 1px solid #111827 !important;">No.</th>
@@ -1732,131 +1752,100 @@
                         </table>
                     </div>`;
             } else if (view.startsWith('hw')) {
-                let wordTestHtml = ''; let senTestHtml = ''; let wordScrHtml = ''; let senUnscrHtml = ''; let senTransHtml = ''; let defMatchHtml = ''; let senTenseHtml = ''; let errHtml = '';
-                
-                // 숙제 시작 시 세션 구분 대제목 추가
-                pageHtml += `
-                    <div class="a4-page print-page-break flex items-center justify-center">
-                        <div class="text-center">
-                            <h1 class="text-5xl font-black text-blue-900 en-font mb-4">SESSION ${session}</h1>
-                            <p class="text-2xl font-bold text-gray-500 ko-font">숙제 (HOMEWORK)</p>
-                            <div class="mt-10 border-t-4 border-blue-600 w-24 mx-auto"></div>
-                        </div>
-                    </div>
-                `;
+                let wordTestHtml = ''; let senTestHtml = ''; let wordScrHtml = ''; let senUnscrHtml = ''; let senTransHtml = ''; let defMatchHtml = ''; let errHtml = '';
                 
                 for (let i = 0; i < sessionWords.length; i++) {
-                    let ansKo = answerMode ? `<span class="text-red-600 font-bold text-[11pt] ko-font w-full break-words leading-tight">${sessionWords[i].ko}</span>` : '';
-                    let ansEn = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${sessionWords[i].en}</span>` : '';
+                    let ansKo = answerMode ? `<span class="text-red-600 font-bold text-[10.5pt] ko-font w-full break-words leading-tight">${sessionWords[i].ko}</span>` : '';
+                    let ansEn = answerMode ? `<span class="text-red-600 font-bold text-[10.5pt] en-font w-full break-words leading-tight">${sessionWords[i].en}</span>` : '';
                     let scrData = sessionScrambleData[i];
                     
                     // Part 1. Word Practice
                     wordTestHtml += `
-                        <div class="avoid-break mt-3 mb-4">
+                        <div class="avoid-break mt-1 mb-2 homework-item">
                             <div class="grid grid-cols-2 gap-8">
                                 <div class="flex flex-col">
-                                    <div class="font-bold text-gray-900 text-[11pt] en-font mb-1.5"><span class="text-blue-700 mr-2">${i + 1}.</span>${sessionWords[i].en}</div>
-                                    <div class="flex-1 writing-line w-full">${ansKo}</div>
+                                    <div class="font-bold text-gray-900 text-[10.5pt] en-font mb-0.5"><span class="text-blue-700 mr-2">${i + 1}.</span>${sessionWords[i].en}</div>
+                                    <div class="flex-1 writing-line w-full min-h-[22px]">${ansKo}</div>
                                 </div>
                                 <div class="flex flex-col">
-                                    <div class="font-bold text-gray-900 text-[11pt] ko-font mb-1.5"><span class="text-green-700 mr-2">${i + 1}.</span>${sessionWords[i].ko}</div>
-                                    <div class="flex-1 writing-line w-full">${ansEn}</div>
+                                    <div class="font-bold text-gray-900 text-[10.5pt] ko-font mb-0.5"><span class="text-green-700 mr-2">${i + 1}.</span>${sessionWords[i].ko}</div>
+                                    <div class="flex-1 writing-line w-full min-h-[22px]">${ansEn}</div>
                                 </div>
                             </div>
                         </div>`;
 
                     // Part 2. Sentence Practice
-                    let ansSenEn = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
+                    let ansSenEn = answerMode ? `<span class="text-red-600 font-bold text-[10.5pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
                     senTestHtml += `
-                        <div class="avoid-break mt-4 mb-5">
-                            <p class="font-bold text-[11pt] text-gray-900 mb-1.5 ko-font leading-snug"><span class="text-blue-700 mr-2 en-font">Q${String(i + 1).padStart(2, '0')}.</span> ${sessionWords[i].senKo} <span class="text-[9.5pt] text-gray-400 font-normal ml-2 en-font">(${sessionWords[i].en})</span></p>
-                            <div class="writing-line mt-3 w-full">${ansSenEn}</div>
+                        <div class="avoid-break mt-1 mb-2 homework-item">
+                            <p class="font-bold text-[10.2pt] text-gray-900 mb-0.5 ko-font leading-snug"><span class="text-blue-700 mr-2 en-font">Q${String(i + 1).padStart(2, '0')}.</span> ${sessionWords[i].senKo} <span class="text-[8.5pt] text-gray-400 font-normal ml-2 en-font">(${sessionWords[i].en})</span></p>
+                            <div class="writing-line mt-0.5 w-full min-h-[24px]">${ansSenEn}</div>
                         </div>`;
 
                     wordScrHtml += `
-                        <div class="avoid-break mt-2 mb-3 flex items-center gap-3 w-full border-b border-gray-50 pb-1" style="flex-wrap: nowrap !important; overflow: hidden !important;">
+                        <div class="avoid-break mt-0.5 mb-1.5 flex items-center gap-3 w-full border-b border-gray-50 pb-0.5" style="flex-wrap: nowrap !important; overflow: hidden !important;">
                             <div class="flex-shrink-0" style="white-space: nowrap !important; flex-shrink: 0 !important;">
-                                <span class="text-gray-400 text-[10pt] mr-1">${i + 1}.</span>
-                                <span class="font-black text-blue-800 text-[11pt] en-font uppercase tracking-wider" style="white-space: nowrap !important;">${scrData.word}</span>
+                                <span class="text-gray-400 text-[9pt] mr-1">${i + 1}.</span>
+                                <span class="font-black text-blue-800 text-[10.5pt] en-font uppercase tracking-wider" style="white-space: nowrap !important;">${scrData.word}</span>
                             </div>
-                            <div class="text-[9pt] text-gray-500 ko-font italic" style="white-space: nowrap !important; flex-shrink: 0 !important;">(${sessionWords[i].ko})</div>
-                            <div class="flex-1 border-b-[1.5px] border-gray-300 min-h-[22px] ml-1 relative">
-                                ${answerMode ? `<span class="text-red-600 font-bold text-[10.5pt] en-font absolute left-0 bottom-0" style="white-space: nowrap !important;">${sessionWords[i].en}</span>` : ''}
+                            <div class="text-[8.5pt] text-gray-500 ko-font italic" style="white-space: nowrap !important; flex-shrink: 0 !important;">(${sessionWords[i].ko})</div>
+                            <div class="flex-1 border-b-[1.5px] border-gray-300 min-h-[20px] ml-1 relative">
+                                ${answerMode ? `<span class="text-red-600 font-bold text-[10pt] en-font absolute left-0 bottom-0" style="white-space: nowrap !important;">${sessionWords[i].en}</span>` : ''}
                             </div>
                         </div>`;
 
-                    // Part 4-2. Sentence Unscrambles
-                    let ansUnscr = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
+                    // Part 3-2. Sentence Unscrambles
+                    let ansUnscr = answerMode ? `<span class="text-red-600 font-bold text-[10pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
                     senUnscrHtml += `
-                        <div class="avoid-break mt-2 mb-3 flex items-center gap-3 w-full border-b border-gray-100 pb-1" style="flex-wrap: nowrap !important;">
+                        <div class="avoid-break mt-0.5 mb-1.5 flex items-center gap-3 w-full border-b border-gray-100 pb-0.5" style="flex-wrap: nowrap !important;">
                             <div class="flex-shrink-0" style="white-space: nowrap !important;">
-                                <span class="text-gray-400 mr-2 font-normal">Q${i + 1}.</span>
-                                <span class="font-bold text-[10.5pt] text-blue-900 en-font uppercase">${scrData.sen}</span>
+                                <span class="text-gray-400 mr-1 font-normal text-[8.5pt]">Q${i + 1}.</span>
+                                <span class="font-bold text-[9.5pt] text-blue-900 en-font uppercase tracking-tighter">${scrData.sen}</span>
                             </div>
-                            <div class="text-[9pt] text-gray-500 ko-font italic flex-shrink-0" style="white-space: nowrap !important;">(${sessionWords[i].senKo})</div>
-                            <div class="flex-1 writing-line min-h-[22px] ml-1 relative">
+                            <div class="text-[8pt] text-gray-500 ko-font italic flex-shrink-0" style="white-space: nowrap !important;">(${sessionWords[i].senKo})</div>
+                            <div class="flex-1 writing-line min-h-[34px] ml-1 relative">
                                 ${ansUnscr}
                             </div>
                         </div>`;
 
-                    // Part 5. Transformation
+                    // Part 4. Transformation
                     let tData = sessionTransData[i];
-                    let ansTrans = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${tData.ans}</span>` : '';
+                    let ansTrans = answerMode ? `<span class="text-red-600 font-bold text-[10pt] en-font w-full break-words leading-tight">${tData.ans}</span>` : '';
                     senTransHtml += `
-                        <div class="avoid-break mt-4 mb-5 flex flex-col">
-                            <div class="font-bold text-[11pt] text-gray-900 en-font mb-1.5"><span class="text-gray-400 mr-2 font-normal">Q${i + 1}.</span> ${sessionWords[i].senEn}</div>
-                            <div class="bg-blue-50 text-blue-800 font-bold ml-6 mb-2 px-3 py-1 border-l-2 border-blue-600 ko-font text-[9.5pt] inline-block self-start">▶ ${tData.prompt}</div>
-                            <div class="writing-line ml-6 w-auto">${ansTrans}</div>
+                        <div class="avoid-break mt-0.5 mb-1.5 flex flex-col">
+                            <div class="font-bold text-[10pt] text-gray-900 en-font mb-0.5"><span class="text-gray-400 mr-2 font-normal text-[8.5pt]">Q${i + 1}.</span> ${sessionWords[i].senEn}</div>
+                            <div class="bg-blue-50 text-blue-800 font-bold ml-6 mb-0.5 px-2 py-0.5 border-l-2 border-blue-600 ko-font text-[9pt] inline-block self-start">▶ ${tData.prompt}</div>
+                            <div class="writing-line ml-6 w-auto min-h-[28px]">${ansTrans}</div>
                         </div>`;
 
-                    // Part 6. Definition Match
+                    // Part 5. Definition Match
                     defMatchHtml += `
-                        <div class="avoid-break mt-4 mb-5 flex items-start gap-4">
-                            <span class="text-gray-400 font-bold text-[11pt] en-font w-6 text-right">${i + 1}.</span>
+                        <div class="avoid-break mt-1.5 mb-2 flex items-start gap-4">
+                            <span class="text-gray-400 font-bold text-[9.5pt] en-font w-6 text-right">${i + 1}.</span>
                             <div class="flex-1 flex flex-col">
-                                <div class="text-gray-800 text-[9.5pt] ko-font leading-snug bg-gray-50 p-3 rounded-md border-[1.5px] border-gray-100 font-medium">${sessionWords[i].def}</div>
-                                <div class="writing-line mt-2 w-full">${ansEn}</div>
+                                <div class="text-gray-800 text-[8.5pt] ko-font leading-snug bg-gray-50 p-2 rounded-md border-[1.5px] border-gray-100 font-medium">${sessionWords[i].def}</div>
+                                <div class="writing-line mt-1 w-full min-h-[20px]">${ansEn}</div>
                             </div>
                         </div>`;
 
-                    // Part 7. Tense Change
-                    let originSen = sessionWords[i].senEn; 
-                    let tenseInfo = sessionTenseData[i]; 
-                    let target1Answer = getTenseAnswer(originSen, tenseInfo.target1); 
-                    let target2Answer = getTenseAnswer(originSen, tenseInfo.target2); 
-                    let ansT1Html = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${target1Answer}</span>` : ''; 
-                    let ansT2Html = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${target2Answer}</span>` : '';
-                    senTenseHtml += `
-                        <div class="avoid-break mt-5 mb-6">
-                            <div class="font-bold text-[11pt] text-gray-900 en-font mb-3"><span class="text-gray-400 mr-2 font-normal">Q${i + 1}.</span> ${originSen}</div>
-                            <div class="ml-6 flex flex-col gap-3">
-                                <div class="flex items-end gap-3 w-full">
-                                    <span class="text-[9pt] bg-purple-700 text-white font-bold px-3 py-1 rounded en-font w-20 text-center shadow-sm mb-1">${tenseInfo.target1}</span>
-                                    <div class="flex-1 writing-line w-full">${ansT1Html}</div>
-                                </div>
-                                <div class="flex items-end gap-3 w-full">
-                                    <span class="text-[9pt] bg-purple-700 text-white font-bold px-3 py-1 rounded en-font w-20 text-center shadow-sm mb-1">${tenseInfo.target2}</span>
-                                    <div class="flex-1 writing-line w-full">${ansT2Html}</div>
-                                </div>
-                            </div>
-                        </div>`;
 
-                    // Part 7. Error Correction
+
+                    // Part 6. Error Correction
                     let err = sessionErrorData[i]; 
-                    let ansErrHtml = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${err.answerText}</span>` : '';
+                    let ansErrHtml = answerMode ? `<span class="text-red-600 font-bold text-[9.5pt] en-font w-full break-words leading-tight">${err.answerText}</span>` : '';
                     errHtml += `
-                        <div class="avoid-break mt-5 mb-8 flex flex-col">
-                            <div class="flex items-start gap-4 mb-2">
-                                <span class="text-gray-400 font-bold text-[11pt] en-font w-6 text-right">Q${i + 1}.</span>
+                        <div class="avoid-break mt-0 mb-1 flex flex-col homework-item">
+                            <div class="flex items-start gap-2 mb-0.5">
+                                <span class="text-gray-400 font-bold text-[8.5pt] en-font w-5 text-right">Q${i + 1}.</span>
                                 <div class="flex-1">
-                                    <div class="text-gray-900 font-bold ko-font text-[10.5pt] mb-2 leading-snug bg-gray-50 p-2.5 rounded-md border-l-4 border-red-500">
-                                        <i class="fas fa-check-circle text-red-500 mr-2 text-[9pt]"></i>${err.correctKo}
+                                    <div class="text-gray-900 font-bold ko-font text-[9pt] mb-0.5 leading-snug bg-gray-50 px-2 py-0.5 rounded-md border-l-[3px] border-red-500">
+                                        <i class="fas fa-check-circle text-red-500 mr-1 text-[6.5pt]"></i>${err.correctKo}
                                     </div>
-                                    <div class="text-gray-500 text-[11pt] en-font mb-4 italic pl-1 leading-relaxed">
-                                        <span class="text-red-600 font-black not-italic mr-2">!</span>${err.errorSen}
+                                    <div class="text-gray-500 text-[9pt] en-font mb-0.5 italic pl-1 leading-tight">
+                                        <span class="text-red-600 font-black not-italic mr-1.5">!</span>${err.errorSen}
                                     </div>
-                                    <div class="writing-line w-full flex items-center min-h-[35px] pl-1">
-                                        <span class="text-[9pt] bg-gray-900 text-white font-bold px-2 py-0.5 rounded mr-3 en-font shadow-sm">FIX</span>
+                                    <div class="writing-line w-full flex items-center min-h-[22px] pl-1">
+                                        <span class="text-[6.5pt] bg-gray-900 text-white font-bold px-1 py-0 rounded mr-2 en-font">FIX</span>
                                         ${ansErrHtml}
                                     </div>
                                 </div>
@@ -1869,90 +1858,82 @@
                         ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">01</span>
-                            <span class="section-title-text ko-font">Part 1. 단어 암기와 영작 (Word Practice)</span>
+                            <span class="section-title-text ko-font">Part 1. [Session ${session}] 단어 암기와 영작</span>
                         </div>
-                        <div class="px-2 pb-2">${wordTestHtml}</div>
+                        <div class="px-2 pb-0.5">${wordTestHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">02</span>
-                            <span class="section-title-text ko-font">Part 2. 문장 해석과 영작 (Sentence Practice)</span>
+                            <span class="section-title-text ko-font">Part 2. [Session ${session}] 문장 해석과 영작</span>
                         </div>
-                        <div class="px-2 pb-2">${senTestHtml}</div>
+                        <div class="px-2 pb-0.5">${senTestHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">03-1</span>
-                            <span class="section-title-text ko-font">Part 3-1. 단어 배열 숙제 (Word Unscramble)</span>
+                            <span class="section-title-text ko-font">Part 3-1. [Session ${session}] 단어 배열 숙제</span>
                         </div>
-                        <h3 class="font-bold text-gray-500 mt-4 mb-3 text-[11pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-1 w-max rounded-sm shadow-sm"><i class="fas fa-list-ul mr-2 text-[9pt]"></i> Word Unscramble</h3>
-                        <div class="px-2 mb-2">${wordScrHtml}</div>
+                        <h3 class="font-bold text-gray-500 mt-1 mb-1 text-[10pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-0.5 w-max rounded-sm shadow-sm"><i class="fas fa-list-ul mr-2 text-[8pt]"></i> Word Unscramble (S${session})</h3>
+                        <div class="px-2 mb-0.5">${wordScrHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">03-2</span>
-                            <span class="section-title-text ko-font">Part 3-2. 문장 배열 숙제 (Sentence Unscramble)</span>
+                            <span class="section-title-text ko-font">Part 3-2. [Session ${session}] 문장 배열 숙제</span>
                         </div>
-                        <h3 class="font-bold text-gray-500 mt-4 mb-3 text-[11pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-1 w-max rounded-sm shadow-sm"><i class="fas fa-list-ol mr-2 text-[9pt]"></i> Sentence Unscramble</h3>
-                        <div class="px-2 pb-2 w-full">${senUnscrHtml}</div>
+                        <h3 class="font-bold text-gray-500 mt-1 mb-1 text-[10pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-0.5 w-max rounded-sm shadow-sm"><i class="fas fa-list-ol mr-2 text-[8pt]"></i> Sentence Unscramble (S${session})</h3>
+                        <div class="px-2 pb-0.5 w-full">${senUnscrHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">04</span>
-                            <span class="section-title-text ko-font">Part 4. 문장 변형 숙제 (Transformation)</span>
+                            <span class="section-title-text ko-font">Part 4. [Session ${session}] 문장 변형 숙제</span>
                         </div>
-                        <div class="px-2 pb-2">${senTransHtml}</div>
+                        <div class="px-2 pb-0.5">${senTransHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">05</span>
-                            <span class="section-title-text ko-font">Part 5. 영영풀이 숙제 (Definition Match)</span>
+                            <span class="section-title-text ko-font">Part 5. [Session ${session}] 영영풀이 숙제</span>
                         </div>
-                        <div class="px-2 mt-4 pb-2 print-columns-2">${defMatchHtml}</div>
+                        <div class="px-2 mt-1 pb-0.5 print-columns-2">${defMatchHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">06</span>
-                            <span class="section-title-text ko-font">Part 6. 시제 변형 숙제 (Tense Change)</span>
+                            <span class="section-title-text ko-font">Part 6. [Session ${session}] 오류 수정 숙제</span>
                         </div>
-                        <div class="px-2 mt-2 pb-2">${senTenseHtml}</div>
+                        <div class="px-2 mt-0.5 pb-0.5">${errHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
                         <div class="section-header">
                             <span class="section-number en-font">07</span>
-                            <span class="section-title-text ko-font">Part 7. 오류 수정 숙제 (Error Correction)</span>
+                            <span class="section-title-text ko-font">Part 7. [Session ${session}] 받아쓰기 숙제</span>
                         </div>
-                        <div class="px-2 mt-2 pb-2">${errHtml}</div>
-                    </div>
-                    <div class="a4-page print-page-break">
-                        ${headerHtml}
-                        <div class="section-header">
-                            <span class="section-number en-font">08</span>
-                            <span class="section-title-text ko-font">Part 8. 받아쓰기 숙제 (Dictation Practice)</span>
-                        </div>
-                        <div class="mt-4 mb-6 flex items-center justify-between bg-blue-50/50 p-5 rounded-lg border-[1.5px] border-blue-100 border-dashed">
+                        <div class="mt-1 mb-1 flex items-center justify-between bg-blue-50/50 p-2 rounded-lg border-[1.5px] border-blue-100 border-dashed">
                             <div>
-                                <h4 class="text-xl font-black text-blue-900 en-font mb-1.5"><i class="fas fa-headphones-alt mr-2 text-blue-600"></i>QR Dictation Audio</h4>
-                                <p class="text-gray-600 ko-font text-[10pt]">스마트폰으로 스캔하여 받아쓰기를 시작하세요.</p>
+                                <h4 class="text-sm font-black text-blue-900 en-font mb-0"><i class="fas fa-headphones-alt mr-2 text-blue-600"></i>QR Dictation Audio (S${session})</h4>
+                                <p class="text-gray-600 ko-font text-[8pt]">스캔하여 오디오를 재생하세요.</p>
                             </div>
-                            <div class="bg-white p-2 rounded shadow-sm border border-blue-200">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=90x90&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="QR" class="w-16 h-16">
+                            <div class="bg-white p-1 rounded shadow-sm border border-blue-200">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="QR" class="w-8 h-8">
                             </div>
                         </div>
-                        <div class="grid grid-cols-1 gap-6 px-3 pb-2">
+                        <div class="grid grid-cols-1 gap-0 px-3 pb-0.5">
                             ${Array.from({ length: 14 }).map((_, i) => `
-                                <div class="avoid-break w-full">
-                                    <div class="flex items-end gap-4 w-full">
-                                        <span class="font-black text-[14pt] text-blue-800 en-font w-8 mb-1">Q${String(i + 1).padStart(2, '0')}</span>
-                                        <div class="flex-1 writing-line w-full">
-                                            ${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words">${sessionWords[i].senEn}</span>` : ''}
+                                <div class="avoid-break w-full homework-item">
+                                    <div class="flex items-end gap-3 w-full">
+                                        <span class="font-black text-[9pt] text-blue-800 en-font w-7 mb-0.5">Q${String(i + 1).padStart(2, '0')}</span>
+                                        <div class="flex-1 writing-line w-full min-h-[24px]">
+                                            ${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[9pt] en-font w-full break-words">${sessionWords[i].senEn}</span>` : ''}
                                         </div>
                                     </div>
                                 </div>`).join('')}
@@ -1964,17 +1945,18 @@
 
         function renderChapter(id) {
             document.querySelectorAll('.chapter-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`btn-${id}`).classList.add('active');
+            const activeBtn = document.getElementById(`btn-${id}`);
+            if (activeBtn) activeBtn.classList.add('active');
+            
             const ch = db.find(c => c.id === id);
             updateDocumentTitle(ch);
             
-            // 숙제 클릭 시 1, 2, 3차시 모두 나오게 함
-            if (currentView === 'hw') {
-                let allHwHtml = "";
+            if (currentSession === 'all') {
+                let allHtml = "";
                 for (let s = 1; s <= 3; s++) {
-                    allHwHtml += generatePageHtml(id, s, 'hw', isAnswerMode);
+                    allHtml += generatePageHtml(id, s, currentView, isAnswerMode);
                 }
-                document.getElementById('page-container').innerHTML = allHwHtml;
+                document.getElementById('page-container').innerHTML = allHtml;
             } else {
                 document.getElementById('page-container').innerHTML = generatePageHtml(id, currentSession, currentView, isAnswerMode);
             }
