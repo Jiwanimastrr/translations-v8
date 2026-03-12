@@ -273,16 +273,16 @@
 
             /* 한 페이지 14문항 최적화 스타일 */
             .homework-item {
-                margin-top: 6px !important;
-                margin-bottom: 6px !important;
+                margin-top: 3px !important;
+                margin-bottom: 3px !important;
             }
             .writing-line {
-                min-height: 24px !important;
-                margin-top: 1px !important;
+                min-height: 20px !important;
+                margin-top: 0px !important;
             }
             .section-header {
-                margin-top: 5px !important;
-                margin-bottom: 8px !important;
+                margin-top: 2px !important;
+                margin-bottom: 4px !important;
             }
 
             /* 5. 표/테두리 완벽 유지 */
@@ -1761,61 +1761,61 @@
                     
                     // Part 1. Word Practice
                     wordTestHtml += `
-                        <div class="avoid-break mt-1 mb-2 homework-item">
-                            <div class="grid grid-cols-2 gap-8">
+                        <div class="avoid-break mt-0.5 mb-1 homework-item">
+                            <div class="grid grid-cols-2 gap-x-8">
                                 <div class="flex flex-col">
-                                    <div class="font-bold text-gray-900 text-[10.5pt] en-font mb-0.5"><span class="text-blue-700 mr-2">${i + 1}.</span>${sessionWords[i].en}</div>
-                                    <div class="flex-1 writing-line w-full min-h-[22px]">${ansKo}</div>
+                                    <div class="font-bold text-gray-900 text-[10pt] en-font mb-0"><span class="text-blue-700 mr-2">${i + 1}.</span>${sessionWords[i].en}</div>
+                                    <div class="flex-1 writing-line w-full min-h-[20px]">${ansKo}</div>
                                 </div>
                                 <div class="flex flex-col">
-                                    <div class="font-bold text-gray-900 text-[10.5pt] ko-font mb-0.5"><span class="text-green-700 mr-2">${i + 1}.</span>${sessionWords[i].ko}</div>
-                                    <div class="flex-1 writing-line w-full min-h-[22px]">${ansEn}</div>
+                                    <div class="font-bold text-gray-900 text-[10pt] ko-font mb-0"><span class="text-green-700 mr-2">${i + 1}.</span>${sessionWords[i].ko}</div>
+                                    <div class="flex-1 writing-line w-full min-h-[20px]">${ansEn}</div>
                                 </div>
                             </div>
                         </div>`;
 
                     // Part 2. Sentence Practice
-                    let ansSenEn = answerMode ? `<span class="text-red-600 font-bold text-[10.5pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
+                    let ansSenEn = answerMode ? `<span class="text-red-600 font-bold text-[10pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
                     senTestHtml += `
-                        <div class="avoid-break mt-1 mb-2 homework-item">
-                            <p class="font-bold text-[10.2pt] text-gray-900 mb-0.5 ko-font leading-snug"><span class="text-blue-700 mr-2 en-font">Q${String(i + 1).padStart(2, '0')}.</span> ${sessionWords[i].senKo} <span class="text-[8.5pt] text-gray-400 font-normal ml-2 en-font">(${sessionWords[i].en})</span></p>
-                            <div class="writing-line mt-0.5 w-full min-h-[24px]">${ansSenEn}</div>
+                        <div class="avoid-break mt-0.5 mb-1 homework-item">
+                            <p class="font-bold text-[10pt] text-gray-900 mb-0.5 ko-font leading-snug"><span class="text-blue-700 mr-2 en-font">Q${String(i + 1).padStart(2, '0')}.</span> ${sessionWords[i].senKo} <span class="text-[8pt] text-gray-400 font-normal ml-1 en-font">(${sessionWords[i].en})</span></p>
+                            <div class="writing-line mt-0 w-full min-h-[22px]">${ansSenEn}</div>
                         </div>`;
 
                     wordScrHtml += `
-                        <div class="avoid-break mt-0.5 mb-1.5 flex items-center gap-3 w-full border-b border-gray-50 pb-0.5" style="flex-wrap: nowrap !important; overflow: hidden !important;">
+                        <div class="avoid-break mt-0 mb-1 flex items-center gap-3 w-full border-b border-gray-50 pb-0.5" style="flex-wrap: nowrap !important; overflow: hidden !important;">
                             <div class="flex-shrink-0" style="white-space: nowrap !important; flex-shrink: 0 !important;">
-                                <span class="text-gray-400 text-[9pt] mr-1">${i + 1}.</span>
-                                <span class="font-black text-blue-800 text-[10.5pt] en-font uppercase tracking-wider" style="white-space: nowrap !important;">${scrData.word}</span>
+                                <span class="text-gray-400 text-[8.5pt] mr-1">${i + 1}.</span>
+                                <span class="font-black text-blue-800 text-[10pt] en-font uppercase tracking-wider" style="white-space: nowrap !important;">${scrData.word}</span>
                             </div>
-                            <div class="text-[8.5pt] text-gray-500 ko-font italic" style="white-space: nowrap !important; flex-shrink: 0 !important;">(${sessionWords[i].ko})</div>
-                            <div class="flex-1 border-b-[1.5px] border-gray-300 min-h-[20px] ml-1 relative">
-                                ${answerMode ? `<span class="text-red-600 font-bold text-[10pt] en-font absolute left-0 bottom-0" style="white-space: nowrap !important;">${sessionWords[i].en}</span>` : ''}
+                            <div class="text-[8pt] text-gray-500 ko-font italic" style="white-space: nowrap !important; flex-shrink: 0 !important;">(${sessionWords[i].ko})</div>
+                            <div class="flex-1 border-b-[1.5px] border-gray-300 min-h-[18px] ml-1 relative">
+                                ${answerMode ? `<span class="text-red-600 font-bold text-[9.5pt] en-font absolute left-0 bottom-0" style="white-space: nowrap !important;">${sessionWords[i].en}</span>` : ''}
                             </div>
                         </div>`;
 
                     // Part 3-2. Sentence Unscrambles
-                    let ansUnscr = answerMode ? `<span class="text-red-600 font-bold text-[10pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
+                    let ansUnscr = answerMode ? `<span class="text-red-600 font-bold text-[9.5pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
                     senUnscrHtml += `
-                        <div class="avoid-break mt-0.5 mb-1.5 flex items-center gap-3 w-full border-b border-gray-100 pb-0.5" style="flex-wrap: nowrap !important;">
+                        <div class="avoid-break mt-0 mb-1 flex items-center gap-2 w-full border-b border-gray-100 pb-0.5" style="flex-wrap: nowrap !important;">
                             <div class="flex-shrink-0" style="white-space: nowrap !important;">
-                                <span class="text-gray-400 mr-1 font-normal text-[8.5pt]">Q${i + 1}.</span>
-                                <span class="font-bold text-[9.5pt] text-blue-900 en-font uppercase tracking-tighter">${scrData.sen}</span>
+                                <span class="text-gray-400 mr-1 font-normal text-[8pt]">Q${i + 1}.</span>
+                                <span class="font-bold text-[9pt] text-blue-900 en-font uppercase tracking-tighter">${scrData.sen}</span>
                             </div>
-                            <div class="text-[8pt] text-gray-500 ko-font italic flex-shrink-0" style="white-space: nowrap !important;">(${sessionWords[i].senKo})</div>
-                            <div class="flex-1 writing-line min-h-[34px] ml-1 relative">
+                            <div class="text-[7.5pt] text-gray-500 ko-font italic flex-shrink-0" style="white-space: nowrap !important;">(${sessionWords[i].senKo})</div>
+                            <div class="flex-1 writing-line min-h-[28px] ml-1 relative">
                                 ${ansUnscr}
                             </div>
                         </div>`;
 
                     // Part 4. Transformation
                     let tData = sessionTransData[i];
-                    let ansTrans = answerMode ? `<span class="text-red-600 font-bold text-[10pt] en-font w-full break-words leading-tight">${tData.ans}</span>` : '';
+                    let ansTrans = answerMode ? `<span class="text-red-600 font-bold text-[9.5pt] en-font w-full break-words leading-tight">${tData.ans}</span>` : '';
                     senTransHtml += `
-                        <div class="avoid-break mt-0.5 mb-1.5 flex flex-col">
-                            <div class="font-bold text-[10pt] text-gray-900 en-font mb-0.5"><span class="text-gray-400 mr-2 font-normal text-[8.5pt]">Q${i + 1}.</span> ${sessionWords[i].senEn}</div>
-                            <div class="bg-blue-50 text-blue-800 font-bold ml-6 mb-0.5 px-2 py-0.5 border-l-2 border-blue-600 ko-font text-[9pt] inline-block self-start">▶ ${tData.prompt}</div>
-                            <div class="writing-line ml-6 w-auto min-h-[28px]">${ansTrans}</div>
+                        <div class="avoid-break mt-0 mb-1 flex flex-col">
+                            <div class="font-bold text-[9.5pt] text-gray-900 en-font mb-0"><span class="text-gray-400 mr-2 font-normal text-[8pt]">Q${i + 1}.</span> ${sessionWords[i].senEn}</div>
+                            <div class="bg-blue-50 text-blue-800 font-bold ml-6 mb-0 px-2 py-0.5 border-l-2 border-blue-600 ko-font text-[8.5pt] inline-block self-start">▶ ${tData.prompt}</div>
+                            <div class="writing-line ml-6 w-auto min-h-[22px]">${ansTrans}</div>
                         </div>`;
 
                     // Part 5. Definition Match
@@ -1832,20 +1832,20 @@
 
                     // Part 6. Error Correction
                     let err = sessionErrorData[i]; 
-                    let ansErrHtml = answerMode ? `<span class="text-red-600 font-bold text-[9.5pt] en-font w-full break-words leading-tight">${err.answerText}</span>` : '';
+                    let ansErrHtml = answerMode ? `<span class="text-red-600 font-bold text-[9pt] en-font w-full break-words leading-tight">${err.answerText}</span>` : '';
                     errHtml += `
-                        <div class="avoid-break mt-0 mb-1 flex flex-col homework-item">
-                            <div class="flex items-start gap-2 mb-0.5">
+                        <div class="avoid-break mt-0 mb-0.5 flex flex-col homework-item">
+                            <div class="flex items-start gap-2 mb-0">
                                 <span class="text-gray-400 font-bold text-[8.5pt] en-font w-5 text-right">Q${i + 1}.</span>
                                 <div class="flex-1">
-                                    <div class="text-gray-900 font-bold ko-font text-[9pt] mb-0.5 leading-snug bg-gray-50 px-2 py-0.5 rounded-md border-l-[3px] border-red-500">
-                                        <i class="fas fa-check-circle text-red-500 mr-1 text-[6.5pt]"></i>${err.correctKo}
+                                    <div class="text-gray-900 font-bold ko-font text-[8.5pt] mb-0.5 leading-snug bg-gray-50 px-2 py-0.5 rounded-md border-l-[3px] border-red-500">
+                                        <i class="fas fa-check-circle text-red-500 mr-1 text-[6pt]"></i>${err.correctKo}
                                     </div>
-                                    <div class="text-gray-500 text-[9pt] en-font mb-0.5 italic pl-1 leading-tight">
-                                        <span class="text-red-600 font-black not-italic mr-1.5">!</span>${err.errorSen}
+                                    <div class="text-gray-500 text-[8.5pt] en-font mb-0 italic pl-1 leading-tight">
+                                        <span class="text-red-600 font-black not-italic mr-1">!</span>${err.errorSen}
                                     </div>
-                                    <div class="writing-line w-full flex items-center min-h-[22px] pl-1">
-                                        <span class="text-[6.5pt] bg-gray-900 text-white font-bold px-1 py-0 rounded mr-2 en-font">FIX</span>
+                                    <div class="writing-line w-full flex items-center min-h-[20px] pl-1">
+                                        <span class="text-[6pt] bg-gray-900 text-white font-bold px-1 py-0 rounded mr-2 en-font">FIX</span>
                                         ${ansErrHtml}
                                     </div>
                                 </div>
@@ -1932,8 +1932,8 @@
                                 <div class="avoid-break w-full homework-item">
                                     <div class="flex items-end gap-3 w-full">
                                         <span class="font-black text-[9pt] text-blue-800 en-font w-7 mb-0.5">Q${String(i + 1).padStart(2, '0')}</span>
-                                        <div class="flex-1 writing-line w-full min-h-[24px]">
-                                            ${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[9pt] en-font w-full break-words">${sessionWords[i].senEn}</span>` : ''}
+                                        <div class="flex-1 writing-line w-full min-h-[20px]">
+                                            ${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[8.5pt] en-font w-full break-words">${sessionWords[i].senEn}</span>` : ''}
                                         </div>
                                     </div>
                                 </div>`).join('')}
