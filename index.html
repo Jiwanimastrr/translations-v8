@@ -1734,6 +1734,17 @@
             } else if (view.startsWith('hw')) {
                 let wordTestHtml = ''; let senTestHtml = ''; let wordScrHtml = ''; let senUnscrHtml = ''; let senTransHtml = ''; let defMatchHtml = ''; let senTenseHtml = ''; let errHtml = '';
                 
+                // 숙제 시작 시 세션 구분 대제목 추가
+                pageHtml += `
+                    <div class="a4-page print-page-break flex items-center justify-center">
+                        <div class="text-center">
+                            <h1 class="text-5xl font-black text-blue-900 en-font mb-4">SESSION ${session}</h1>
+                            <p class="text-2xl font-bold text-gray-500 ko-font">숙제 (HOMEWORK)</p>
+                            <div class="mt-10 border-t-4 border-blue-600 w-24 mx-auto"></div>
+                        </div>
+                    </div>
+                `;
+                
                 for (let i = 0; i < sessionWords.length; i++) {
                     let ansKo = answerMode ? `<span class="text-red-600 font-bold text-[11pt] ko-font w-full break-words leading-tight">${sessionWords[i].ko}</span>` : '';
                     let ansEn = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${sessionWords[i].en}</span>` : '';
@@ -1957,12 +1968,13 @@
             const ch = db.find(c => c.id === id);
             updateDocumentTitle(ch);
             
+            // 숙제 클릭 시 1, 2, 3차시 모두 나오게 함
             if (currentView === 'hw') {
                 let allHwHtml = "";
                 for (let s = 1; s <= 3; s++) {
                     allHwHtml += generatePageHtml(id, s, 'hw', isAnswerMode);
                 }
-                document.getElementById('page-container').innerHTML = allHwHtml.trim();
+                document.getElementById('page-container').innerHTML = allHwHtml;
             } else {
                 document.getElementById('page-container').innerHTML = generatePageHtml(id, currentSession, currentView, isAnswerMode);
             }
