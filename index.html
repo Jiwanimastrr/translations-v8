@@ -21,7 +21,8 @@
             --gray-500: #6b7280;
             --gray-200: #e5e7eb;
             --gray-100: #f0f2f5;
-            --print-margin: 10mm;
+            --print-margin-v: 12mm;
+            --print-margin-h: 10mm;
         }
 
         body {
@@ -97,12 +98,25 @@
             margin: 0 auto 30mm auto;
             background: white;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
-            padding: var(--print-margin);
+            padding: var(--print-margin-v) var(--print-margin-h);
             position: relative;
             box-sizing: border-box;
             color: black;
             font-size: 9.5pt;
             line-height: 1.4;
+        }
+        
+        .homework-item {
+            margin-top: 3px !important;
+            margin-bottom: 3px !important;
+        }
+        .writing-line {
+            min-height: 20px !important;
+            margin-top: 0px !important;
+        }
+        .section-header {
+            margin-top: 2px !important;
+            margin-bottom: 4px !important;
         }
 
         /* Essential Typography */
@@ -231,7 +245,7 @@
                 width: 210mm !important;
                 min-height: 296mm !important;
                 margin: 0 !important;
-                padding: 15mm 12mm !important; /* 가용 면적 극대화 */
+                padding: var(--print-margin-v) var(--print-margin-h) !important;
                 box-sizing: border-box !important;
                 background: #ffffff !important;
                 display: block !important;
@@ -253,8 +267,6 @@
                 overflow: visible !important;
                 position: relative !important;
                 transform: translateZ(0);
-                margin-top: 1px !important;
-                margin-bottom: 2px !important;
             }
 
             /* 다단 편집 최적화 (Grid 활용) */
@@ -271,19 +283,6 @@
                 width: 100% !important;
             }
 
-            /* 한 페이지 14문항 최적화 스타일 */
-            .homework-item {
-                margin-top: 3px !important;
-                margin-bottom: 3px !important;
-            }
-            .writing-line {
-                min-height: 20px !important;
-                margin-top: 0px !important;
-            }
-            .section-header {
-                margin-top: 2px !important;
-                margin-bottom: 4px !important;
-            }
 
             /* 5. 표/테두리 완벽 유지 */
             table {
@@ -1901,7 +1900,7 @@
                             <span class="section-number en-font">05</span>
                             <span class="section-title-text ko-font">Part 5. [Session ${session}] 영영풀이 숙제</span>
                         </div>
-                        <div class="px-2 mt-1 pb-0.5 print-columns-2">${defMatchHtml}</div>
+                        <div class="px-2 mt-1 pb-0.5">${defMatchHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
