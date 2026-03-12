@@ -259,6 +259,11 @@
                 print-color-adjust: exact !important;
             }
 
+            .a4-page:last-child {
+                page-break-after: auto !important;
+                break-after: auto !important;
+            }
+
             /* 4. 가로/세로 잘림 및 쪼개짐 철통 방어 */
             .avoid-break, tr, td, th, section, .section-header, .neumo-panel, .word-set, .question-block, .roleplay-box, .word-entry, .word-grid {
                 page-break-inside: avoid !important;
