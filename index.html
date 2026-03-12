@@ -1626,6 +1626,20 @@
                 </div>
             `;
 
+            const compactHeaderHtml = `
+                <div class="page-header avoid-break ko-font !mb-1 !pb-0.5">
+                    <div class="logo-box">
+                        ${currentLogoUrl ? `<img src="${currentLogoUrl}" alt="로고" class="max-h-5 max-w-[80px] object-contain mix-blend-multiply mr-2">` : ''}
+                        <div>
+                            <h1 class="text-[11pt] font-black text-gray-900 leading-none">Ch 0${ch.id}. ${ch.title} ${answerMode ? '<span class="text-red-600 text-[9pt] ml-2 font-bold">[Ans]</span>' : ''}</h1>
+                        </div>
+                    </div>
+                    <div class="info-box en-font !text-[7pt]">
+                        Date: ________ / Name: ______________
+                    </div>
+                </div>
+            `;
+
             let pageHtml = '';
             if (view === 'textbook') {
                 // Step 1. Words
@@ -1911,27 +1925,27 @@
                         <div class="px-2 mt-0.5 pb-0.5">${errHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
-                        ${headerHtml.replace('page-header', 'page-header !mb-0 !pb-0')}
-                        <div class="section-header !mt-0 !mb-1">
-                            <span class="section-number en-font">07</span>
-                            <span class="section-title-text ko-font">Part 7. [Session ${session}] 받아쓰기 숙제</span>
+                        ${compactHeaderHtml}
+                        <div class="section-header !mt-0 !mb-0.5 !pb-0.5">
+                            <span class="section-number !text-[10pt] en-font">07</span>
+                            <span class="section-title-text !text-[11pt] ko-font">Part 7. 받아쓰기 숙제</span>
                         </div>
                         <div class="mt-0 mb-0.5 flex items-center justify-between bg-blue-50/50 p-1 rounded-lg border-[1px] border-blue-100 border-dashed">
                             <div>
-                                <h4 class="text-[9pt] font-black text-blue-900 en-font mb-0"><i class="fas fa-headphones-alt mr-2 text-blue-600"></i>QR Dictation Audio (S${session})</h4>
-                                <p class="text-gray-600 ko-font text-[7pt]">스캔하여 오디오를 재생하세요.</p>
+                                <h4 class="text-[8.5pt] font-black text-blue-900 en-font mb-0"><i class="fas fa-headphones-alt mr-2 text-blue-600"></i>QR Dictation Audio (S${session})</h4>
+                                <p class="text-gray-600 ko-font text-[6.5pt]">스캔하여 오디오를 재생하세요.</p>
                             </div>
                             <div class="bg-white p-0.5 rounded shadow-sm border border-blue-200">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="QR" class="w-10 h-10">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=60x60&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="QR" class="w-8 h-8">
                             </div>
                         </div>
                         <div class="grid grid-cols-1 gap-0 px-3 pb-0">
                             ${Array.from({ length: 14 }).map((_, i) => `
                                 <div class="avoid-break w-full homework-item !mt-0 !mb-0">
                                     <div class="flex items-start gap-2 w-full">
-                                        <span class="font-black text-[9pt] text-blue-800 en-font w-7 pt-0">Q${String(i + 1).padStart(2, '0')}</span>
-                                        <div class="flex-1 writing-line w-full min-h-[12px] !mt-0">
-                                            ${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[8.5pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : ''}
+                                        <span class="font-black text-[8.5pt] text-blue-800 en-font w-7 pt-0">Q${String(i + 1).padStart(2, '0')}</span>
+                                        <div class="flex-1 writing-line w-full min-h-[9px] !mt-0">
+                                            ${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[8pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : ''}
                                         </div>
                                     </div>
                                 </div>`).join('')}
