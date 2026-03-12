@@ -1761,24 +1761,30 @@
                             <div class="writing-line mt-3 w-full">${ansSenEn}</div>
                         </div>`;
 
-                    // Part 4-1. Word Scrambles
-                    let scrData = sessionScrambleData[i];
                     wordScrHtml += `
-                        <div class="avoid-break mt-3 mb-4 flex items-end gap-4">
-                            <div class="flex-1">
-                                <div class="font-black text-blue-800 text-[11pt] en-font mb-1 tracking-wider uppercase"><span class="text-gray-400 mr-2 font-normal">${i + 1}.</span>${scrData.word}</div>
-                                <div class="text-[9.5pt] text-gray-500 ko-font ml-6 italic mb-1">(${sessionWords[i].ko})</div>
+                        <div class="avoid-break mt-2 mb-3 flex items-center gap-3 w-full border-b border-gray-50 pb-1" style="flex-wrap: nowrap !important; overflow: hidden !important;">
+                            <div class="flex-shrink-0" style="white-space: nowrap !important; flex-shrink: 0 !important;">
+                                <span class="text-gray-400 text-[10pt] mr-1">${i + 1}.</span>
+                                <span class="font-black text-blue-800 text-[11pt] en-font uppercase tracking-wider" style="white-space: nowrap !important;">${scrData.word}</span>
                             </div>
-                            <div class="w-1/2 writing-line">${ansEn}</div>
+                            <div class="text-[9pt] text-gray-500 ko-font italic" style="white-space: nowrap !important; flex-shrink: 0 !important;">(${sessionWords[i].ko})</div>
+                            <div class="flex-1 border-b-[1.5px] border-gray-300 min-h-[22px] ml-1 relative">
+                                ${answerMode ? `<span class="text-red-600 font-bold text-[10.5pt] en-font absolute left-0 bottom-0" style="white-space: nowrap !important;">${sessionWords[i].en}</span>` : ''}
+                            </div>
                         </div>`;
 
                     // Part 4-2. Sentence Unscrambles
                     let ansUnscr = answerMode ? `<span class="text-red-600 font-bold text-[11pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : '';
                     senUnscrHtml += `
-                        <div class="avoid-break mt-4 mb-5">
-                            <div class="font-bold text-[11pt] text-blue-900 en-font leading-snug mb-1.5"><span class="text-gray-400 mr-2 font-normal">Q${i + 1}.</span> ${scrData.sen}</div>
-                            <div class="text-[9.5pt] text-gray-500 ko-font ml-6 mb-1.5">(${sessionWords[i].senKo})</div>
-                            <div class="writing-line ml-6 w-full">${ansUnscr}</div>
+                        <div class="avoid-break mt-2 mb-3 flex items-center gap-3 w-full border-b border-gray-100 pb-1" style="flex-wrap: nowrap !important;">
+                            <div class="flex-shrink-0" style="white-space: nowrap !important;">
+                                <span class="text-gray-400 mr-2 font-normal">Q${i + 1}.</span>
+                                <span class="font-bold text-[10.5pt] text-blue-900 en-font uppercase">${scrData.sen}</span>
+                            </div>
+                            <div class="text-[9pt] text-gray-500 ko-font italic flex-shrink-0" style="white-space: nowrap !important;">(${sessionWords[i].senKo})</div>
+                            <div class="flex-1 writing-line min-h-[22px] ml-1 relative">
+                                ${ansUnscr}
+                            </div>
                         </div>`;
 
                     // Part 5. Transformation
@@ -1870,7 +1876,7 @@
                             <span class="section-title-text ko-font">Part 3-1. 단어 배열 숙제 (Word Unscramble)</span>
                         </div>
                         <h3 class="font-bold text-gray-500 mt-4 mb-3 text-[11pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-1 w-max rounded-sm shadow-sm"><i class="fas fa-list-ul mr-2 text-[9pt]"></i> Word Unscramble</h3>
-                        <div class="px-2 mb-2 print-columns-3">${wordScrHtml}</div>
+                        <div class="px-2 mb-2">${wordScrHtml}</div>
                     </div>
                     <div class="a4-page print-page-break">
                         ${headerHtml}
