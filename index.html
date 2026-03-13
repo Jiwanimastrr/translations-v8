@@ -188,10 +188,9 @@
         th, td { border: 1px solid var(--gray-900); }
 
         /* -------------------------------------
-           Final Hyper-Preservation Print UI
-        -------------------------------------- */
+           -------------------------------------- */
         @media print {
-            /* 1. Global Reset & Design Lock - 화면 캡처 수준의 박제 */
+            /* 1. Global Reset & A4 정규격 박제 (상하단 URL/날짜 절대 제거) */
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
@@ -201,33 +200,27 @@
                 overflow-wrap: break-word !important;
                 text-rendering: optimizeLegibility !important;
                 -webkit-font-smoothing: antialiased !important;
-                box-shadow: none !important;
-                text-shadow: none !important;
             }
 
             @page {
-                size: A4;
-                margin: 0 !important;
+                size: 210mm 297mm; /* A4 규격 완벽 고정 */
+                margin: 0 !important; /* 브라우저 여백 완전 제거 (헤더/푸터 차단) */
             }
 
             html, body {
                 width: 210mm !important;
-                height: auto !important;
+                height: auto !important; /* 다중 페이지 출력을 위해 높이 자동 조절 */
                 margin: 0 !important;
                 padding: 0 !important;
                 background: #ffffff !important;
-                overflow: visible !important;
+                overflow: visible !important; /* 인쇄 시 모든 페이지가 보이도록 설정 */
                 display: block !important;
-                zoom: 1 !important;
-                transform-origin: top left !important;
             }
 
-            /* 2. UI 제거 및 본문 강제 고정 */
+            /* 2. 불필요한 UI 완전 차단 */
             .sidebar, .view-tabs, .session-tabs, .no-print, button, [onclick], header, #menu-container, .flex-col.fixed {
                 display: none !important;
                 visibility: hidden !important;
-                width: 0 !important;
-                height: 0 !important;
             }
 
             .main-content {
@@ -237,77 +230,97 @@
                 padding: 0 !important;
                 display: block !important;
                 position: static !important;
-                overflow: visible !important;
             }
 
-            /* 3. A4 Page Wrapper - 화면과 똑같은 비율 여백 */
+            /* 3. A4 Page Wrapper - 1파트 1페이지 완전 강제 (.a4-page 당 무조건 한 장) */
             .a4-page {
                 width: 210mm !important;
-                min-height: 296mm !important;
+                height: 297mm !important;
+                max-height: 297mm !important;
                 margin: 0 !important;
                 padding: var(--print-margin-v) var(--print-margin-h) !important;
                 box-sizing: border-box !important;
                 background: #ffffff !important;
-                display: block !important;
+                display: flex !important;
+                flex-direction: column !important;
                 position: relative !important;
-                page-break-after: always !important;
+                overflow: hidden !important; /* 절대 2페이지로 넘어가지 않도록 박제 */
+                
+                /* 파트 간 페이지 분할 */
+                break-before: page !important;
                 break-after: page !important;
-                overflow: hidden !important;
+                page-break-after: always !important;
 
-                /* 배경/테두리 100% 보존 */
+                /* 잉크 절약 무시 & 디자인 100% 보존 */
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
 
-            .a4-page:last-child {
-                page-break-after: auto !important;
-                break-after: auto !important;
+            /* 4. 간격 및 폰트 극한 다이어트 (Auto-Squeeze) */
+            .page-header {
+                margin-bottom: 4px !important;
+                padding-bottom: 2px !important;
             }
-
-            /* 4. 가로/세로 잘림 및 쪼개짐 철통 방어 */
-            .avoid-break, tr, td, th, section, .section-header, .neumo-panel, .word-set, .question-block, .roleplay-box, .word-entry, .word-grid {
-                page-break-inside: avoid !important;
+            .section-header {
+                margin-top: 0px !important;
+                margin-bottom: 4px !important;
+                padding-bottom: 1px !important;
+            }
+            .homework-item {
+                margin-top: 0px !important;
+                margin-bottom: 0px !important;
+                padding-top: 0px !important;
+                padding-bottom: 0px !important;
                 break-inside: avoid !important;
-                max-width: 100% !important;
-                overflow: visible !important;
-                position: relative !important;
-                transform: translateZ(0);
+            }
+            .writing-line {
+                min-height: 14px !important;
+                margin-top: 0px !important;
+                padding-bottom: 0px !important;
+            }
+            .roleplay-box {
+                padding: 6px !important;
+                margin-top: 2px !important;
             }
 
-            /* 다단 편집 최적화 (Grid 활용) */
-            .print-columns-2 {
-                display: grid !important;
-                grid-template-columns: repeat(2, 1fr) !important;
-                gap: 5px 8mm !important;
+            /* 5. 가로 공간 활용 극대화 (2단 배열) 및 배율 축소 */
+            .homework-list-wrapper {
+                flex: 1 !important;
+                display: block !important;
                 width: 100% !important;
-            }
-            .print-columns-3 {
-                display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 5px 5mm !important;
-                width: 100% !important;
+                max-height: 250mm !important; 
+                
+                /* 영영풀이, Unscramble 등 세로가 긴 파트 자동 2단화 */
+                column-count: 2 !important;
+                column-gap: 10mm !important;
+                column-fill: auto !important;
+                
+                /* 내용 과다 해결을 위한 배율 축소 (scale 대신 zoom 사용으로 레이아웃 보존) */
+                zoom: 0.94 !important;
+                transform-origin: top left;
             }
 
+            /* 6. 요 소 쪼개짐 철통 방어 */
+            .avoid-break, tr, td, th, section, .neumo-panel, .word-set, .question-block, .word-entry, .roleplay-box {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
 
-            /* 5. 표/테두리 완벽 유지 */
+            /* 7. 표/테두리 축소 및 박제 */
             table {
                 width: 100% !important;
-                display: table !important;
                 border-collapse: collapse !important;
                 table-layout: fixed !important;
-                border: 2px solid #111827 !important;
+                border: 1.5px solid #111827 !important;
             }
             th, td {
-                display: table-cell !important;
-                border: 1px solid #111827 !important;
-                padding: 4px !important;
-                word-break: keep-all !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
+                border: 0.8px solid #111827 !important;
+                padding: 1.5px !important;
+                font-size: 8pt !important;
             }
             thead { background-color: #111827 !important; color: #ffffff !important; }
 
-            /* 6. 서식 포인트 보존 */
+            /* 8. 핵심 컬러 디자인 사수 */
             .text-red-600 { color: #dc2626 !important; }
             .bg-blue-50 { background-color: #eff6ff !important; }
             .bg-yellow-50 { background-color: #fefce8 !important; }
@@ -349,17 +362,38 @@
             </h1>
             <p class="text-[11px] text-gray-500 mt-2 mb-4">출력할 테마를 선택하세요.</p>
 
-            <!-- Print Button (Moved to Sidebar) -->
-            <button onclick="window.print()"
-                class="w-full neumo-btn font-bold py-2 px-4 flex items-center justify-center gap-2 text-sm text-blue-600 mb-2 cursor-pointer">
-                <i class="fas fa-print"></i> 현재 페이지 인쇄
-            </button>
+            <!-- Print Options Group -->
+            <div class="space-y-2 mb-4">
+                <button onclick="window.print()"
+                    class="w-full neumo-btn font-bold py-2.5 px-4 flex items-center justify-center gap-2 text-[13px] text-blue-600 cursor-pointer">
+                    <i class="fas fa-print"></i> 현재 페이지 인쇄
+                </button>
 
-            <!-- Chapter All Print Button -->
-            <button onclick="printChapterAll()"
-                class="w-full neumo-btn font-bold py-2 px-4 flex items-center justify-center gap-2 text-sm text-green-600 mb-1 cursor-pointer">
-                <i class="fas fa-file-pdf"></i> 전체 차시 인쇄 (1~3차시)
-            </button>
+                <div class="h-px bg-gray-100 my-2"></div>
+
+                <button onclick="printChapterAll(false)"
+                    class="w-full neumo-btn font-bold py-2.5 px-4 flex items-center justify-center gap-2 text-[13px] text-green-600 cursor-pointer">
+                    <i class="fas fa-copy"></i> 전체 합본 인쇄 (1~3차시)
+                </button>
+
+                <button onclick="printChapterAll(true)"
+                    class="w-full neumo-btn font-bold py-2.5 px-4 flex items-center justify-center gap-2 text-[13px] text-red-600 cursor-pointer">
+                    <i class="fas fa-check-double"></i> 전체 답지 인쇄
+                </button>
+            </div>
+        </div>
+        
+        <!-- Part Selection Group -->
+        <div class="px-5 mb-4 no-print">
+            <div class="neumo-panel !m-0 !p-3">
+                <h3 class="text-[12px] font-bold text-gray-700 mb-2 flex items-center justify-between">
+                    <span><i class="fas fa-check-double mr-1.5 text-purple-500"></i>인쇄 파트 선택</span>
+                    <button onclick="toggleAllParts(true)" class="text-[10px] text-blue-500 hover:underline">전체선택</button>
+                </h3>
+                <div id="part-selection-container" class="space-y-1">
+                    <!-- JS will generate checkboxes here based on current view -->
+                </div>
+            </div>
         </div>
 
         <div id="menu-container" class="flex-1 pb-2">
@@ -1448,6 +1482,47 @@
             return { errorSen, answerText, correctKo: item.senKo };
         }
 
+        const hwPartNames = ['Part 1. 단어 암기/영작', 'Part 2. 문장 해석/영작', 'Part 3. 단어/문장 배열', 'Part 4. 문장 변형', 'Part 5. 영영풀이', 'Part 6. 오류 수정', 'Part 7. 받아쓰기'];
+        const tbPartNames = ['Step 1. 단어 학습', 'Step 2. 직독직해', 'Step 3. 영작 훈련', 'Step 4. 실전 대화'];
+        let selectedParts = {
+            hw: [1, 2, 3, 4, 5, 6, 7],
+            textbook: [1, 2, 3, 4]
+        };
+
+        function renderPartSelection() {
+            const container = document.getElementById('part-selection-container');
+            if (!container) return;
+            let parts = [], key = '';
+            if (currentView.startsWith('hw')) { parts = hwPartNames; key = 'hw'; }
+            else if (currentView === 'textbook') { parts = tbPartNames; key = 'textbook'; }
+            else { container.innerHTML = '<p class="text-[10px] text-gray-400 py-2">이 탭은 파트 선택이 없습니다.</p>'; return; }
+            
+            container.innerHTML = parts.map((name, i) => {
+                const id = i + 1;
+                const checked = selectedParts[key].includes(id) ? 'checked' : '';
+                return `<label class="flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded">
+                    <input type="checkbox" class="w-3.5 h-3.5 rounded border-gray-300" ${checked} onchange="updatePartSelection('${key}', ${id}, this.checked)">
+                    <span class="text-[11px] text-gray-600 font-medium">${name}</span>
+                </label>`;
+            }).join('');
+        }
+
+        function updatePartSelection(key, id, isChecked) {
+            if (isChecked) { if (!selectedParts[key].includes(id)) selectedParts[key].push(id); }
+            else { selectedParts[key] = selectedParts[key].filter(p => p !== id); }
+            const activeBtn = document.querySelector('.chapter-btn.active');
+            if (activeBtn) renderChapter(parseInt(activeBtn.id.replace('btn-', '')));
+        }
+
+        function toggleAllParts(checked) {
+            let key = currentView.startsWith('hw') ? 'hw' : (currentView === 'textbook' ? 'textbook' : '');
+            if (!key) return;
+            selectedParts[key] = checked ? (key === 'hw' ? [1,2,3,4,5,6,7] : [1,2,3,4]) : [];
+            renderPartSelection();
+            const activeBtn = document.querySelector('.chapter-btn.active');
+            if (activeBtn) renderChapter(parseInt(activeBtn.id.replace('btn-', '')));
+        }
+
         let currentLogoUrl = "";
         let currentView = 'textbook';
         let currentSession = 1;
@@ -1507,6 +1582,7 @@
         function init() {
             padDataTo42();
             renderMenu();
+            renderPartSelection();
             renderChapter(1);
             setupCsvUploader();
             setupLogoUploader();
@@ -1515,6 +1591,7 @@
         function changeView(view) {
             currentView = view;
             isAnswerMode = false;
+            renderPartSelection();
 
             const tabs = ['textbook', 'vocalist', 'hw'];
             tabs.forEach(t => {
@@ -1648,96 +1725,104 @@
             let pageHtml = '';
             if (view === 'textbook') {
                 // Step 1. Words
-                let wordsHtml = '<div class="grid grid-cols-2 gap-x-8 gap-y-3 mt-4">';
-                sessionWords.forEach(word => {
-                    wordsHtml += `
-                        <div class="word-entry avoid-break !pb-1">
-                            <div class="word-entry-en en-font !text-[12pt] mb-0">${word.en}</div>
-                            <div class="word-entry-ko ko-font !text-[10pt]">${word.ko}</div>
+                if (selectedParts.textbook.includes(1)) {
+                    let wordsHtml = '<div class="grid grid-cols-2 gap-x-8 gap-y-3 mt-4">';
+                    sessionWords.forEach(word => {
+                        wordsHtml += `
+                            <div class="word-entry avoid-break !pb-1">
+                                <div class="word-entry-en en-font !text-[12pt] mb-0">${word.en}</div>
+                                <div class="word-entry-ko ko-font !text-[10pt]">${word.ko}</div>
+                            </div>`;
+                    });
+                    wordsHtml += '</div>';
+                    pageHtml += `
+                        <div class="a4-page print-page-break">
+                            ${headerHtml}
+                            <div class="section-header mt-0.5 mb-2">
+                                <span class="section-number en-font">01</span>
+                                <span class="section-title-text ko-font">Step 1. 단어 학습 (Words)</span>
+                            </div>
+                            ${wordsHtml}
                         </div>`;
-                });
-                wordsHtml += '</div>';
-                pageHtml += `
-                    <div class="a4-page print-page-break">
-                        ${headerHtml}
-                        <div class="section-header mt-0.5 mb-2">
-                            <span class="section-number en-font">01</span>
-                            <span class="section-title-text ko-font">Step 1. 단어 학습 (Words)</span>
-                        </div>
-                        ${wordsHtml}
-                    </div>`;
+                }
 
                 // Step 2. English to Korean
-                let transHtml = '';
-                sessionWords.forEach((word, index) => {
-                    const ansText = answerMode ? `<div class="text-red-600 font-bold text-[10pt] mt-0.5 mb-0 ko-font leading-tight">${word.senKo}</div>` : '';
-                    transHtml += `
-                        <div class="avoid-break mt-1 mb-1.5">
-                            <p class="font-bold text-[10.5pt] mb-0.5 en-font leading-snug"><span class="text-blue-700 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senEn}</p>
-                            ${ansText}
-                            <div class="writing-line !mb-1"></div>
+                if (selectedParts.textbook.includes(2)) {
+                    let transHtml = '';
+                    sessionWords.forEach((word, index) => {
+                        const ansText = answerMode ? `<div class="text-red-600 font-bold text-[10pt] mt-0.5 mb-0 ko-font leading-tight">${word.senKo}</div>` : '';
+                        transHtml += `
+                            <div class="avoid-break mt-1 mb-1.5">
+                                <p class="font-bold text-[10.5pt] mb-0.5 en-font leading-snug"><span class="text-blue-700 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senEn}</p>
+                                ${ansText}
+                                <div class="writing-line !mb-1"></div>
+                            </div>`;
+                    });
+                    pageHtml += `
+                        <div class="a4-page print-page-break">
+                            ${headerHtml}
+                            <div class="section-header">
+                                <span class="section-number en-font">02</span>
+                                <span class="section-title-text ko-font">Step 2. 직독직해 (Eng to Kor)</span>
+                            </div>
+                            <div class="mt-2 text-sm">${transHtml}</div>
                         </div>`;
-                });
-                pageHtml += `
-                    <div class="a4-page print-page-break">
-                        ${headerHtml}
-                        <div class="section-header">
-                            <span class="section-number en-font">02</span>
-                            <span class="section-title-text ko-font">Step 2. 직독직해 (Eng to Kor)</span>
-                        </div>
-                        <div class="mt-2 text-sm">${transHtml}</div>
-                    </div>`;
+                }
 
                 // Step 3. Korean to English
-                let writeHtml = '';
-                sessionWords.forEach((word, index) => {
-                    const ansText = answerMode ? `<div class="text-red-600 font-bold text-[10pt] mt-0.5 mb-0 en-font leading-tight">${word.senEn}</div>` : '';
-                    writeHtml += `
-                        <div class="avoid-break mt-1 mb-1.5">
-                            <p class="font-bold text-[10.5pt] mb-0.5 ko-font leading-snug"><span class="text-red-600 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senKo} <span class="text-[9pt] text-gray-400 font-normal ml-2 en-font">(${word.en})</span></p>
-                            ${ansText}
-                            <div class="writing-line !mb-1"></div>
+                if (selectedParts.textbook.includes(3)) {
+                    let writeHtml = '';
+                    sessionWords.forEach((word, index) => {
+                        const ansText = answerMode ? `<div class="text-red-600 font-bold text-[10pt] mt-0.5 mb-0 en-font leading-tight">${word.senEn}</div>` : '';
+                        writeHtml += `
+                            <div class="avoid-break mt-1 mb-1.5">
+                                <p class="font-bold text-[10.5pt] mb-0.5 ko-font leading-snug"><span class="text-red-600 font-black mr-2">Q${String(index + 1).padStart(2, '0')}.</span> ${word.senKo} <span class="text-[9pt] text-gray-400 font-normal ml-2 en-font">(${word.en})</span></p>
+                                ${ansText}
+                                <div class="writing-line !mb-1"></div>
+                            </div>`;
+                    });
+                    pageHtml += `
+                        <div class="a4-page print-page-break">
+                            ${headerHtml}
+                            <div class="section-header">
+                                <span class="section-number en-font">03</span>
+                                <span class="section-title-text ko-font">Step 3. 영작 훈련 (Kor to Eng)</span>
+                            </div>
+                            <div class="mt-2 text-sm">${writeHtml}</div>
                         </div>`;
-                });
-                pageHtml += `
-                    <div class="a4-page print-page-break">
-                        ${headerHtml}
-                        <div class="section-header">
-                            <span class="section-number en-font">03</span>
-                            <span class="section-title-text ko-font">Step 3. 영작 훈련 (Kor to Eng)</span>
-                        </div>
-                        <div class="mt-2 text-sm">${writeHtml}</div>
-                    </div>`;
+                }
 
                 // Step 4. Role-play
-                let roleplayHtml = '';
-                if (sessionRpDialogue.length > 0) {
-                    roleplayHtml = sessionRpDialogue.map(d => {
-                        const formattedText = d.text.replace(/\[(.*?)\]/g, (match, word) => { 
-                            if (answerMode) return `<span class="inline-block px-1 border-b-[1.5px] border-red-500 text-red-600 font-black mx-1">${word}</span>`; 
-                            return `<span class="inline-block min-w-[4rem] px-1 border-b-[1.5px] border-gray-400 mx-1"></span>`; 
-                        });
-                        return `
-                            <div class="mb-3 avoid-break flex gap-3">
-                                <div class="font-black text-base ${d.speaker === 'A' ? 'text-blue-700' : 'text-green-700'} en-font w-8">${d.speaker}:</div>
-                                <div class="flex-1">
-                                    <div class="text-[11pt] font-bold text-gray-900 en-font leading-relaxed mb-0.5">"${formattedText}"</div>
-                                    <div class="text-[9pt] text-gray-500 italic ko-font border-l-2 border-gray-200 pl-3 mt-1">(${d.ko || ''})</div>
-                                </div>
-                            </div>`;
-                    }).join('');
+                if (selectedParts.textbook.includes(4)) {
+                    let roleplayHtml = '';
+                    if (sessionRpDialogue.length > 0) {
+                        roleplayHtml = sessionRpDialogue.map(d => {
+                            const formattedText = d.text.replace(/\[(.*?)\]/g, (match, word) => { 
+                                if (answerMode) return `<span class="inline-block px-1 border-b-[1.5px] border-red-500 text-red-600 font-black mx-1">${word}</span>`; 
+                                return `<span class="inline-block min-w-[4rem] px-1 border-b-[1.5px] border-gray-400 mx-1"></span>`; 
+                            });
+                            return `
+                                <div class="mb-3 avoid-break flex gap-3">
+                                    <div class="font-black text-base ${d.speaker === 'A' ? 'text-blue-700' : 'text-green-700'} en-font w-8">${d.speaker}:</div>
+                                    <div class="flex-1">
+                                        <div class="text-[11pt] font-bold text-gray-900 en-font leading-relaxed mb-0.5">"${formattedText}"</div>
+                                        <div class="text-[9pt] text-gray-500 italic ko-font border-l-2 border-gray-200 pl-3 mt-1">(${d.ko || ''})</div>
+                                    </div>
+                                </div>`;
+                        }).join('');
+                    }
+                    pageHtml += `
+                        <div class="a4-page print-page-break bg-yellow-50/20">
+                            ${headerHtml}
+                            <div class="section-header">
+                                <span class="section-number en-font">04</span>
+                                <span class="section-title-text ko-font">Step 4. 실전 대화 응용 (Role-play)</span>
+                            </div>
+                            <div class="roleplay-box bg-white mt-2 shadow-sm p-4 border-[1.5px] border-gray-100">
+                                ${roleplayHtml}
+                            </div>
+                        </div>`;
                 }
-                pageHtml += `
-                    <div class="a4-page print-page-break bg-yellow-50/20">
-                        ${headerHtml}
-                        <div class="section-header">
-                            <span class="section-number en-font">04</span>
-                            <span class="section-title-text ko-font">Step 4. 실전 대화 응용 (Role-play)</span>
-                        </div>
-                        <div class="roleplay-box bg-white mt-2 shadow-sm p-4 border-[1.5px] border-gray-100">
-                            ${roleplayHtml}
-                        </div>
-                    </div>`;
             } else if (view === 'vocalist') {
                 let trs = sessionWords.map((word, i) => `
                     <tr class="avoid-break" style="border-bottom: 1px solid #e5e7eb !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;">
@@ -1872,97 +1957,106 @@
                         </div>`;
                 }
 
-                pageHtml += `
+                if (selectedParts.hw.includes(1)) {
+                    pageHtml += `
+                        <div class="a4-page print-page-break">
+                            ${headerHtml}
+                            <div class="section-header">
+                                <span class="section-number en-font">01</span>
+                                <span class="section-title-text ko-font">Part 1. [Session ${session}] 단어 암기와 영작</span>
+                            </div>
+                            <div class="px-2 pb-0.5 homework-list-wrapper">${wordTestHtml}</div>
+                        </div>`;
+                }
+                if (selectedParts.hw.includes(2)) {
+                    pageHtml += `
+                        <div class="a4-page print-page-break">
+                            ${headerHtml}
+                            <div class="section-header">
+                                <span class="section-number en-font">02</span>
+                                <span class="section-title-text ko-font">Part 2. [Session ${session}] 문장 해석과 영작</span>
+                            </div>
+                            <div class="px-2 pb-0.5 homework-list-wrapper">${senTestHtml}</div>
+                        </div>`;
+                }
+                if (selectedParts.hw.includes(3)) {
+                    pageHtml += `
+                        <div class="a4-page print-page-break">
+                            ${headerHtml}
+                            <div class="section-header">
+                                <span class="section-number en-font">03</span>
+                                <span class="section-title-text ko-font">Part 3. [Session ${session}] 단어 & 문장 배열 숙제</span>
+                            </div>
+                            <div class="homework-list-wrapper">
+                                <h3 class="font-bold text-gray-500 mt-1 mb-1 text-[10pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-0.5 w-max rounded-sm shadow-sm"><i class="fas fa-list-ul mr-2 text-[8pt]"></i> Word Unscramble</h3>
+                                <div class="px-2 mb-2 w-full">${wordScrHtml}</div>
+                                <div class="h-px bg-gray-100 my-4 break-inside-avoid"></div>
+                                <h3 class="font-bold text-gray-500 mt-1 mb-1 text-[10pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-0.5 w-max rounded-sm shadow-sm"><i class="fas fa-list-ol mr-2 text-[8pt]"></i> Sentence Unscramble</h3>
+                                <div class="px-2 pb-0.5 w-full">${senUnscrHtml}</div>
+                            </div>
+                        </div>`;
+                }
+                if (selectedParts.hw.includes(4)) {
+                    pageHtml += `
+                        <div class="a4-page print-page-break">
+                            ${headerHtml}
+                            <div class="section-header">
+                                <span class="section-number en-font">04</span>
+                                <span class="section-title-text ko-font">Part 4. [Session ${session}] 문장 변형 숙제</span>
+                            </div>
+                            <div class="px-2 pb-0.5 homework-list-wrapper">${senTransHtml}</div>
+                        </div>`;
+                }
+                if (selectedParts.hw.includes(5)) {
+                    pageHtml += `
+                        <div class="a4-page print-page-break">
+                            ${headerHtml}
+                            <div class="section-header">
+                                <span class="section-number en-font">05</span>
+                                <span class="section-title-text ko-font">Part 5. [Session ${session}] 영영풀이 숙제</span>
+                            </div>
+                            <div class="px-2 mt-1 pb-0.5 homework-list-wrapper">${defMatchHtml}</div>
+                        </div>`;
+                }
+                if (selectedParts.hw.includes(6)) {
+                    pageHtml += `
+                        <div class="a4-page print-page-break">
+                            ${headerHtml}
+                            <div class="section-header">
+                                <span class="section-number en-font">06</span>
+                                <span class="section-title-text ko-font">Part 6. [Session ${session}] 오류 수정 숙제</span>
+                            </div>
+                            <div class="px-2 mt-0.5 pb-0.5 homework-list-wrapper">${errHtml}</div>
+                        </div>`;
+                }
+                if (selectedParts.hw.includes(7) && session !== 3) {
+                    pageHtml += `
                     <div class="a4-page print-page-break">
-                        ${headerHtml}
-                        <div class="section-header">
-                            <span class="section-number en-font">01</span>
-                            <span class="section-title-text ko-font">Part 1. [Session ${session}] 단어 암기와 영작</span>
-                        </div>
-                        <div class="px-2 pb-0.5">${wordTestHtml}</div>
-                    </div>
-                    <div class="a4-page print-page-break">
-                        ${headerHtml}
-                        <div class="section-header">
-                            <span class="section-number en-font">02</span>
-                            <span class="section-title-text ko-font">Part 2. [Session ${session}] 문장 해석과 영작</span>
-                        </div>
-                        <div class="px-2 pb-0.5">${senTestHtml}</div>
-                    </div>
-                    <div class="a4-page print-page-break">
-                        ${headerHtml}
-                        <div class="section-header">
-                            <span class="section-number en-font">03-1</span>
-                            <span class="section-title-text ko-font">Part 3-1. [Session ${session}] 단어 배열 숙제</span>
-                        </div>
-                        <h3 class="font-bold text-gray-500 mt-1 mb-1 text-[10pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-0.5 w-max rounded-sm shadow-sm"><i class="fas fa-list-ul mr-2 text-[8pt]"></i> Word Unscramble (S${session})</h3>
-                        <div class="px-2 mb-0.5">${wordScrHtml}</div>
-                    </div>
-                    <div class="a4-page print-page-break">
-                        ${headerHtml}
-                        <div class="section-header">
-                            <span class="section-number en-font">03-2</span>
-                            <span class="section-title-text ko-font">Part 3-2. [Session ${session}] 문장 배열 숙제</span>
-                        </div>
-                        <h3 class="font-bold text-gray-500 mt-1 mb-1 text-[10pt] border-l-[3px] border-gray-400 pl-3 en-font uppercase flex items-center bg-gray-50 p-0.5 w-max rounded-sm shadow-sm"><i class="fas fa-list-ol mr-2 text-[8pt]"></i> Sentence Unscramble (S${session})</h3>
-                        <div class="px-2 pb-0.5 w-full">${senUnscrHtml}</div>
-                    </div>
-                    <div class="a4-page print-page-break">
-                        ${headerHtml}
-                        <div class="section-header">
-                            <span class="section-number en-font">04</span>
-                            <span class="section-title-text ko-font">Part 4. [Session ${session}] 문장 변형 숙제</span>
-                        </div>
-                        <div class="px-2 pb-0.5">${senTransHtml}</div>
-                    </div>
-                    <div class="a4-page print-page-break">
-                        ${headerHtml}
-                        <div class="section-header">
-                            <span class="section-number en-font">05</span>
-                            <span class="section-title-text ko-font">Part 5. [Session ${session}] 영영풀이 숙제</span>
-                        </div>
-                        <div class="px-2 mt-1 pb-0.5">${defMatchHtml}</div>
-                    </div>
-                    <div class="a4-page print-page-break">
-                        ${headerHtml}
-                        <div class="section-header">
-                            <span class="section-number en-font">06</span>
-                            <span class="section-title-text ko-font">Part 6. [Session ${session}] 오류 수정 숙제</span>
-                        </div>
-                        <div class="px-2 mt-0.5 pb-0.5">${errHtml}</div>
-                    </div>
-                    <div class="a4-page print-page-break" style="display: flex; flex-direction: column; break-inside: avoid-page;">
                         ${compactHeaderHtml}
                         <div class="section-header !mt-1 !mb-2 !pb-1">
                             <span class="section-number !text-[11pt] en-font">07</span>
                             <span class="section-title-text !text-[12pt] ko-font">Part 7. [Session ${session}] 받아쓰기 숙제</span>
                         </div>
-                        
                         <div class="mt-0 mb-4 flex items-center justify-between bg-blue-50/50 p-3 rounded-lg border-[1.5px] border-blue-100 border-dashed">
                             <div class="flex-1">
                                 <h4 class="text-[10pt] font-black text-blue-900 en-font mb-0.5"><i class="fas fa-headphones-alt mr-2 text-blue-600"></i>QR Dictation Audio (S${session})</h4>
                                 <p class="text-gray-600 ko-font text-[8.5pt]">학생들은 아래 QR 코드를 스캔하여 오디오를 들으며 받아쓰기를 완성하세요.</p>
                             </div>
                             <div class="bg-white p-1.5 rounded-lg shadow-sm border border-blue-200 ml-4">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" 
-                                     alt="QR" 
-                                     style="width: 64px !important; height: 64px !important; display: block !important;"
-                                     class="print-visible">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https%3A%2F%2Fjunior-dictation.jiwanism.workers.dev%2F" alt="QR" style="width: 64px !important; height: 64px !important; display: block !important;">
                             </div>
                         </div>
-
                         <div style="display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0 12mm !important; flex: 1;">
                             ${Array.from({ length: 14 }).map((_, i) => `
                                 <div class="avoid-break w-full homework-item !mt-0 !mb-0 border-b border-gray-200">
                                     <div class="flex items-start gap-2 w-full py-4">
                                         <span class="font-black text-[9.5pt] text-blue-800 en-font w-7 pt-1.5">Q${String(i + 1).padStart(2, '0')}</span>
-                                        <div class="flex-1 writing-line w-full min-h-[36px] !mt-0">
-                                            ${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[9pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : ''}
-                                        </div>
+                                        <div class="flex-1 writing-line w-full min-h-[36px] !mt-0">${answerMode && sessionWords[i] ? `<span class="text-red-600 font-bold text-[9pt] en-font w-full break-words leading-tight">${sessionWords[i].senEn}</span>` : ''}</div>
                                     </div>
                                 </div>`).join('')}
                         </div>
                     </div>`;
+                }
             }
             return pageHtml;
         }
@@ -1986,27 +2080,30 @@
             }
         }
 
-        function printChapterAll() {
+
+
+        function printChapterAll(forceAnswer) {
             const activeBtn = document.querySelector('.chapter-btn.active');
             if (!activeBtn) { alert("먼저 챕터를 선택해주세요."); return; }
             const chId = parseInt(activeBtn.id.replace('btn-', ''));
             let allHtml = "";
             
+            const printAnswer = (forceAnswer === true) ? true : isAnswerMode;
+            
             // 모든 차시(1~3차시)의 교재, 단어장, 숙제를 순차적으로 빌드
             for (let s = 1; s <= 3; s++) {
-                allHtml += generatePageHtml(chId, s, 'vocalist', isAnswerMode);
-                allHtml += generatePageHtml(chId, s, 'textbook', isAnswerMode);
-                allHtml += generatePageHtml(chId, s, 'hw' + s, isAnswerMode);
+                allHtml += generatePageHtml(chId, s, 'vocalist', printAnswer);
+                allHtml += generatePageHtml(chId, s, 'textbook', printAnswer);
+                allHtml += generatePageHtml(chId, s, 'hw', printAnswer);
             }
             
             const originalContent = document.getElementById('page-container').innerHTML;
             document.getElementById('page-container').innerHTML = allHtml.trim();
             
-            // DOM 렌더링 및 리소스 로드 대기 후 인쇄 실행
             setTimeout(() => {
                 window.print();
                 document.getElementById('page-container').innerHTML = originalContent;
-            }, 1200);
+            }, 1500);
         }
 
         function setupLogoUploader() {
