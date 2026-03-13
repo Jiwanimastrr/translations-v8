@@ -1486,7 +1486,7 @@
         }
 
         const hwPartNames = ['Part 1. 단어 암기/영작', 'Part 2. 문장 해석/영작', 'Part 3. 단어/문장 배열', 'Part 4. 문장 변형', 'Part 5. 영영풀이', 'Part 6. 오류 수정', 'Part 7. 받아쓰기'];
-        const tbPartNames = ['Step 1. 단어 학습', 'Step 2. 직독직해', 'Step 3. 영작 훈련', 'Step 4. 실전 대화'];
+        const tbPartNames = ['Step 1. 보카리아 퀴즈', 'Step 2. 직독직해', 'Step 3. 영작 훈련', 'Step 4. 실전 대화'];
         let selectedParts = {
             hw: [1, 2, 3, 4, 5, 6, 7],
             textbook: [1, 2, 3, 4]
@@ -1727,25 +1727,83 @@
 
             let pageHtml = '';
             if (view === 'textbook') {
-                // Step 1. Words
+                // Step 1. 보카리아 5지선다 퀴즈
                 if (selectedParts.textbook.includes(1)) {
-                    let wordsHtml = '<div class="grid grid-cols-2 gap-x-8 gap-y-3 mt-4">';
-                    sessionWords.forEach(word => {
-                        wordsHtml += `
-                            <div class="word-entry avoid-break !pb-1">
-                                <div class="word-entry-en en-font !text-[12pt] mb-0">${word.en}</div>
-                                <div class="word-entry-ko ko-font !text-[10pt]">${word.ko}</div>
+                    // 오답 생성 함수: 같은 세션 내 다른 문장 해석을 활용하고 미세하게 변형
+                    function generateQuizOptions(sessionWords, correctIndex) {
+                        const correct = sessionWords[correctIndex].senKo;
+                        let distractors = [];
+                        // 1) 다른 단어들의 senKo를 후보로 수집
+                        let pool = sessionWords.map((w, i) => i !== correctIndex ? w.senKo : null).filter(Boolean);
+                        // 셔플
+                        for (let i = pool.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+                        // 2) 미세 변형 함수들
+                        const tweaks = [
+                            s => s.replace(/합니다/g, '했습니다').replace(/해요/g, '했어요').replace(/하세요/g, '했어요'),
+                            s => s.replace(/했/g, '할 것').replace(/였/g, '일 것'),
+                            s => s.replace(/을 /g, '를 ').replace(/를 /g, '을 '),
+                            s => s // 원본 유지
+                        ];
+                        // 3) 풀에서 4개 선택 + 변형 적용
+                        for (let i = 0; i < Math.min(4, pool.length); i++) {
+                            let tweak = tweaks[i % tweaks.length];
+                            distractors.push(tweak(pool[i]));
+                        }
+                        // 부족하면 정답 변형으로 채움
+                        while (distractors.length < 4) {
+                            let v = correct.replace(/합니다/g, '했습니다');
+                            if (distractors.includes(v)) v = correct.replace(/요/g, '어');
+                            distractors.push(v);
+                        }
+                        // 4) 정답 삽입 후 셔플
+                        let options = [...distractors.slice(0, 4), correct];
+                        for (let i = options.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [options[i], options[j]] = [options[j], options[i]]; }
+                        let correctIdx = options.indexOf(correct) + 1;
+                        return { options, correctIdx };
+                    }
+
+                    // 캐싱: 같은 세션/챕터에서 퀴즈 옵션 고정
+                    if (!ch[`quizCache_s${session}`]) {
+                        ch[`quizCache_s${session}`] = sessionWords.map((_, i) => generateQuizOptions(sessionWords, i));
+                    }
+                    const quizData = ch[`quizCache_s${session}`];
+                    const circleNums = ['①','②','③','④','⑤'];
+
+                    let quizHtml = '';
+                    sessionWords.forEach((word, i) => {
+                        const q = quizData[i];
+                        const answerMark = answerMode ? `<span class="text-red-600 font-black text-[8pt] ml-2 ko-font">[정답: ${circleNums[q.correctIdx - 1]}]</span>` : '';
+                        quizHtml += `
+                            <div class="avoid-break" style="margin-bottom:4px; padding:5px 8px; border:1.5px solid #e5e7eb; border-radius:6px; background:${i % 2 === 0 ? '#f8faff' : '#fafbfc'};">
+                                <div style="display:flex; align-items:flex-start; gap:6px; margin-bottom:3px;">
+                                    <div style="width:14px; height:14px; border:2px solid #9ca3af; border-radius:3px; flex-shrink:0; margin-top:2px;"></div>
+                                    <span class="en-font" style="font-size:8.5pt; font-weight:900; color:#6366f1; min-width:26px;">Q${String(i + 1).padStart(2, '0')}.</span>
+                                    <span class="en-font" style="font-size:11pt; font-weight:900; color:#1e40af;">${word.en}</span>
+                                    <span class="ko-font" style="font-size:8pt; color:#94a3b8; font-weight:600;">(${word.ko})</span>
+                                    ${answerMark}
+                                </div>
+                                <div class="en-font" style="font-size:8.5pt; font-weight:700; color:#334155; margin-left:46px; margin-bottom:4px; padding:2px 6px; background:#eef2ff; border-left:3px solid #6366f1; border-radius:0 4px 4px 0; line-height:1.4;">${word.senEn}</div>
+                                <div style="display:grid; grid-template-columns:repeat(5, 1fr); gap:2px; margin-left:46px;">
+                                    ${q.options.map((opt, oi) => {
+                                        const isCorrect = answerMode && (oi + 1) === q.correctIdx;
+                                        return `<div class="ko-font" style="font-size:7pt; padding:2px 4px; border:1px solid ${isCorrect ? '#dc2626' : '#e2e8f0'}; border-radius:3px; background:${isCorrect ? '#fef2f2' : '#fff'}; line-height:1.3; display:flex; gap:2px;">
+                                            <span style="font-weight:800; color:${isCorrect ? '#dc2626' : '#6b7280'}; flex-shrink:0;">${circleNums[oi]}</span>
+                                            <span style="color:${isCorrect ? '#dc2626' : '#374151'}; font-weight:${isCorrect ? '700' : '500'};">${opt}</span>
+                                        </div>`;
+                                    }).join('')}
+                                </div>
                             </div>`;
                     });
-                    wordsHtml += '</div>';
+
                     pageHtml += `
                         <div class="a4-page print-page-break">
                             ${headerHtml}
                             <div class="section-header mt-0.5 mb-2">
                                 <span class="section-number en-font">01</span>
-                                <span class="section-title-text ko-font">Step 1. 단어 학습 (Words)</span>
+                                <span class="section-title-text ko-font">Step 1. 보카리아 퀴즈 (Vocaria Quiz)</span>
                             </div>
-                            ${wordsHtml}
+                            <div style="font-size:8pt; color:#64748b; margin-bottom:6px;" class="ko-font"><i class="fas fa-info-circle mr-1 text-blue-400"></i>영어 문장의 올바른 한글 해석을 고르세요. 체크박스에 아는 단어를 표시하세요.</div>
+                            ${quizHtml}
                         </div>`;
                 }
 

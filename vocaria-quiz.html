@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>보카리아 Quiz - Section 7. Condition & Situation</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Noto+Sans+KR:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --print-margin-h: 10mm;
+            --print-margin-v: 8mm;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans KR', sans-serif;
+            background: #f0f2f5;
+            color: #1a1a2e;
+        }
+
+        .en-font { font-family: 'Inter', sans-serif; }
+        .ko-font { font-family: 'Noto Sans KR', sans-serif; }
+
+        /* ===== A4 Page ===== */
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 20px auto;
+            padding: 12mm 14mm;
+            background: #fff;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            border-radius: 4px;
+            position: relative;
+        }
+
+        /* ===== Header ===== */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2.5px solid #111;
+            padding-bottom: 6px;
+            margin-bottom: 10px;
+        }
+        .page-header h1 {
+            font-size: 15pt;
+            font-weight: 900;
+            color: #111;
+            line-height: 1.2;
+        }
+        .page-header .tag {
+            font-size: 8pt;
+            color: #6366f1;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .info-box {
+            font-size: 9pt;
+            color: #64748b;
+        }
+
+        /* ===== Section Header ===== */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1.5px solid #e2e8f0;
+        }
+        .section-number {
+            background: #111827;
+            color: #fff;
+            font-size: 10pt;
+            font-weight: 900;
+            padding: 2px 10px;
+            border-radius: 4px;
+        }
+        .section-title-text {
+            font-size: 12pt;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        /* ===== Quiz Item ===== */
+        .quiz-item {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            margin-bottom: 6px;
+            padding: 7px 10px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 8px;
+            background: #fafbfc;
+        }
+        .quiz-item:nth-child(odd) {
+            background: #f8faff;
+        }
+
+        .quiz-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .quiz-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #9ca3af;
+            border-radius: 3px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .quiz-number {
+            font-size: 9pt;
+            font-weight: 900;
+            color: #6366f1;
+            min-width: 28px;
+        }
+
+        .quiz-word {
+            font-size: 12pt;
+            font-weight: 900;
+            color: #1e40af;
+            margin-right: 6px;
+        }
+
+        .quiz-meaning-hint {
+            font-size: 9pt;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .quiz-sentence {
+            font-size: 9.5pt;
+            font-weight: 700;
+            color: #334155;
+            margin-left: 52px;
+            margin-bottom: 5px;
+            padding: 3px 8px;
+            background: #eef2ff;
+            border-left: 3px solid #6366f1;
+            border-radius: 0 4px 4px 0;
+            line-height: 1.5;
+        }
+
+        /* ===== Options ===== */
+        .quiz-options {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 3px;
+            margin-left: 52px;
+        }
+
+        .quiz-option {
+            font-size: 8pt;
+            padding: 3px 5px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            background: #fff;
+            display: flex;
+            align-items: flex-start;
+            gap: 3px;
+            line-height: 1.35;
+        }
+
+        .quiz-option .opt-num {
+            font-weight: 800;
+            color: #6b7280;
+            flex-shrink: 0;
+        }
+
+        .quiz-option .opt-text {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        /* ===== Answer Key ===== */
+        .answer-key {
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #fef2f2;
+            border: 1.5px solid #fca5a5;
+            border-radius: 6px;
+            break-inside: avoid;
+        }
+        .answer-key h3 {
+            font-size: 10pt;
+            font-weight: 800;
+            color: #dc2626;
+            margin-bottom: 4px;
+        }
+        .answer-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        .answer-cell {
+            font-size: 8.5pt;
+            font-weight: 700;
+            text-align: center;
+            padding: 2px 0;
+            background: #fff;
+            border: 1px solid #fca5a5;
+            border-radius: 3px;
+        }
+        .answer-cell .ans-q { color: #6b7280; }
+        .answer-cell .ans-v { color: #dc2626; font-weight: 900; }
+
+        /* ===== No-Print Controls ===== */
+        .controls {
+            max-width: 210mm;
+            margin: 20px auto;
+            padding: 12px 16px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .controls button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-print { background: #6366f1; color: #fff; }
+        .btn-print:hover { background: #4f46e5; }
+        .btn-answer { background: #ef4444; color: #fff; }
+        .btn-answer:hover { background: #dc2626; }
+        .btn-toggle { background: #e5e7eb; color: #374151; }
+        .btn-toggle:hover { background: #d1d5db; }
+
+        /* ===== PRINT STYLES ===== */
+        @media print {
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                box-sizing: border-box !important;
+            }
+
+            @page {
+                size: 210mm 297mm;
+                margin: 0 !important;
+            }
+
+            html, body {
+                width: 210mm !important;
+                height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important;
+                overflow: visible !important;
+            }
+
+            .controls, .no-print {
+                display: none !important;
+            }
+
+            .a4-page {
+                width: 210mm !important;
+                height: 297mm !important;
+                max-height: 297mm !important;
+                margin: 0 !important;
+                padding: var(--print-margin-v) var(--print-margin-h) !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                overflow: hidden !important;
+                break-before: page !important;
+                break-after: page !important;
+                page-break-after: always !important;
+            }
+
+            .quiz-item {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            .answer-key {
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
+            }
+
+            .quiz-item {
+                border-color: #d1d5db !important;
+            }
+
+            .quiz-sentence {
+                background-color: #eef2ff !important;
+                border-left-color: #6366f1 !important;
+            }
+
+            .section-number {
+                background-color: #111827 !important;
+                color: #fff !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="controls no-print">
+        <button class="btn-print" onclick="window.print()">
+            <i class="fas fa-print mr-2"></i>인쇄하기
+        </button>
+        <button class="btn-answer" onclick="toggleAnswerKey()">
+            <i class="fas fa-key mr-2"></i>정답 표시/숨기기
+        </button>
+        <span class="text-gray-400 text-xs ml-2">보카리아 퀴즈 - Section 7. Condition & Situation</span>
+    </div>
+
+    <div id="page-container">
+        <!-- Page 1: Q1 ~ Q7 -->
+        <div class="a4-page">
+            <div class="page-header ko-font">
+                <div>
+                    <span class="tag en-font">VOCARIA QUIZ</span>
+                    <h1>Section 7. Condition & Situation <span class="text-gray-400 text-sm font-bold">(1/2)</span></h1>
+                </div>
+                <div class="info-box en-font">
+                    Date: ___________ / Name: __________________________
+                </div>
+            </div>
+
+            <div class="section-header">
+                <span class="section-number en-font">VQ</span>
+                <span class="section-title-text ko-font">보카리아 5지선다 퀴즈 · 문장의 올바른 해석을 고르세요</span>
+            </div>
+
+            <!-- Q1. absent -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q01.</span>
+                    <span class="quiz-word en-font">absent</span>
+                    <span class="quiz-meaning-hint ko-font">(결석한)</span>
+                </div>
+                <div class="quiz-sentence en-font">Michael was absent from school yesterday.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">Michael은 어제 학교에 일찍 갔어요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">Michael은 어제 결석했어요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">Michael은 내일 결석할 거예요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">Michael은 어제 학교에 출석했어요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">Michael은 오늘 결석했어요.</span></div>
+                </div>
+            </div>
+
+            <!-- Q2. present -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q02.</span>
+                    <span class="quiz-word en-font">present</span>
+                    <span class="quiz-meaning-hint ko-font">(출석한)</span>
+                </div>
+                <div class="quiz-sentence en-font">We are present for the meeting every Monday.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">우리는 매주 월요일 회의에 결석합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">우리는 매주 금요일 회의에 참석합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">우리는 매주 월요일 회의에 참석합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">우리는 매주 월요일 회의에 늦습니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">우리는 지난 월요일 회의에 참석했습니다.</span></div>
+                </div>
+            </div>
+
+            <!-- Q3. accept -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q03.</span>
+                    <span class="quiz-word en-font">accept</span>
+                    <span class="quiz-meaning-hint ko-font">(받아들이다)</span>
+                </div>
+                <div class="quiz-sentence en-font">Please accept my apology.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">내 사과를 거절해 주세요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">내 초대를 받아 주세요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">내 사과를 받아 주세요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">내 제안을 받아 주세요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">내 사과를 무시해 주세요.</span></div>
+                </div>
+            </div>
+
+            <!-- Q4. refuse -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q04.</span>
+                    <span class="quiz-word en-font">refuse</span>
+                    <span class="quiz-meaning-hint ko-font">(거절하다)</span>
+                </div>
+                <div class="quiz-sentence en-font">Please don't refuse my request.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">나의 부탁을 수락해 주세요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">나의 제안을 거절하지 말아 주세요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">나의 요청을 거절해 주세요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">나의 제안을 거절하지 말아 주세요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">나의 요청을 받아들여 주세요.</span></div>
+                </div>
+            </div>
+
+            <!-- Q5. agree -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q05.</span>
+                    <span class="quiz-word en-font">agree</span>
+                    <span class="quiz-meaning-hint ko-font">(찬성하다)</span>
+                </div>
+                <div class="quiz-sentence en-font">I agree with you on this issue.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">이 문제에 대해서 반대합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">저 문제에 대해서 동의합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">이 문제에 대해서는 당신에게 동의합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">이 문제에 대해서 당신은 동의했었습니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">이 문제에 대해서 당신에게 동의하지 않습니다.</span></div>
+                </div>
+            </div>
+
+            <!-- Q6. disagree -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q06.</span>
+                    <span class="quiz-word en-font">disagree</span>
+                    <span class="quiz-meaning-hint ko-font">(반대하다)</span>
+                </div>
+                <div class="quiz-sentence en-font">They disagree with what you say.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">그들은 당신이 말한 것에 동의합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">그들은 당신이 말한 것을 반대합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">그들은 당신이 말한 것을 반대했습니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">그들은 내가 말한 것을 반대합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">그들은 당신이 할 것을 반대합니다.</span></div>
+                </div>
+            </div>
+
+            <!-- Q7. bad -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q07.</span>
+                    <span class="quiz-word en-font">bad</span>
+                    <span class="quiz-meaning-hint ko-font">(나쁜)</span>
+                </div>
+                <div class="quiz-sentence en-font">It's bad news for me.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">그것은 내게 좋은 뉴스야.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">그것은 내게 나쁜 뉴스야.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">그것은 내게 나쁜 뉴스였어.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">그것은 너에게 나쁜 뉴스야.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">그것은 내게 새로운 뉴스야.</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page 2: Q8 ~ Q14 -->
+        <div class="a4-page">
+            <div class="page-header ko-font">
+                <div>
+                    <span class="tag en-font">VOCARIA QUIZ</span>
+                    <h1>Section 7. Condition & Situation <span class="text-gray-400 text-sm font-bold">(2/2)</span></h1>
+                </div>
+                <div class="info-box en-font">
+                    Date: ___________ / Name: __________________________
+                </div>
+            </div>
+
+            <div class="section-header">
+                <span class="section-number en-font">VQ</span>
+                <span class="section-title-text ko-font">보카리아 5지선다 퀴즈 · 문장의 올바른 해석을 고르세요</span>
+            </div>
+
+            <!-- Q8. good -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q08.</span>
+                    <span class="quiz-word en-font">good</span>
+                    <span class="quiz-meaning-hint ko-font">(좋은)</span>
+                </div>
+                <div class="quiz-sentence en-font">She is a good teacher.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">그녀는 나쁜 선생님이예요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">그는 좋은 선생님이예요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">그녀는 좋은 학생이예요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">그녀는 좋은 선생님이예요.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">그녀는 좋은 선생님이었어요.</span></div>
+                </div>
+            </div>
+
+            <!-- Q9. before -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q09.</span>
+                    <span class="quiz-word en-font">before</span>
+                    <span class="quiz-meaning-hint ko-font">(~ 전에)</span>
+                </div>
+                <div class="quiz-sentence en-font">You should wash your hands before meals.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">식사 후에 손을 씻어야 합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">식사 전에 손을 씻어야 합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">식사 전에 발을 씻어야 합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">식사 전에 손을 씻었어야 합니다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">식사 중에 손을 씻어야 합니다.</span></div>
+                </div>
+            </div>
+
+            <!-- Q10. after -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q10.</span>
+                    <span class="quiz-word en-font">after</span>
+                    <span class="quiz-meaning-hint ko-font">(~ 후에)</span>
+                </div>
+                <div class="quiz-sentence en-font">Let's go for a walk after dinner.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">저녁 식사 전에 산책 가자.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">점심 식사 후에 산책 가자.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">저녁 식사 후에 산책 가자.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">저녁 식사 후에 산책 갔었어.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">저녁 식사 후에 달리기 하자.</span></div>
+                </div>
+            </div>
+
+            <!-- Q11. begin -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q11.</span>
+                    <span class="quiz-word en-font">begin</span>
+                    <span class="quiz-meaning-hint ko-font">(시작하다)</span>
+                </div>
+                <div class="quiz-sentence en-font">What time does the festival begin?</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">축제는 몇시에 끝나나요?</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">축제는 몇시에 시작하나요?</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">축제는 몇시에 시작했나요?</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">공연은 몇시에 시작하나요?</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">축제는 어디서 시작하나요?</span></div>
+                </div>
+            </div>
+
+            <!-- Q12. end -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q12.</span>
+                    <span class="quiz-word en-font">end</span>
+                    <span class="quiz-meaning-hint ko-font">(마치다)</span>
+                </div>
+                <div class="quiz-sentence en-font">What time does the festival end?</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">축제는 몇시에 시작하나요?</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">축제는 몇시에 끝날까요?</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">축제는 몇시에 끝나나요?</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">축제는 몇시에 끝났나요?</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">파티는 몇시에 끝나나요?</span></div>
+                </div>
+            </div>
+
+            <!-- Q13. below -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q13.</span>
+                    <span class="quiz-word en-font">below</span>
+                    <span class="quiz-meaning-hint ko-font">(아래에)</span>
+                </div>
+                <div class="quiz-sentence en-font">The sun sank slowly below the horizon.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">태양이 수평선 위로 서서히 떠올랐다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">태양이 수평선 아래로 빠르게 가라앉았다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">태양이 수평선 아래로 서서히 가라앉았다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">달이 수평선 아래로 서서히 가라앉았다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">태양이 산 아래로 서서히 가라앉았다.</span></div>
+                </div>
+            </div>
+
+            <!-- Q14. above -->
+            <div class="quiz-item">
+                <div class="quiz-top">
+                    <div class="quiz-checkbox"></div>
+                    <span class="quiz-number en-font">Q14.</span>
+                    <span class="quiz-word en-font">above</span>
+                    <span class="quiz-meaning-hint ko-font">(위에)</span>
+                </div>
+                <div class="quiz-sentence en-font">The sun rose slowly above the mountain.</div>
+                <div class="quiz-options ko-font">
+                    <div class="quiz-option"><span class="opt-num">①</span><span class="opt-text">태양이 산 아래로 천천히 내려갔다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">②</span><span class="opt-text">태양이 바다 위로 천천히 떠올랐다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">③</span><span class="opt-text">태양이 산 위로 빠르게 떠올랐다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">④</span><span class="opt-text">태양이 산 위로 천천히 떠올랐다.</span></div>
+                    <div class="quiz-option"><span class="opt-num">⑤</span><span class="opt-text">달이 산 위로 천천히 떠올랐다.</span></div>
+                </div>
+            </div>
+
+            <!-- Answer Key -->
+            <div class="answer-key" id="answer-key" style="display: none;">
+                <h3><i class="fas fa-check-circle mr-1"></i>정답표 (Answer Key)</h3>
+                <div class="answer-grid en-font">
+                    <div class="answer-cell"><span class="ans-q">Q1.</span> <span class="ans-v">②</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q2.</span> <span class="ans-v">③</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q3.</span> <span class="ans-v">③</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q4.</span> <span class="ans-v">④</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q5.</span> <span class="ans-v">③</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q6.</span> <span class="ans-v">②</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q7.</span> <span class="ans-v">②</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q8.</span> <span class="ans-v">④</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q9.</span> <span class="ans-v">②</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q10.</span> <span class="ans-v">③</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q11.</span> <span class="ans-v">②</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q12.</span> <span class="ans-v">③</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q13.</span> <span class="ans-v">③</span></div>
+                    <div class="answer-cell"><span class="ans-q">Q14.</span> <span class="ans-v">④</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleAnswerKey() {
+            const el = document.getElementById('answer-key');
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
