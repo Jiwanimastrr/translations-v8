@@ -2100,12 +2100,17 @@
                 allHtml += generatePageHtml(chId, s, 'hw', printAnswer);
             }
             
-            const originalContent = document.getElementById('page-container').innerHTML;
-            document.getElementById('page-container').innerHTML = allHtml.trim();
+            const container = document.getElementById('page-container');
+            const originalContent = container.innerHTML;
+            const hadA4Class = container.classList.contains('a4-page');
+            
+            container.classList.remove('a4-page');
+            container.innerHTML = allHtml.trim();
             
             setTimeout(() => {
                 window.print();
-                document.getElementById('page-container').innerHTML = originalContent;
+                container.innerHTML = originalContent;
+                if (hadA4Class) container.classList.add('a4-page');
             }, 1500);
         }
 
@@ -2128,12 +2133,18 @@
                 return;
             }
 
-            const originalContent = document.getElementById('page-container').innerHTML;
-            document.getElementById('page-container').innerHTML = printHtml.trim();
+            const container = document.getElementById('page-container');
+            const originalContent = container.innerHTML;
+            const hadA4Class = container.classList.contains('a4-page');
+            
+            // page-container의 a4-page 클래스를 제거해야 개별 파트(.a4-page)가 각자 한 페이지로 출력됨
+            container.classList.remove('a4-page');
+            container.innerHTML = printHtml.trim();
 
             setTimeout(() => {
                 window.print();
-                document.getElementById('page-container').innerHTML = originalContent;
+                container.innerHTML = originalContent;
+                if (hadA4Class) container.classList.add('a4-page');
             }, 500);
         }
 
