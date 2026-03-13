@@ -1727,36 +1727,48 @@
 
             let pageHtml = '';
             if (view === 'textbook') {
-                // Step 1. 보카리아 5지선다 퀴즈 (A4 1장 극한 압축)
+                // Step 1. 보카리아 5지선다 퀴즈 (A4 1장 · 왼쪽 밀착 · 극강 함정)
                 if (selectedParts.textbook.includes(1)) {
                     function generateQuizOptions(sessionWords, correctIndex) {
                         const correct = sessionWords[correctIndex].senKo;
                         let distractors = [];
-                        // 정답 문장 자체를 교묘하게 변형하는 8가지 함정 함수
+                        // 10가지 극강 함정 변형 함수
                         const trickFns = [
-                            s => s.replace(/합니다/g, '했습니다').replace(/해요/g, '했어요'),
-                            s => s.replace(/했/g, '하고 있').replace(/었/g, '고 있었'),
-                            s => s.replace(/을 /g, '를 ').replace(/를 /g, '을 ').replace(/은 /g, '는 '),
-                            s => s.replace(/세요/g, '셨어요').replace(/하세요/g, '했어요'),
-                            s => s.replace(/나는/g, '너는').replace(/내/g, '네').replace(/내게/g, '너에게'),
-                            s => s.replace(/입니다/g, '이었습니다').replace(/이에요/g, '이었어요'),
-                            s => s.replace(/아요/g, '았어요').replace(/어요/g, '었어요'),
-                            s => s.replace(/ㅂ니다/g, '았습니다')
+                            // 1) 과거 시제화
+                            s => s.replace(/합니다/g, '했습니다').replace(/해요/g, '했어요').replace(/예요/g, '였어요'),
+                            // 2) 진행형 변환
+                            s => s.replace(/합니다/g, '하고 있습니다').replace(/해요/g, '하고 있어요'),
+                            // 3) 조사 교체 (을↔를, 은↔는, 이↔가)
+                            s => s.replace(/을 /g, '를 ').replace(/를 /g, '을 ').replace(/은 /g, '는 ').replace(/이 /g, '가 '),
+                            // 4) 능동↔수동 뉘앙스
+                            s => s.replace(/했어요/g, '되었어요').replace(/합니다/g, '됩니다').replace(/해요/g, '돼요'),
+                            // 5) 주어 뒤바꿈 (나↔너, 우리↔그들)
+                            s => s.replace(/나는 /g, '너는 ').replace(/내 /g, '네 ').replace(/우리/g, '그들').replace(/내게/g, '너에게'),
+                            // 6) 대과거 (했다→했었다)
+                            s => s.replace(/했/g, '했었').replace(/었어/g, '었었어').replace(/였/g, '였었'),
+                            // 7) 미래 시제화
+                            s => s.replace(/합니다/g, '할 겁니다').replace(/해요/g, '할 거예요').replace(/했/g, '할'),
+                            // 8) 부정 삽입
+                            s => s.replace(/을 /g, '을 못 ').replace(/를 /g, '를 못 ').replace(/에 /g, '에 안 '),
+                            // 9) 존칭 레벨 변경
+                            s => s.replace(/세요/g, '셨어요').replace(/주세요/g, '주셨어요').replace(/합니다/g, '하신답니다'),
+                            // 10) 어미 미세 변형
+                            s => s.replace(/아요/g, '았어요').replace(/어요/g, '었어요').replace(/이야/g, '이었어')
                         ];
-                        // 1) 정답을 미세 변형한 오답 2개
-                        let shuffledTricks = [...trickFns].sort(() => Math.random() - 0.5);
-                        for (let t = 0; t < 2; t++) {
-                            let d = shuffledTricks[t](correct);
+                        // 정답을 미세 변형한 오답 3개 (최대한 헷갈리게)
+                        let shuffled = [...trickFns].sort(() => Math.random() - 0.5);
+                        for (let t = 0; t < shuffled.length && distractors.length < 3; t++) {
+                            let d = shuffled[t](correct);
                             if (d !== correct && !distractors.includes(d)) distractors.push(d);
                         }
-                        // 2) 다른 단어의 senKo를 변형한 오답
+                        // 다른 단어 senKo 변형 오답 1개
                         let others = sessionWords.map((w, i) => i !== correctIndex ? w.senKo : null).filter(Boolean);
                         others.sort(() => Math.random() - 0.5);
                         for (let i = 0; distractors.length < 4 && i < others.length; i++) {
-                            let d = shuffledTricks[i % trickFns.length](others[i]);
+                            let d = shuffled[i % trickFns.length](others[i]);
                             if (d !== correct && !distractors.includes(d)) distractors.push(d);
                         }
-                        while (distractors.length < 4) { distractors.push(correct.replace(/요/g, '어').replace(/다/g, '었다')); }
+                        while (distractors.length < 4) distractors.push(correct.replace(/다\.?$/g, '었다'));
                         let options = [...distractors.slice(0, 4), correct];
                         for (let i = options.length - 1; i > 0; i--) { let j = Math.floor(Math.random() * (i + 1)); [options[i], options[j]] = [options[j], options[i]]; }
                         return { options, correctIdx: options.indexOf(correct) + 1 };
@@ -1766,28 +1778,27 @@
                         ch[`quizCache_s${session}`] = sessionWords.map((_, i) => generateQuizOptions(sessionWords, i));
                     }
                     const quizData = ch[`quizCache_s${session}`];
-                    const cNums = ['①','②','③','④','⑤'];
+                    const cN = ['①','②','③','④','⑤'];
 
                     let quizHtml = '';
                     sessionWords.forEach((word, i) => {
                         const q = quizData[i];
-                        const ansMark = answerMode ? `<span style="color:#dc2626;font-weight:900;font-size:6pt;margin-left:3px;">[${cNums[q.correctIdx-1]}]</span>` : '';
+                        const ansMark = answerMode ? `<span style="color:#dc2626;font-weight:900;font-size:6.5pt;margin-left:4px;">[${cN[q.correctIdx-1]}]</span>` : '';
                         quizHtml += `
-                        <div class="avoid-break" style="margin-bottom:1px;padding:2.5px 4px;border-bottom:0.5px solid #e5e7eb;${i%2===0?'background:#f8faff;':''}">
-                            <div style="display:flex;align-items:center;gap:3px;margin-bottom:1px;">
-                                <div style="width:10px;height:10px;border:1.5px solid #9ca3af;border-radius:2px;flex-shrink:0;"></div>
-                                <span class="en-font" style="font-size:6.5pt;font-weight:900;color:#6366f1;min-width:20px;">Q${String(i+1).padStart(2,'0')}</span>
-                                <span class="en-font" style="font-size:8pt;font-weight:900;color:#1e40af;">${word.en}</span>
-                                <span class="ko-font" style="font-size:5.5pt;color:#94a3b8;font-weight:600;">(${word.ko})</span>
+                        <div class="avoid-break" style="margin-bottom:3px;padding:3px 5px;border-bottom:0.8px solid #e2e8f0;${i%2===0?'background:#f8faff;':''}">
+                            <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px;">
+                                <div style="width:11px;height:11px;border:1.5px solid #94a3b8;border-radius:2px;flex-shrink:0;"></div>
+                                <span class="en-font" style="font-size:7pt;font-weight:900;color:#6366f1;">Q${String(i+1).padStart(2,'0')}</span>
+                                <span class="en-font" style="font-size:8.5pt;font-weight:900;color:#1e40af;">${word.en}</span>
+                                <span class="ko-font" style="font-size:6pt;color:#94a3b8;font-weight:700;">(${word.ko})</span>
+                                <span class="en-font" style="font-size:7.5pt;font-weight:600;color:#334155;padding:1px 5px;background:#eef2ff;border-left:2px solid #6366f1;border-radius:0 3px 3px 0;line-height:1.3;margin-left:2px;">${word.senEn}</span>
                                 ${ansMark}
-                                <span style="flex:1;"></span>
-                                <span class="en-font" style="font-size:7pt;font-weight:600;color:#334155;padding:1px 4px;background:#eef2ff;border-left:2px solid #6366f1;border-radius:0 3px 3px 0;line-height:1.3;max-width:60%;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${word.senEn}</span>
                             </div>
-                            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1px;margin-left:14px;">
+                            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:1.5px;margin-left:16px;">
                                 ${q.options.map((opt,oi) => {
                                     const isC = answerMode && (oi+1)===q.correctIdx;
-                                    return `<div class="ko-font" style="font-size:5.8pt;padding:1px 2px;border:0.5px solid ${isC?'#dc2626':'#e2e8f0'};border-radius:2px;background:${isC?'#fef2f2':'#fff'};line-height:1.2;display:flex;gap:1px;overflow:hidden;">
-                                        <span style="font-weight:800;color:${isC?'#dc2626':'#9ca3af'};flex-shrink:0;font-size:6pt;">${cNums[oi]}</span>
+                                    return `<div class="ko-font" style="font-size:6.2pt;padding:1.5px 3px;border:0.7px solid ${isC?'#dc2626':'#e2e8f0'};border-radius:2px;background:${isC?'#fef2f2':'#fff'};line-height:1.25;display:flex;gap:1.5px;overflow:hidden;">
+                                        <span style="font-weight:800;color:${isC?'#dc2626':'#9ca3af'};flex-shrink:0;">${cN[oi]}</span>
                                         <span style="color:${isC?'#dc2626':'#374151'};font-weight:${isC?'700':'400'};overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${opt}</span>
                                     </div>`;
                                 }).join('')}
@@ -1798,10 +1809,10 @@
                     pageHtml += `
                         <div class="a4-page print-page-break">
                             ${headerHtml}
-                            <div class="section-header" style="margin-top:0;margin-bottom:3px;padding-bottom:2px;">
+                            <div class="section-header" style="margin-top:0;margin-bottom:4px;padding-bottom:2px;">
                                 <span class="section-number en-font">01</span>
                                 <span class="section-title-text ko-font" style="font-size:10pt;">Step 1. 보카리아 퀴즈 (Vocaria Quiz)</span>
-                                <span class="ko-font" style="font-size:6pt;color:#94a3b8;margin-left:auto;">영어 문장의 올바른 한글 해석을 고르세요</span>
+                                <span class="ko-font" style="font-size:6.5pt;color:#94a3b8;margin-left:auto;">영어 문장의 올바른 한글 해석을 고르세요</span>
                             </div>
                             ${quizHtml}
                         </div>`;
